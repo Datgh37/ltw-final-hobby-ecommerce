@@ -8,6 +8,13 @@ namespace TuNhanTamTInh_Ecommerce
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            // Config cho web deploy (hiện tại đang thử nghiệm)
+            var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenAnyIP(int.Parse(port));
+            });
+
             var myConnectionString = builder.Configuration.GetConnectionString("MyConnectString");
 
             // Add services to the container.

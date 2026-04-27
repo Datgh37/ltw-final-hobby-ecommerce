@@ -1,4 +1,4 @@
-﻿CREATE DATABASE Ecommerce_Hobby_Shop
+CREATE DATABASE Ecommerce_Hobby_Shop
 GO
 USE Ecommerce_Hobby_Shop
 GO
