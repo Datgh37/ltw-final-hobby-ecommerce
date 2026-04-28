@@ -16,10 +16,10 @@ namespace TuNhanTamTInh_Ecommerce
             });
 
             var myConnectionString = builder.Configuration.GetConnectionString("MyConnectString");
-            Console.WriteLine("==================================================");
-            Console.WriteLine($"[DEBUG] Connection String Length: {myConnectionString?.Length ?? 0}");
-            Console.WriteLine($"[DEBUG] Connection String Starts With: {myConnectionString?.Substring(0, Math.Min(30, myConnectionString?.Length ?? 0))}");
-            Console.WriteLine("==================================================");
+            // Console.WriteLine("==================================================");
+            // Console.WriteLine($"[DEBUG] Connection String Length: {myConnectionString?.Length ?? 0}");
+            // Console.WriteLine($"[DEBUG] Connection String Starts With: {myConnectionString?.Substring(0, Math.Min(30, myConnectionString?.Length ?? 0))}");
+            // Console.WriteLine("==================================================");
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
