@@ -1,6 +1,10 @@
 ﻿@model TuNhanTamTInh_Ecommerce.Models.ViewModels.HeroSectionViewModel
+@{
+    var isHome = ViewData["IsHomePage"] as bool? ?? false;
+}
+
 <!-- Hero Section Begin -->
-<section class="hero hero-normal">
+<section class="hero @(isHome ? "" : "hero-normal")">
     <div class="container">
         <div class="row">
             <div class="col-lg-3">
@@ -25,8 +29,8 @@
                 <div class="hero__search">
                     <div class="hero__search__form">
                         <form asp-controller="Product" asp-action="Index" method="get">
-                            <select name="seriesId" class="hero__search__categories">
-                                <option value="">All Series</option>
+                            <select name="seriesId" class="hero-series-select">
+                                <option value="" selected>All Series</option>
                                 @foreach (var seriesItem in Model.Series)
                                 {
                                     <option value="@seriesItem.SeriesId">@seriesItem.SeriesName</option>
@@ -46,6 +50,11 @@
                         </div>
                     </div>
                 </div>
+
+                @if (isHome)
+                {
+                    <partial name="_HomePageBanner" />
+                }
             </div>
         </div>
     </div>

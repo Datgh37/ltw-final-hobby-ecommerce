@@ -1,0 +1,62 @@
+@model TuNhanTamTInh_Ecommerce.Models.Category
+
+@{
+    ViewData["Title"] = "Edit Category";
+}
+
+<section class="crud-page">
+    <div class="container">
+        <div class="crud-page__header">
+            <div class="crud-page__breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+                <span>/</span>
+                <a asp-controller="Categories" asp-action="Index">Categories</a>
+                <span>/</span>
+                <span>Edit</span>
+            </div>
+            <h1><i class="fa fa-pencil-square-o"></i> Edit Category</h1>
+            <p>Update the category information below.</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 col-md-10">
+                <div class="crud-card">
+                    <h3 class="crud-card__title">
+                        <i class="fa fa-th-list"></i> Category Information
+                    </h3>
+                    <form asp-action="Edit" class="crud-form">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="CategoryId" />
+                        <div class="form-group">
+                            <label asp-for="CategoryName" class="control-label"></label>
+                            <input asp-for="CategoryName" class="form-control" />
+                            <span asp-validation-for="CategoryName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CategorySlug" class="control-label"></label>
+                            <input asp-for="CategorySlug" class="form-control" />
+                            <span asp-validation-for="CategorySlug" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Image" class="control-label"></label>
+                            <input asp-for="Image" class="form-control" />
+                            <span asp-validation-for="Image" class="text-danger"></span>
+                        </div>
+                        <div class="crud-btn-group">
+                            <button type="submit" class="crud-btn crud-btn--primary">
+                                <i class="fa fa-save"></i> Save Changes
+                            </button>
+                            <a asp-action="Index" class="crud-btn crud-btn--secondary">
+                                <i class="fa fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

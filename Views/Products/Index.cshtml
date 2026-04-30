@@ -1,0 +1,98 @@
+@model IEnumerable<TuNhanTamTInh_Ecommerce.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="crud-page">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="crud-page__header">
+            <div class="crud-page__breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+                <span>/</span>
+                <span>Products</span>
+            </div>
+            <h1><i class="fa fa-cube"></i> Product Management</h1>
+            <p>Manage all products in your store.</p>
+        </div>
+
+        <!-- Create Button -->
+        <a asp-action="Create" class="crud-btn crud-btn--create">
+            <i class="fa fa-plus"></i> Add New Product
+        </a>
+
+        <!-- Table Card -->
+        <div class="crud-card">
+            <table class="crud-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                        <th>Stock</th>
+                        <th>Category</th>
+                        <th>Series</th>
+                        <th>Supplier</th>
+                        <th>Views</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int stt = 1; }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@(stt++)</td>
+                            <td>
+                                <strong>@Html.DisplayFor(modelItem => item.ProductName)</strong>
+                                @if (!string.IsNullOrEmpty(item.ProductSlug))
+                                {
+                                    <br /><small style="color:#999;">@item.ProductSlug</small>
+                                }
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.UnitPrice)</td>
+                            <td>
+                                @if (item.Discount > 0)
+                                {
+                                    <span class="crud-badge crud-badge--green">@(item.Discount)%</span>
+                                }
+                                else
+                                {
+                                    <span style="color:#ccc;">—</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.StockQuantity > 0)
+                                {
+                                    <span class="crud-badge crud-badge--green">@item.StockQuantity</span>
+                                }
+                                else
+                                {
+                                    <span class="crud-badge crud-badge--red">Out of stock</span>
+                                }
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.Category.CategoryId)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Series.SeriesId)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Supplier.SupplierId)</td>
+                            <td>@Html.DisplayFor(modelItem => item.ViewCount)</td>
+                            <td class="crud-actions">
+                                <a asp-action="Edit" asp-route-id="@item.ProductId" class="crud-btn--edit" title="Edit">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.ProductId" class="crud-btn--detail" title="Details">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.ProductId" class="crud-btn--delete" title="Delete">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

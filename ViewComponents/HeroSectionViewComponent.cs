@@ -21,9 +21,9 @@ namespace TuNhanTamTInh_Ecommerce.ViewComponents
                 Categories = await _context.Categories.AsNoTracking().OrderBy(x => x.CategoryId).ToListAsync(),
                 Series = await _context.Series.AsNoTracking().OrderBy(y => y.SeriesId).ToListAsync()
             };
-            // Có 2 VC cho hero section, của home có thêm Ảnh bìa sản phẩm nổi bật
-            var viewName = isHome ? "Home" : "Default";
-            return View(viewName, viewModel);
+
+            ViewData["IsHomePage"] = isHome;
+            return View(viewModel);
         }
     }
 }

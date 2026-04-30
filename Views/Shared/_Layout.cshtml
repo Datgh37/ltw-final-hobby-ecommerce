@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -17,17 +17,18 @@
     <link rel="stylesheet" href="~/css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="~/css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="~/css/style.css" type="text/css">
+    <link rel="stylesheet" href="~/css/admin-crud.css" type="text/css">
 </head>
 <body>
     <!-- Page Preloder -->
     <div id="preloder">
         <div class="loader"></div>
     </div>
-    @await Html.PartialAsync("_Header");
+    @await Html.PartialAsync("_Header")
 
     @RenderBody()
 
-    @await Html.PartialAsync("_Footer");
+    @await Html.PartialAsync("_Footer")
 
     <!-- Js Plugins -->
     <script src="~/js/jquery-3.3.1.min.js"></script>

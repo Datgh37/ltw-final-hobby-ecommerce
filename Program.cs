@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TuNhanTamTInh_Ecommerce.Data;
+using TuNhanTamTInh_Ecommerce.Helpers;
 
 namespace TuNhanTamTInh_Ecommerce
 {

@@ -1,0 +1,79 @@
+@model TuNhanTamTInh_Ecommerce.Models.Product
+
+@{
+    ViewData["Title"] = "Delete Product";
+}
+
+<section class="crud-page">
+    <div class="container">
+        <div class="crud-page__header">
+            <div class="crud-page__breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+                <span>/</span>
+                <a asp-controller="Products" asp-action="Index">Products</a>
+                <span>/</span>
+                <span>Delete</span>
+            </div>
+            <h1><i class="fa fa-trash"></i> Delete Product</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 col-md-10">
+                <div class="crud-card">
+                    <!-- Warning -->
+                    <div class="crud-delete-warning">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        <span>Are you sure you want to delete this product? This action cannot be undone.</span>
+                    </div>
+
+                    <h3 class="crud-card__title">
+                        <i class="fa fa-cube"></i> @Model.ProductName
+                    </h3>
+                    <dl class="crud-detail-list">
+                        <dt>Product Name</dt>
+                        <dd>@Html.DisplayFor(model => model.ProductName)</dd>
+
+                        <dt>Slug</dt>
+                        <dd><code>@Html.DisplayFor(model => model.ProductSlug)</code></dd>
+
+                        <dt>Unit Price</dt>
+                        <dd>@Html.DisplayFor(model => model.UnitPrice)</dd>
+
+                        <dt>Discount</dt>
+                        <dd>@Html.DisplayFor(model => model.Discount)</dd>
+
+                        <dt>Stock Quantity</dt>
+                        <dd>@Html.DisplayFor(model => model.StockQuantity)</dd>
+
+                        <dt>View Count</dt>
+                        <dd>@Html.DisplayFor(model => model.ViewCount)</dd>
+
+                        <dt>Description</dt>
+                        <dd>@Html.DisplayFor(model => model.Description)</dd>
+
+                        <dt>Category</dt>
+                        <dd>@Html.DisplayFor(model => model.Category.CategoryId)</dd>
+
+                        <dt>Series</dt>
+                        <dd>@Html.DisplayFor(model => model.Series.SeriesId)</dd>
+
+                        <dt>Supplier</dt>
+                        <dd>@Html.DisplayFor(model => model.Supplier.SupplierId)</dd>
+                    </dl>
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="ProductId" />
+                        <div class="crud-btn-group">
+                            <button type="submit" class="crud-btn crud-btn--danger">
+                                <i class="fa fa-trash"></i> Confirm Delete
+                            </button>
+                            <a asp-action="Index" class="crud-btn crud-btn--secondary">
+                                <i class="fa fa-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

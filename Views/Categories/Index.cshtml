@@ -1,0 +1,72 @@
+@model IEnumerable<TuNhanTamTInh_Ecommerce.Models.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<section class="crud-page">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="crud-page__header">
+            <div class="crud-page__breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+                <span>/</span>
+                <span>Categories</span>
+            </div>
+            <h1><i class="fa fa-th-list"></i> Category Management</h1>
+            <p>Manage all product categories in your store.</p>
+        </div>
+
+        <!-- Create Button -->
+        <a asp-action="Create" class="crud-btn crud-btn--create">
+            <i class="fa fa-plus"></i> Add New Category
+        </a>
+
+        <!-- Table Card -->
+        <div class="crud-card">
+            <table class="crud-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Image</th>
+                        <th>Category Name</th>
+                        <th>Slug</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int stt = 1; }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@(stt++)</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Image))
+                                {
+                                    <img src="@Url.Content(item.Image)" alt="@item.CategoryName" class="crud-img-preview" />
+                                }
+                                else
+                                {
+                                    <span style="color:#ccc;"><i class="fa fa-image"></i></span>
+                                }
+                            </td>
+                            <td><strong>@Html.DisplayFor(modelItem => item.CategoryName)</strong></td>
+                            <td><code>@Html.DisplayFor(modelItem => item.CategorySlug)</code></td>
+                            <td class="crud-actions">
+                                <a asp-action="Edit" asp-route-id="@item.CategoryId" class="crud-btn--edit" title="Edit">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.CategoryId" class="crud-btn--detail" title="Details">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.CategoryId" class="crud-btn--delete" title="Delete">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

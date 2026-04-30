@@ -3255,7 +3255,8 @@ ol {
 	.hero__search__form form input {
 		width: 100%;
 	}
-	.hero__search__form form .hero__search__categories {
+	.hero__search__form form .hero__search__categories,
+	.nice-select.hero-series-select {
 		display: none;
 	}
 	.hero__search__phone {
