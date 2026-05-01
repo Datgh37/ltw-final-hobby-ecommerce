@@ -1,4 +1,9 @@
-﻿<partial name="_HeaderHamburger.cshtml" />
+﻿@{
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<partial name="_HeaderHamburger.cshtml" />
 <!-- Header Section Begin -->
 <header class="header">
     <div class="header__top">
@@ -47,8 +52,13 @@
             <div class="col-lg-6">
                 <nav class="header__menu">
                     <ul>
-                        <li class="active"><a asp-controller ="Home" asp-action="Index">Home</a></li>
-                        <li><a href="./shop-grid.html">Shop</a></li>
+                        <li class="@(currentController == "Home" && currentAction == "Index" ? "active" : "")">
+                            <a asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+
+                        <li class="@(currentController == "Products" ? "active" : "")">
+                            <a asp-controller="Products" asp-action="Index">Shop</a>
+                        </li>
                         <li>
                             <a href="#">Pages</a>
                             <ul class="header__menu__dropdown">

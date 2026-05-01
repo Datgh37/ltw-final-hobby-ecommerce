@@ -9,12 +9,19 @@ namespace TuNhanTamTInh_Ecommerce
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            // Config cho web deploy (hiện tại đang thử nghiệm)
-            var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-            builder.WebHost.ConfigureKestrel(options =>
+
+            // Chỉ ép cổng khi deploy (non-Development) có cung cấp PORT.
+            // Development local sẽ dùng launchSettings (http/https).
+            var port = Environment.GetEnvironmentVariable("PORT");
+            if (!builder.Environment.IsDevelopment()
+                && !string.IsNullOrWhiteSpace(port)
+                && int.TryParse(port, out var parsedPort))
             {
-                options.ListenAnyIP(int.Parse(port));
-            });
+                builder.WebHost.ConfigureKestrel(options =>
+                {
+                    options.ListenAnyIP(parsedPort);
+                });
+            }
 
             var myConnectionString = builder.Configuration.GetConnectionString("MyConnectString");
             // Console.WriteLine("==================================================");
@@ -37,7 +44,6 @@ namespace TuNhanTamTInh_Ecommerce
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

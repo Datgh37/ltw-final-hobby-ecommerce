@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +9,7 @@ using TuNhanTamTInh_Ecommerce.Data;
 using TuNhanTamTInh_Ecommerce.DTOs;
 using TuNhanTamTInh_Ecommerce.Helpers;
 using TuNhanTamTInh_Ecommerce.Models;
+using TuNhanTamTInh_Ecommerce.Models.ViewModels;
 
 namespace TuNhanTamTInh_Ecommerce.Controllers
 {
@@ -22,12 +23,118 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? categoryId, int? seriesId, string? keyword, string? sort, decimal? minPrice, decimal? maxPrice, int page = 1, int pageSize = 12)
+        {
+            var productQuery = _context.Products
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (categoryId.HasValue)
+            {
+                productQuery = productQuery.Where(x => x.CategoryId == categoryId.Value);
+            }
+
+            if (seriesId.HasValue)
+            {
+                productQuery = productQuery.Where(x => x.SeriesId == seriesId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                productQuery = productQuery.Where(x => x.ProductName.Contains(keyword));
+            }
+
+            var overallMaxPrice = await _context.Products.AsNoTracking().Select(x => (decimal?)x.UnitPrice).MaxAsync() ?? 0m;
+            var selectedMinPrice = minPrice ?? 0m;
+            var selectedMaxPrice = maxPrice ?? overallMaxPrice;
+
+            if (selectedMinPrice > 0 || selectedMaxPrice < overallMaxPrice)
+            {
+                productQuery = productQuery.Where(x => x.UnitPrice >= selectedMinPrice && x.UnitPrice <= selectedMaxPrice);
+            }
+
+            productQuery = sort?.ToLowerInvariant() switch
+            {
+                "price_asc" => productQuery.OrderBy(x => x.UnitPrice),
+                "price_desc" => productQuery.OrderByDescending(x => x.UnitPrice),
+                "newest" => productQuery.OrderByDescending(x => x.ProductId),
+                "top_rated" => productQuery.OrderByDescending(x => x.Reviews.Any() ? x.Reviews.Average(r => r.Rating) : 0).ThenByDescending(x => x.ProductId),
+                "discount_desc" => productQuery.OrderByDescending(x => x.Discount).ThenByDescending(x => x.ProductId),
+                "viewcount_desc" => productQuery.OrderByDescending(x => x.ViewCount).ThenByDescending(x => x.ProductId),
+                _ => productQuery.OrderBy(x => x.ProductName)
+            };
+
+            var totalCount = await productQuery.CountAsync();
+            var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)pageSize));
+            page = Math.Clamp(page, 1, totalPages);
+            var skipItems = (page - 1) * pageSize;
+
+            // Use centralized ProjectToCard() — no duplicate Select blocks
+            var products = await productQuery
+                .Skip(skipItems)
+                .Take(pageSize)
+                .ProjectToCard()
+                .ToListAsync();
+
+            var saleOffProducts = await _context.Products
+                .AsNoTracking()
+                .Where(x => x.Discount > 0)
+                .OrderByDescending(x => x.Discount)
+                .Take(6)
+                .ProjectToCard()
+                .ToListAsync();
+
+            // Shared query object — single source of truth for filter params
+            var queryVM = new ProductIndexQueryViewModel
+            {
+                CategoryId = categoryId,
+                SeriesId = seriesId,
+                Keyword = keyword,
+                Sort = sort,
+                MinPrice = minPrice,
+                MaxPrice = maxPrice,
+                Page = page,
+                PageSize = pageSize
+            };
+
+            var viewModel = new ProductIndexViewModel
+            {
+                Query = queryVM,
+                PriceFilter = new PriceFilterViewModel
+                {
+                    MinPrice = 0m,
+                    MaxPrice = overallMaxPrice,
+                    SelectedMinPrice = selectedMinPrice,
+                    SelectedMaxPrice = selectedMaxPrice,
+                    Query = queryVM
+                },
+                SortOptions = new SortOptionsViewModel
+                {
+                    SelectedSort = sort,
+                    TotalCount = totalCount,
+                    Query = queryVM
+                },
+                Pagination = new PaginationViewModel
+                {
+                    CurrentPage = page,
+                    TotalPages = totalPages,
+                    TotalCount = totalCount,
+                    PageSize = pageSize,
+                    ShowArrows = totalPages > 1,
+                    Query = queryVM
+                },
+                Products = products,
+                SaleOffProducts = saleOffProducts
+            };
+
+            return View(viewModel);
+        }
+        // GET: Products/AdminIndex
+        public async Task<IActionResult> AdminIndex()
         {
             var ecommerceHobbyShopContext = _context.Products.Include(p => p.Category).Include(p => p.Series).Include(p => p.Supplier);
             return View(await ecommerceHobbyShopContext.ToListAsync());
         }
-
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -52,16 +159,14 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
-            ViewData["SeriesId"] = new SelectList(_context.Series, "SeriesId", "SeriesId");
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId");
+            PopulateDropdowns();
             return View();
         }
 
         // POST: Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductUpdateInfo model)
+        public async Task<IActionResult> Create(ProductUpdateInfoDTO model)
         {
             if (ModelState.IsValid)
             {
@@ -82,9 +187,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", model.CategoryId);
-            ViewData["SeriesId"] = new SelectList(_context.Series, "SeriesId", "SeriesId", model.SeriesId);
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId", model.SupplierId);
+            PopulateDropdowns(model.CategoryId, model.SeriesId, model.SupplierId);
             return View(model);
         }
 
@@ -101,34 +204,56 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", product.CategoryId);
-            ViewData["SeriesId"] = new SelectList(_context.Series, "SeriesId", "SeriesId", product.SeriesId);
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId", product.SupplierId);
-            return View(product);
+
+            // Map entity → DTO to prevent over-posting (ViewCount excluded)
+            var model = new ProductUpdateInfoDTO
+            {
+                ProductName = product.ProductName,
+                ProductSlug = product.ProductSlug,
+                CategoryId = product.CategoryId,
+                SeriesId = product.SeriesId,
+                SupplierId = product.SupplierId,
+                UnitPrice = product.UnitPrice,
+                Description = product.Description,
+                Discount = product.Discount,
+                StockQuantity = product.StockQuantity
+            };
+
+            PopulateDropdowns(product.CategoryId, product.SeriesId, product.SupplierId);
+            return View(model);
         }
 
         // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,ProductSlug,CategoryId,SeriesId,SupplierId,UnitPrice,Description,Discount,ViewCount,StockQuantity")] Product product)
+        public async Task<IActionResult> Edit(int id, ProductUpdateInfoDTO model)
         {
-            if (id != product.ProductId)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
+                var product = await _context.Products.FindAsync(id);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                // Map DTO → entity (only allowed fields)
+                product.ProductName = model.ProductName;
+                product.ProductSlug = SlugHelper.GenerateSlug(model.ProductName);
+                product.CategoryId = model.CategoryId;
+                product.SeriesId = model.SeriesId;
+                product.SupplierId = model.SupplierId;
+                product.UnitPrice = model.UnitPrice;
+                product.Description = model.Description;
+                product.Discount = model.Discount;
+                product.StockQuantity = model.StockQuantity;
+
                 try
                 {
-                    _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.ProductId))
+                    if (!ProductExists(id))
                     {
                         return NotFound();
                     }
@@ -139,10 +264,8 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", product.CategoryId);
-            ViewData["SeriesId"] = new SelectList(_context.Series, "SeriesId", "SeriesId", product.SeriesId);
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId", product.SupplierId);
-            return View(product);
+            PopulateDropdowns(model.CategoryId, model.SeriesId, model.SupplierId);
+            return View(model);
         }
 
         // GET: Products/Delete/5
@@ -184,6 +307,16 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.ProductId == id);
+        }
+
+        /// <summary>
+        /// Populates Category/Series/Supplier dropdowns showing Name instead of ID.
+        /// </summary>
+        private void PopulateDropdowns(int? selectedCategory = null, int? selectedSeries = null, string? selectedSupplier = null)
+        {
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", selectedCategory);
+            ViewData["SeriesId"] = new SelectList(_context.Series, "SeriesId", "SeriesName", selectedSeries);
+            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "CompanyName", selectedSupplier);
         }
     }
 }

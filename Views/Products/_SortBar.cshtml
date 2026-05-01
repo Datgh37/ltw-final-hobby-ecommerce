@@ -1,0 +1,43 @@
+@model TuNhanTamTInh_Ecommerce.Models.ViewModels.SortOptionsViewModel
+
+<div class="filter__item">
+    <div class="row">
+        <div class="col-lg-4 col-md-5">
+            <div class="filter__sort">
+                <span>Sort By</span>
+                <form asp-controller="Products" asp-action="Index" method="get">
+                    <input type="hidden" name="categoryId" value="@Model.Query.CategoryId" />
+                    <input type="hidden" name="seriesId" value="@Model.Query.SeriesId" />
+                    <input type="hidden" name="keyword" value="@Model.Query.Keyword" />
+                    <input type="hidden" name="minPrice" value="@Model.Query.MinPrice" />
+                    <input type="hidden" name="maxPrice" value="@Model.Query.MaxPrice" />
+                    <input type="hidden" name="page" value="1" />
+                    <select name="sort" onchange="this.form.submit()">
+                        @foreach (var option in Model.Options)
+                        {
+                            if (option.Value == Model.SelectedSort)
+                            {
+                                <option value="@option.Value" selected="selected">@option.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@option.Value">@option.Text</option>
+                            }
+                        }
+                    </select>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4">
+            <div class="filter__found">
+                <h6><span>@Model.TotalCount</span> Products found</h6>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-3">
+            <div class="filter__option">
+                <span class="icon_grid-2x2"></span>
+                <span class="icon_ul"></span>
+            </div>
+        </div>
+    </div>
+</div>

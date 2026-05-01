@@ -1,6 +1,6 @@
 ﻿namespace TuNhanTamTInh_Ecommerce.DTOs
 {
-    public class ProductUpdateInfo
+    public class ProductUpdateInfoDTO
     {
         public string ProductName { get; set; } = null!;
         public string? ProductSlug { get; set; }

@@ -1,0 +1,31 @@
+@model TuNhanTamTInh_Ecommerce.Models.ViewModels.ProductCardViewModel
+
+<div class="col-lg-4 col-md-6 col-sm-6">
+    <div class="product__item">
+        <div class="product__item__pic set-bg" data-setbg="@Url.Content(Model.PrimaryImage ?? "~/img/product/product-1.jpg")">
+            @if (Model.IsOnSale)
+            {
+                <div class="product__discount__percent">-@Model.DiscountPercent.ToString("0")%</div>
+            }
+            <ul class="product__item__pic__hover">
+                <li><a href="#"><i class="fa fa-heart"></i></a></li>
+                <li><a href="#"><i class="fa fa-retweet"></i></a></li>
+                <li><a asp-controller="Products" asp-action="Details" asp-route-id="@Model.ProductId"><i class="fa fa-shopping-cart"></i></a></li>
+            </ul>
+        </div>
+        <div class="product__item__text">
+            <h6><a asp-controller="Products" asp-action="Details" asp-route-id="@Model.ProductId">@Model.ProductName</a></h6>
+            @if (Model.IsOnSale)
+            {
+                <h5>
+                    @Model.FinalPrice.ToString("N0")
+                    <span>@Model.UnitPrice.ToString("N0")</span>
+                </h5>
+            }
+            else
+            {
+                <h5>@Model.UnitPrice.ToString("N0")</h5>
+            }
+        </div>
+    </div>
+</div>
