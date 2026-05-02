@@ -23,30 +23,39 @@
 <section class="product spad">
     <div class="container">
         <div class="row">
-            <!-- Sidebar-->
-            <div class="col-lg-3 col-md-5">
-                <div class="sidebar">
-                    <!--Categories Filter Sidebar-->
-                    <div class="sidebar__item">
-                        <h4>Categories</h4>
-                        <ul>
-                            @await Component.InvokeAsync("ProductSidebarCategories")
-                        </ul>
-                    </div>
+            <!-- Sidebar Toggle Button (tablet/mobile only) -->
+            <div class="col-12 d-lg-none mb-3">
+                <button class="btn btn-outline-secondary btn-block w-100" type="button" data-bs-toggle="collapse" data-bs-target="#shopSidebar" aria-expanded="false" aria-controls="shopSidebar">
+                    <i class="fa fa-filter"></i> Bộ lọc sản phẩm
+                </button>
+            </div>
 
-                    <!-- Price Sidebar-->
-                    <div class="sidebar__item">
-                        <h4>Price</h4>
-                        <partial name="_PriceFilter" model="Model.PriceFilter" />
-                    </div>
+            <!-- Sidebar -->
+            <div class="col-lg-3 col-md-12">
+                <div class="collapse d-lg-block" id="shopSidebar">
+                    <div class="sidebar">
+                        <!--Categories Filter Sidebar-->
+                        <div class="sidebar__item">
+                            <h4>Categories</h4>
+                            <ul>
+                                @await Component.InvokeAsync("ProductSidebarCategories")
+                            </ul>
+                        </div>
 
-                    <!--Latest Product Sidebar-->
-                    @await Component.InvokeAsync("ProductLatestProducts", new { take = 6 })
+                        <!-- Price Sidebar-->
+                        <div class="sidebar__item">
+                            <h4>Price</h4>
+                            <partial name="_PriceFilter" model="Model.PriceFilter" />
+                        </div>
+
+                        <!--Latest Product Sidebar-->
+                        @await Component.InvokeAsync("ProductLatestProducts", new { take = 6 })
+                    </div>
                 </div>
             </div>
 
             <!-- Main Content -->
-            <div class="col-lg-9 col-md-7">
+            <div class="col-lg-9 col-md-12">
                 <partial name="_SaleOffCarousel" model="Model.SaleOffProducts" />
                 <partial name="_SortBar" model="Model.SortOptions" />
                 <partial name="_ProductGrid" model="Model.Products" />

@@ -1,6 +1,6 @@
 @model TuNhanTamTInh_Ecommerce.Models.ViewModels.ProductCardViewModel
 
-<div class="col-lg-4 col-md-6 col-sm-6">
+<div class="col-lg-4 col-md-6 col-sm-6 col-6">
     <div class="product__item">
         <div class="product__item__pic set-bg" data-setbg="@Url.Content(Model.PrimaryImage ?? "~/img/product/product-1.jpg")">
             @if (Model.IsOnSale)
@@ -18,14 +18,15 @@
             @if (Model.IsOnSale)
             {
                 <h5>
-                    @Model.FinalPrice.ToString("N0")
-                    <span>@Model.UnitPrice.ToString("N0")</span>
+                    @Model.FinalPrice.ToString("N0")₫
+                    <span>@Model.UnitPrice.ToString("N0")₫</span>
                 </h5>
             }
             else
             {
-                <h5>@Model.UnitPrice.ToString("N0")</h5>
+                <h5>@Model.UnitPrice.ToString("N0")₫</h5>
             }
         </div>
     </div>
 </div>
+

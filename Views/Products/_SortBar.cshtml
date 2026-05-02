@@ -1,8 +1,8 @@
 @model TuNhanTamTInh_Ecommerce.Models.ViewModels.SortOptionsViewModel
 
 <div class="filter__item">
-    <div class="row">
-        <div class="col-lg-4 col-md-5">
+    <div class="row align-items-center">
+        <div class="col-lg-4 col-md-5 col-sm-5 col-6">
             <div class="filter__sort">
                 <span>Sort By</span>
                 <form asp-controller="Products" asp-action="Index" method="get">
@@ -28,12 +28,12 @@
                 </form>
             </div>
         </div>
-        <div class="col-lg-4 col-md-4">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-6">
             <div class="filter__found">
                 <h6><span>@Model.TotalCount</span> Products found</h6>
             </div>
         </div>
-        <div class="col-lg-4 col-md-3">
+        <div class="col-lg-4 col-md-3 col-sm-3 d-none d-sm-block">
             <div class="filter__option">
                 <span class="icon_grid-2x2"></span>
                 <span class="icon_ul"></span>
