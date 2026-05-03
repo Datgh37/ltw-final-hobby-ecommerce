@@ -25,11 +25,17 @@
     <div id="preloder">
         <div class="loader"></div>
     </div>
-    @await Html.PartialAsync("_Header")
 
-    @RenderBody()
+    <!-- Sticky footer wrapper: push footer to bottom -->
+    <div class="page-wrapper">
+        @await Html.PartialAsync("_Header")
 
-    @await Html.PartialAsync("_Footer")
+        <main class="page-content">
+            @RenderBody()
+        </main>
+
+        @await Html.PartialAsync("_Footer")
+    </div>
 
     <!-- Js Plugins -->
     <script src="~/js/jquery-3.3.1.min.js"></script>

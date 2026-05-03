@@ -24,19 +24,11 @@ namespace TuNhanTamTInh_Ecommerce
             }
 
             var myConnectionString = builder.Configuration.GetConnectionString("MyConnectString");
-            // Console.WriteLine("==================================================");
-            // Console.WriteLine($"[DEBUG] Connection String Length: {myConnectionString?.Length ?? 0}");
-            // Console.WriteLine($"[DEBUG] Connection String Starts With: {myConnectionString?.Substring(0, Math.Min(30, myConnectionString?.Length ?? 0))}");
-            // Console.WriteLine("==================================================");
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<EcommerceHobbyShopContext>(option => option.UseSqlServer(myConnectionString));
-
-            // Add Auto Mapper
-            builder.Services.AddAutoMapper(cfg => {
-                cfg.AddMaps(typeof(AutoMapperProfile).Assembly);
-            });
+            builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(AutoMapperProfile).Assembly));
 
             var app = builder.Build();
 

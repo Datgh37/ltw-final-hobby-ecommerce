@@ -4,7 +4,7 @@ namespace TuNhanTamTInh_Ecommerce.Models.ViewModels
     {
         public string Title { get; set; } = string.Empty;
 
-        public string BackgroundImage { get; set; } = "~/img/breadcrumb.jpg";
+        public string BackgroundImage { get; set; } = "~/images/breadcrumb.jpg";
 
         public List<BreadcrumbItem> Items { get; set; } = [];
     }

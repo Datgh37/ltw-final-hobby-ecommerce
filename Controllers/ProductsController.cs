@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,12 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
     public class ProductsController : Controller
     {
         private readonly EcommerceHobbyShopContext _context;
+        private readonly IMapper _mapper;
 
-        public ProductsController(EcommerceHobbyShopContext context)
+        public ProductsController(EcommerceHobbyShopContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Products
@@ -170,18 +173,8 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         {
             if (ModelState.IsValid)
             {
-                Product product = new Product
-                {
-                    ProductName = model.ProductName,
-                    ProductSlug = SlugHelper.GenerateSlug(model.ProductName),
-                    CategoryId = model.CategoryId,
-                    SeriesId = model.SeriesId,
-                    SupplierId = model.SupplierId,
-                    UnitPrice = model.UnitPrice,
-                    Description = model.Description,
-                    Discount = model.Discount,
-                    StockQuantity = model.StockQuantity,
-                };
+                var product = _mapper.Map<Product>(model);
+                product.ProductSlug = SlugHelper.GenerateSlug(product.ProductName);
 
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
@@ -205,19 +198,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 return NotFound();
             }
 
-            // Map entity → DTO to prevent over-posting (ViewCount excluded)
-            var model = new ProductUpdateInfoDTO
-            {
-                ProductName = product.ProductName,
-                ProductSlug = product.ProductSlug,
-                CategoryId = product.CategoryId,
-                SeriesId = product.SeriesId,
-                SupplierId = product.SupplierId,
-                UnitPrice = product.UnitPrice,
-                Description = product.Description,
-                Discount = product.Discount,
-                StockQuantity = product.StockQuantity
-            };
+            var model = _mapper.Map<ProductUpdateInfoDTO>(product);
 
             PopulateDropdowns(product.CategoryId, product.SeriesId, product.SupplierId);
             return View(model);
@@ -236,16 +217,8 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     return NotFound();
                 }
 
-                // Map DTO → entity (only allowed fields)
-                product.ProductName = model.ProductName;
-                product.ProductSlug = SlugHelper.GenerateSlug(model.ProductName);
-                product.CategoryId = model.CategoryId;
-                product.SeriesId = model.SeriesId;
-                product.SupplierId = model.SupplierId;
-                product.UnitPrice = model.UnitPrice;
-                product.Description = model.Description;
-                product.Discount = model.Discount;
-                product.StockQuantity = model.StockQuantity;
+                _mapper.Map(model, product);
+                product.ProductSlug = SlugHelper.GenerateSlug(product.ProductName);
 
                 try
                 {

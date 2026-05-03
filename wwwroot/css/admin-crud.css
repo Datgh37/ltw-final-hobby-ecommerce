@@ -41,7 +41,7 @@
 }
 
 .crud-page__breadcrumb a {
-    color: #7fad39;
+    color: #560bad;
     text-decoration: none;
     transition: color 0.2s;
 }
@@ -75,7 +75,7 @@
 }
 
 .crud-card__title i {
-    color: #7fad39;
+    color: #560bad;
     margin-right: 10px;
 }
 
@@ -208,7 +208,7 @@
 }
 
 .crud-form .form-group .form-control:focus {
-    border-color: #7fad39;
+    border-color: #560bad;
     box-shadow: 0 0 0 3px rgba(127, 173, 57, 0.12);
     outline: none;
 }
@@ -250,7 +250,7 @@
 
 .crud-form .nice-select:focus,
 .crud-form .nice-select.open {
-    border-color: #7fad39 !important;
+    border-color: #560bad !important;
     box-shadow: 0 0 0 3px rgba(127, 173, 57, 0.12) !important;
 }
 
@@ -270,7 +270,7 @@
 .crud-form .nice-select .option:hover,
 .crud-form .nice-select .option.selected {
     background-color: #f9fdf5 !important;
-    color: #7fad39;
+    color: #560bad;
 }
 
 /* ===== BUTTONS CHUNG ===== */
@@ -296,7 +296,7 @@
 }
 
 .crud-btn--primary {
-    background: #7fad39;
+    background: #560bad;
     color: #fff;
 }
 .crud-btn--primary:hover {
@@ -326,7 +326,7 @@
 }
 
 .crud-btn--create {
-    background: #7fad39;
+    background: #560bad;
     color: #fff;
     margin-bottom: 20px;
 }
