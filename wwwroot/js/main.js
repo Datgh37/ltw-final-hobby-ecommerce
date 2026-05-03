@@ -168,17 +168,24 @@
     var rangeSlider = $(".price-range"),
         minamount = $("#minamount"),
         maxamount = $("#maxamount"),
+        minHidden = $("#minamount_hidden"),
+        maxHidden = $("#maxamount_hidden"),
         minPrice = rangeSlider.data('min'),
-        maxPrice = rangeSlider.data('max');
+        maxPrice = rangeSlider.data('max'),
+        selectedMin = rangeSlider.data('selected-min') || minPrice,
+        selectedMax = rangeSlider.data('selected-max') || maxPrice;
+
     rangeSlider.slider({
         range: true,
         min: minPrice,
         max: maxPrice,
         step: 50000,
-        values: [minPrice, maxPrice],
+        values: [selectedMin, selectedMax],
         slide: function (event, ui) {
             minamount.val(formatVND(ui.values[0]));
             maxamount.val(formatVND(ui.values[1]));
+            minHidden.val(ui.values[0]);
+            maxHidden.val(ui.values[1]);
         }
     });
     minamount.val(formatVND(rangeSlider.slider("values", 0)));

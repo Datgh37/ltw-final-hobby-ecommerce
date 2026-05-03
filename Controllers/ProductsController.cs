@@ -72,7 +72,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             page = Math.Clamp(page, 1, totalPages);
             var skipItems = (page - 1) * pageSize;
 
-            // Use centralized ProjectToCard() — no duplicate Select blocks
+            // Use centralized ProjectToCard()
             var products = await productQuery
                 .Skip(skipItems)
                 .Take(pageSize)
@@ -87,7 +87,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 .ProjectToCard()
                 .ToListAsync();
 
-            // Shared query object — single source of truth for filter params
+            // Shared query object
             var queryVM = new ProductIndexQueryViewModel
             {
                 CategoryId = categoryId,

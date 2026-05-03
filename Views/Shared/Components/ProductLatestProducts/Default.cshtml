@@ -4,13 +4,11 @@
     var slides = latestProducts.Chunk(3).ToList();
 }
 
-<div class="sidebar__item">
-    <div class="latest-product__text">
-        <h4>Latest Products</h4>
+
         <div class="latest-product__slider owl-carousel">
             @foreach (var slide in slides)
             {
-                <div class="latest-prdouct__slider__item">
+                <div class="latest-product__slider__item">
                     @foreach (var item in slide)
                     {
                         <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId" class="latest-product__item">
@@ -26,5 +24,4 @@
                 </div>
             }
         </div>
-    </div>
-</div>
+

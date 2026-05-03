@@ -49,7 +49,12 @@
                         </div>
 
                         <!--Latest Product Sidebar-->
-                        @await Component.InvokeAsync("ProductLatestProducts", new { take = 6 })
+                        <div class="sidebar__item">
+                            <div class="latest-product__text">
+                                <h4>Latest Products</h4>
+                                @await Component.InvokeAsync("ProductLatestProducts", new { take = 6 })
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
