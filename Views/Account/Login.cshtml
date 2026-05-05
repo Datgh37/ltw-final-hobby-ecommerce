@@ -9,10 +9,10 @@
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="breadcrumb__text">
-                    <h2>Đăng nhập</h2>
+                    <h2>Login</h2>
                     <div class="breadcrumb__option">
                         <a asp-controller="Home" asp-action="Index">Trang chủ</a>
-                        <span>Đăng nhập</span>
+                        <span>Login</span>
                     </div>
                 </div>
             </div>
@@ -28,26 +28,26 @@
             <div class="col-lg-6 col-md-8">
                 <div class="card shadow-sm border-0 rounded-lg mt-5 mb-5">
                     <div class="card-header bg-white text-center py-4">
-                        <h3 class="font-weight-bold text-dark mb-0">Đăng nhập tài khoản</h3>
+                        <h3 class="font-weight-bold text-dark mb-0">Login</h3>
                     </div>
                     <div class="card-body p-5">
                         <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger mb-3 font-weight-bold"></div>
                             
                             <div class="form-group mb-4">
-                                <label asp-for="UsernameOrEmail" class="font-weight-bold text-dark">Tên đăng nhập hoặc Email <span class="text-danger">*</span></label>
-                                <input asp-for="UsernameOrEmail" class="form-control form-control-lg rounded-0" placeholder="Nhập tên đăng nhập hoặc email..." />
+                                <label asp-for="UsernameOrEmail" class="font-weight-bold text-dark">Username or Email <span class="text-danger">*</span></label>
+                                <input asp-for="UsernameOrEmail" class="form-control form-control-lg rounded-0" placeholder="Username or Email" />
                                 <span asp-validation-for="UsernameOrEmail" class="text-danger small mt-1 d-block"></span>
                             </div>
                             
                             <div class="form-group mb-4">
-                                <label asp-for="Password" class="font-weight-bold text-dark">Mật khẩu <span class="text-danger">*</span></label>
-                                <input asp-for="Password" class="form-control form-control-lg rounded-0" placeholder="Nhập mật khẩu..." />
+                                <label asp-for="Password" class="font-weight-bold text-dark">Password <span class="text-danger">*</span></label>
+                                <input asp-for="Password" class="form-control form-control-lg rounded-0" placeholder="Password" />
                                 <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
                             </div>
 
                             <div class="form-group mb-4 text-right">
-                                <a href="#" class="text-muted small">Quên mật khẩu?</a>
+                                <a href="#" class="text-muted small">Forgot password?</a>
                             </div>
 
                             <div class="text-center mt-4">
