@@ -1,17 +1,18 @@
+@model TuNhanTamTInh_Ecommerce.Models.ViewModels.LoginViewModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Đăng nhập";
 }
 
 <!-- Breadcrumb Section Begin -->
-<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg" style="background-image: url('/img/breadcrumb.jpg');">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="breadcrumb__text">
-                    <h2>Login</h2>
+                    <h2>Đăng nhập</h2>
                     <div class="breadcrumb__option">
-                        <a asp-controller="Home" asp-action="Index">Home</a>
-                        <span>Login</span>
+                        <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                        <span>Đăng nhập</span>
                     </div>
                 </div>
             </div>
@@ -24,29 +25,46 @@
 <section class="contact-form spad">
     <div class="container">
         <div class="row justify-content-center">
-            <!-- Login Form -->
             <div class="col-lg-6 col-md-8">
-                <div class="contact__form__title text-center">
-                    <h2>Login</h2>
-                </div>
-                <form action="#">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <input type="email" name="email" placeholder="Email Address" required>
-                        </div>
-                        <div class="col-lg-12 mt-3">
-                            <input type="password" name="password" placeholder="Password" required>
-                        </div>
-                        <div class="col-lg-12 text-center mt-4">
-                            <button type="submit" class="site-btn">LOGIN</button>
-                        </div>
-                        <div class="col-lg-12 text-center mt-4">
-                            <p>Don't have an account? <a asp-controller="Account" asp-action="Register" class="text-primary font-weight-bold">Register here</a></p>
-                        </div>
+                <div class="card shadow-sm border-0 rounded-lg mt-5 mb-5">
+                    <div class="card-header bg-white text-center py-4">
+                        <h3 class="font-weight-bold text-dark mb-0">Đăng nhập tài khoản</h3>
                     </div>
-                </form>
+                    <div class="card-body p-5">
+                        <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 font-weight-bold"></div>
+                            
+                            <div class="form-group mb-4">
+                                <label asp-for="UsernameOrEmail" class="font-weight-bold text-dark">Tên đăng nhập hoặc Email <span class="text-danger">*</span></label>
+                                <input asp-for="UsernameOrEmail" class="form-control form-control-lg rounded-0" placeholder="Nhập tên đăng nhập hoặc email..." />
+                                <span asp-validation-for="UsernameOrEmail" class="text-danger small mt-1 d-block"></span>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label asp-for="Password" class="font-weight-bold text-dark">Mật khẩu <span class="text-danger">*</span></label>
+                                <input asp-for="Password" class="form-control form-control-lg rounded-0" placeholder="Nhập mật khẩu..." />
+                                <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="form-group mb-4 text-right">
+                                <a href="#" class="text-muted small">Quên mật khẩu?</a>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="site-btn w-100 rounded-0 py-3 text-uppercase font-weight-bold">ĐĂNG NHẬP</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer bg-light text-center py-4">
+                        <p class="mb-0 text-muted">Chưa có tài khoản? <a asp-controller="Account" asp-action="Register" class="text-primary font-weight-bold">Đăng ký ngay</a></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 <!-- Login Section End -->
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

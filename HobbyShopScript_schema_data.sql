@@ -617,3 +617,9 @@ INSERT INTO [dbo].[OrderDetails] (OrderID, ProductID, UnitPrice, Quantity, Disco
 (1, 1, 4500000, 1, 0),
 (1, 2, 3500000, 1, 0);
 GO
+
+
+UPDATE [dbo].[Products] 
+SET [Discount] = 0.2 
+WHERE [ProductID] IN (1, 16, 37, 45);
+GO

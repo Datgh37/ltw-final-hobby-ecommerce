@@ -24,19 +24,22 @@ namespace TuNhanTamTInh_Ecommerce
             }
 
             var myConnectionString = builder.Configuration.GetConnectionString("MyConnectString");
-            // Console.WriteLine("==================================================");
-            // Console.WriteLine($"[DEBUG] Connection String Length: {myConnectionString?.Length ?? 0}");
-            // Console.WriteLine($"[DEBUG] Connection String Starts With: {myConnectionString?.Substring(0, Math.Min(30, myConnectionString?.Length ?? 0))}");
-            // Console.WriteLine("==================================================");
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<EcommerceHobbyShopContext>(option => option.UseSqlServer(myConnectionString));
-
-            // Add Auto Mapper
-            builder.Services.AddAutoMapper(cfg => {
-                cfg.AddMaps(typeof(AutoMapperProfile).Assembly);
-            });
+            builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(AutoMapperProfile).Assembly));
+            
+            // Add Cookie Authentication
+            builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/Logout";
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                });
 
             var app = builder.Build();
 
@@ -52,6 +55,7 @@ namespace TuNhanTamTInh_Ecommerce
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

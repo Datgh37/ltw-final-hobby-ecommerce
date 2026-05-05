@@ -1,17 +1,18 @@
+@model TuNhanTamTInh_Ecommerce.Models.ViewModels.RegisterViewModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Đăng ký";
 }
 
 <!-- Breadcrumb Section Begin -->
-<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg" style="background-image: url('/img/breadcrumb.jpg');">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="breadcrumb__text">
-                    <h2>Register</h2>
+                    <h2>Đăng ký tài khoản</h2>
                     <div class="breadcrumb__option">
-                        <a asp-controller="Home" asp-action="Index">Home</a>
-                        <span>Register</span>
+                        <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                        <span>Đăng ký</span>
                     </div>
                 </div>
             </div>
@@ -24,32 +25,60 @@
 <section class="contact-form spad">
     <div class="container">
         <div class="row justify-content-center">
-            <!-- Register Form -->
             <div class="col-lg-6 col-md-8">
-                <div class="contact__form__title text-center">
-                    <h2>Register</h2>
-                </div>
-                <form action="#">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <input type="text" name="name" placeholder="Full Name" required>
-                        </div>
-                        <div class="col-lg-12 mt-3">
-                            <input type="email" name="email" placeholder="Email Address" required>
-                        </div>
-                        <div class="col-lg-12 mt-3">
-                            <input type="password" name="password" placeholder="Password" required>
-                        </div>
-                        <div class="col-lg-12 text-center mt-4">
-                            <button type="submit" class="site-btn">REGISTER</button>
-                        </div>
-                        <div class="col-lg-12 text-center mt-4">
-                            <p>Already have an account? <a asp-controller="Account" asp-action="Login" class="text-primary font-weight-bold">Login here</a></p>
-                        </div>
+                <div class="card shadow-sm border-0 rounded-lg mt-5 mb-5">
+                    <div class="card-header bg-white text-center py-4">
+                        <h3 class="font-weight-bold text-dark mb-0">Tạo tài khoản mới</h3>
                     </div>
-                </form>
+                    <div class="card-body p-5">
+                        <form asp-action="Register" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 font-weight-bold"></div>
+                            
+                            <div class="form-group mb-4">
+                                <label asp-for="Username" class="font-weight-bold text-dark">Tên đăng nhập <span class="text-danger">*</span></label>
+                                <input asp-for="Username" class="form-control form-control-lg rounded-0" placeholder="Nhập tên đăng nhập..." />
+                                <span asp-validation-for="Username" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label asp-for="FullName" class="font-weight-bold text-dark">Họ và Tên <span class="text-danger">*</span></label>
+                                <input asp-for="FullName" class="form-control form-control-lg rounded-0" placeholder="Nhập họ và tên của bạn..." />
+                                <span asp-validation-for="FullName" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label asp-for="Email" class="font-weight-bold text-dark">Email <span class="text-danger">*</span></label>
+                                <input asp-for="Email" class="form-control form-control-lg rounded-0" placeholder="Nhập địa chỉ email..." />
+                                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label asp-for="Password" class="font-weight-bold text-dark">Mật khẩu <span class="text-danger">*</span></label>
+                                <input asp-for="Password" class="form-control form-control-lg rounded-0" placeholder="Nhập mật khẩu..." />
+                                <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label asp-for="ConfirmPassword" class="font-weight-bold text-dark">Xác nhận Mật khẩu <span class="text-danger">*</span></label>
+                                <input asp-for="ConfirmPassword" class="form-control form-control-lg rounded-0" placeholder="Nhập lại mật khẩu..." />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="site-btn w-100 rounded-0 py-3 text-uppercase font-weight-bold">ĐĂNG KÝ TÀI KHOẢN</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer bg-light text-center py-4">
+                        <p class="mb-0 text-muted">Đã có tài khoản? <a asp-controller="Account" asp-action="Login" class="text-primary font-weight-bold">Đăng nhập ngay</a></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 <!-- Register Section End -->
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -10,15 +10,19 @@
     <div class="price-range-wrap">
         <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
              data-min="@Model.MinPrice"
-             data-max="@Model.MaxPrice">
+             data-max="@Model.MaxPrice"
+             data-selected-min="@Model.SelectedMinPrice"
+             data-selected-max="@Model.SelectedMaxPrice">
             <div class="ui-slider-range ui-corner-all ui-widget-header"></div>
             <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
             <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
         </div>
         <div class="range-slider">
             <div class="price-input">
-                <input type="text" id="minamount" name="minPrice" value="@Model.SelectedMinPrice" />
-                <input type="text" id="maxamount" name="maxPrice" value="@Model.SelectedMaxPrice" />
+                <input type="text" id="minamount" readonly>
+                <input type="text" id="maxamount" readonly>
+                <input type="hidden" name="minPrice" id="minamount_hidden" value="@Model.SelectedMinPrice">
+                <input type="hidden" name="maxPrice" id="maxamount_hidden" value="@Model.SelectedMaxPrice">
             </div>
         </div>
     </div>
