@@ -134,31 +134,33 @@ Tạo file `Views/Shared/_ProductCard.cshtml`:
 Để đạt được Minimum Viable Product (MVP), dự án cần hoàn thiện các chức năng sau theo thứ tự:
 
 1. **Layout Trang Chủ (Homepage):** 
-   - Hiện tại (80%): Đang dùng layout template cũ. 
-   - **Mục tiêu:** Cải tiến UI/UX sang thiết kế độc quyền, phù hợp với một "Hobby Shop" (hiển thị banner sự kiện, series nổi bật như Gundam, Figure). Kết nối backend để hiển thị sản phẩm mới nhất, sản phẩm hot.
+   - **Trạng thái:** Hoàn thành 100%.
+   - **Chi tiết:** Đã tích hợp giao diện đồng bộ (màu chủ đạo `#560bad`), kết nối backend qua các ViewComponent (`ProductLatestProducts`) để hiển thị sản phẩm mới nhất, sản phẩm hot theo từng Tab.
 2. **Menu Hàng Hóa (Category Menu):**
-   - Phân cấp danh mục (Ví dụ: Mô hình lắp ráp -> Gundam -> High Grade).
-   - **Lưu ý:** Bắt buộc dùng **View Component** để render để không phải truy vấn lại dữ liệu ở mọi Controller.
+   - **Trạng thái:** Hoàn thành 100%.
+   - **Chi tiết:** Phân cấp danh mục cực kỳ thông minh (Ví dụ: Mô hình lắp ráp -> Gundam -> High Grade) bằng cách tự động quét liên kết ảo qua bảng Products, giữ nguyên schema Database mà vẫn có Menu xổ ngang cực mượt.
 3. **Trang Danh Sách Hàng Hóa (Product List):**
-   - Hiển thị danh sách sản phẩm theo danh mục.
-   - Hỗ trợ phân trang (Pagination).
+   - **Trạng thái:** Hoàn thành 100%.
+   - **Chi tiết:** Hiển thị thẻ sản phẩm (Tags Sale, click vào text), hỗ trợ bộ lọc theo khoảng giá, danh mục, phân trang.
 4. **Chi Tiết Hàng Hóa (Product Detail):**
-   - Hiển thị đầy đủ thông tin: Ảnh (có thể là slide nhiều ảnh), Tên, Giá, Series, Tỉ lệ (Scale), Tình trạng kho, Mô tả chi tiết.
+   - **Trạng thái:** Hoàn thành 100%.
+   - **Chi tiết:** Fix lỗi layout ảnh (object-fit), slider thumbnail đều tăm tắp, hiển thị linh hoạt lưới 4 sản phẩm liên quan.
 5. **Thêm Vào Giỏ Hàng (Add to Cart):**
-   - Xử lý thêm sản phẩm vào giỏ (Sử dụng AJAX để không phải load lại toàn bộ trang).
+   - Đang phát triển. Xử lý thêm sản phẩm vào giỏ (Sử dụng AJAX để không phải load lại toàn bộ trang).
    - Hiển thị thông báo (Toast notification) khi thêm thành công.
 6. **Thông Tin Giỏ Hàng (Cart Detail):**
-   - Trang xem chi tiết các món hàng đã chọn.
-   - Cho phép cập nhật số lượng, xóa sản phẩm khỏi giỏ hàng.
-   - Tính tổng tiền tạm tính.
+   - Đang phát triển. Trang xem chi tiết các món hàng đã chọn.
+   - Cho phép cập nhật số lượng, xóa sản phẩm khỏi giỏ hàng, tính tổng tiền tạm tính.
 7. **Login / Register (Đăng Nhập / Đăng Ký):**
    - **Đánh giá Hướng Tiếp Cận:** Dự án này sẽ theo hướng **Cho phép khách vãng lai (Guest) sử dụng giỏ hàng**.
-   - **Lý do:** Đối với E-commerce hiện đại, việc bắt ép tạo tài khoản ngay từ đầu tạo rào cản rất lớn, làm giảm tỉ lệ chuyển đổi (Conversion Rate). Việc lưu giỏ hàng vào Session (hoặc Cookie) cho khách vãng lai mang lại trải nghiệm tốt nhất.
+   - **Lý do:** Đối với E-commerce hiện đại, việc bắt ép tạo tài khoản ngay từ đầu tạo rào cản rất lớn, làm giảm tỉ lệ chuyển đổi. Chúng ta sử dụng **Cookie kết hợp CookieId** để lưu vết giỏ hàng thay vì dùng Session (Sử dụng Session tốn RAM server và làm chậm web).
+   - **Xác thực Email (Email Verification):** Vì Database có thuộc tính `IsActive` cho tài khoản, hệ thống sẽ yêu cầu người dùng xác thực Email khi đăng ký. Tài khoản chỉ được cấp quyền mua hàng khi `IsActive = true`.
    - **Luồng xử lý (Flow):**
-     1. Khách vãng lai xem sản phẩm -> Bỏ vào giỏ hàng (lưu Session).
+     1. Khách vãng lai xem sản phẩm -> Bỏ vào giỏ hàng (lưu qua CookieId).
      2. Khách vào trang Giỏ hàng -> Nhấn "Tiến hành Thanh toán".
      3. Hệ thống kiểm tra: Nếu chưa đăng nhập -> Chuyển hướng sang trang Đăng nhập/Đăng ký.
-     4. Sau khi đăng nhập thành công -> Tự động hợp nhất (Merge) giỏ hàng trong Session vào giỏ hàng của Database (nếu cần) và cho phép tiếp tục tới bước thanh toán.
+     4. Đăng ký tài khoản mới -> Hệ thống gửi Email chứa mã/link kích hoạt -> Khách click link để `IsActive = true`.
+     5. Sau khi đăng nhập thành công -> Tự động hợp nhất (Merge) giỏ hàng từ CookieId của khách vãng lai vào giỏ hàng gắn với AccountID trong Database và cho phép thanh toán.
 
 ---
 
@@ -176,16 +178,17 @@ Tạo file `Views/Shared/_ProductCard.cshtml`:
 
 ### 🎨 Ưu Tiên 2: Nhóm Tận Dụng Template Có Sẵn (Tối Ưu Trải Nghiệm - Dễ Làm)
 Nhóm này giúp trang web trông đồ sộ, nhiều chức năng nhưng lại cực kỳ dễ triển khai vì **template Ogani trong `wwwroot/` đã cung cấp sẵn giao diện (UI) 100%**:
-6. **Bộ Lọc Tìm Kiếm Nâng Cao & Sắp Xếp (Tận dụng `shop-grid.html`):**
-   - **Thanh trượt giá (Price Slider):** Template đã có sẵn thanh kéo UI, chỉ cần truyền tham số về Controller để truy vấn.
-   - **Bộ lọc Size / Color ➡️ Tỉ lệ / Dòng:** Tận dụng tag Color/Size có sẵn để đổi chữ thành lọc theo Tỉ lệ (Scale: 1/144, 1/100) hoặc Hãng sản xuất.
-   - **Sắp xếp (Sort By):** Dùng dropdown "Sort By" có sẵn để sắp xếp theo Giá hoặc Mới nhất.
+6. **✅ [ĐÃ HOÀN THÀNH] Bộ Lọc Tìm Kiếm Nâng Cao & Sắp Xếp:**
+   - **Thanh trượt giá (Price Slider):** Đã kết hợp mượt mà `minPrice`, `maxPrice` với LINQ.
+   - **Bộ lọc / Phân loại:** Đã lọc thành công theo danh mục (`categoryId`) và series (`seriesId`).
+   - **Sắp xếp (Sort By):** Xử lý hoàn thiện các tùy chọn giá tăng/giảm, xem nhiều, mua nhiều.
 7. **Hệ Thống Blog / Tin Tức & Review (Tận dụng `blog.html`):** Layout cực đẹp đã có sẵn. Rất thích hợp làm chức năng đăng bài Review đập hộp (Unboxing), thông báo hàng mới để kéo tương tác.
 8. **Mã Giảm Giá / Khuyến Mãi (Tận dụng `shoping-cart.html`):** Trong giỏ hàng có sẵn khối **"Discount Codes - Apply Coupon"**. Chỉ cần thêm bảng `Coupon` để xử lý logic trừ tiền/giảm phần trăm.
-9. **Sản Phẩm Gợi Ý Cùng Loại (Tận dụng `shop-details.html`):** Dùng carousel "Related Product" ở cuối trang chi tiết để hiển thị các sản phẩm cùng Series bằng truy vấn LINQ đơn giản.
+9. **✅ [ĐÃ HOÀN THÀNH] Sản Phẩm Gợi Ý Cùng Loại:** Đã áp dụng thành công trên trang Chi tiết sản phẩm. Dùng carousel "Related Product" ở cuối trang để hiển thị 4 sản phẩm cùng Category hoặc Series một cách cực kỳ bắt mắt.
 10. **Trang Liên Hệ & Bản Đồ (Tận dụng `contact.html`):** Có sẵn form liên hệ và chỗ nhúng Google Maps. Dùng để lưu lời nhắn của khách vào Database (bảng `ContactMessages`).
 
 ### 💡 Ưu Tiên 3: Nhóm Điểm Cộng Phụ (Nên Làm Nếu Dư Thời Gian)
-11. **Danh Sách Yêu Thích (Wishlist):** Cho phép người dùng đánh dấu/lưu lại các mô hình họ thích để mua sau.
+11. **Danh Sách Yêu Thích (Wishlist):** Cho phép người dùng đánh dấu/lưu lại các mô hình họ thích để mua sau (Sử dụng Cookie/Session tương tự Giỏ hàng nếu chưa đăng nhập).
 12. **Đánh Giá & Nhận Xét (Reviews & Ratings):** User có thể rate sao và bình luận kèm ảnh thật sau khi mua mô hình thành công.
-13. **Tìm Kiếm Gợi Ý Trực Tiếp (Live Search AJAX):** Khi gõ tên trên thanh tìm kiếm, danh sách sản phẩm gợi ý sẽ xổ xuống ngay lập tức mà không cần chuyển trang.
+13. **Tìm Kiếm Gợi Ý Trực Tiếp (Live Search AJAX):** Khi gõ tên trên thanh tìm kiếm của Header, danh sách sản phẩm gợi ý sẽ xổ xuống ngay lập tức mà không cần chuyển trang.
+14. **So Sánh Sản Phẩm (Compare):** Đặt 2 hoặc 3 mô hình cạnh nhau để so sánh tỉ lệ, giá cả, và thông số chi tiết.

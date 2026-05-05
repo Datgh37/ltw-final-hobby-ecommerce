@@ -30,7 +30,7 @@
                                 <li><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId"><i class="fa fa-shopping-cart"></i></a></li>
                             </ul>
                         </div>
-                        <div class="featured__item__text">
+                        <div class="featured__item__text" onclick="window.location.href='@Url.Action("Details", "Products", new { id = item.ProductId })'" style="cursor: pointer;">
                             <h6><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">@item.ProductName</a></h6>
                             <h5>@item.FinalPrice.ToString("N0")₫</h5>
                         </div>

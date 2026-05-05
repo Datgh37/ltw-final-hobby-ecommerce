@@ -1,12 +1,26 @@
 @model IEnumerable<TuNhanTamTInh_Ecommerce.Models.Category>
 @{
     var currentQuery = Context.Request.Query;
+    string? currentCategoryId = currentQuery["categoryId"];
     string? currentSeriesId = currentQuery["seriesId"];
     string? currentKeyword = currentQuery["keyword"];
     string? currentSort = currentQuery["sort"];
     string? currentMinPrice = currentQuery["minPrice"];
     string? currentMaxPrice = currentQuery["maxPrice"];
 }
+
+<li>
+    <a asp-controller="Products"
+       asp-action="Index"
+       asp-route-seriesId="@currentSeriesId"
+       asp-route-keyword="@currentKeyword"
+       asp-route-sort="@currentSort"
+       asp-route-minPrice="@currentMinPrice"
+       asp-route-maxPrice="@currentMaxPrice"
+       class="@(string.IsNullOrEmpty(currentCategoryId) ? "sidebar__category--active" : "")">
+        Tất cả
+    </a>
+</li>
 
 @foreach (var item in Model)
 {
@@ -18,7 +32,8 @@
            asp-route-keyword="@currentKeyword"
            asp-route-sort="@currentSort"
            asp-route-minPrice="@currentMinPrice"
-           asp-route-maxPrice="@currentMaxPrice">
+           asp-route-maxPrice="@currentMaxPrice"
+           class="@(currentCategoryId == item.CategoryId.ToString() ? "sidebar__category--active" : "")">
             @item.CategoryName
         </a>
     </li>

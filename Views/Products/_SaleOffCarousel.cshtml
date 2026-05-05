@@ -23,7 +23,7 @@
                                     <li><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId"><i class="fa fa-shopping-cart"></i></a></li>
                                 </ul>
                             </div>
-                            <div class="product__discount__item__text">
+                            <div class="product__discount__item__text" onclick="window.location.href='@Url.Action("Details", "Products", new { id = item.ProductId })'" style="cursor: pointer;">
                                 @if (!string.IsNullOrWhiteSpace(item.CategoryName))
                                 {
                                     <span>@item.CategoryName</span>

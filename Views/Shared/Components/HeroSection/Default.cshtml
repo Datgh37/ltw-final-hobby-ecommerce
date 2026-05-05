@@ -16,10 +16,29 @@
                     <ul>
                         @foreach (var catItem in Model.Categories)
                         {
-                            <li>
-                                <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@catItem.CategoryId">
-                                    @catItem.CategoryName
+                            bool hasSubmenu = Model.CategorySeriesMap.ContainsKey(catItem.CategoryId) && Model.CategorySeriesMap[catItem.CategoryId].Count > 1;
+                            
+                            <li class="@(hasSubmenu ? "has-hero-submenu" : "")">
+                                <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@catItem.CategoryId" class="hero-cat-link">
+                                    <span class="hero-cat-text">@catItem.CategoryName</span>
+                                    @if (hasSubmenu)
+                                    {
+                                        <i class="fa fa-angle-right"></i>
+                                    }
                                 </a>
+                                @if (hasSubmenu)
+                                {
+                                    <ul class="hero-submenu">
+                                        @foreach (var seriesItem in Model.CategorySeriesMap[catItem.CategoryId])
+                                        {
+                                            <li>
+                                                <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@catItem.CategoryId" asp-route-seriesId="@seriesItem.SeriesId">
+                                                    @seriesItem.SeriesName
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
                             </li>
                         }
                     </ul>
