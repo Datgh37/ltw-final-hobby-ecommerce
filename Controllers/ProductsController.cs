@@ -150,11 +150,22 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 .Include(p => p.Category)
                 .Include(p => p.Series)
                 .Include(p => p.Supplier)
+                .Include(p => p.ProductImages)
                 .FirstOrDefaultAsync(m => m.ProductId == id);
             if (product == null)
             {
                 return NotFound();
             }
+
+            var relatedProducts = await _context.Products
+                .AsNoTracking()
+                .Where(p => p.CategoryId == product.CategoryId && p.ProductId != product.ProductId)
+                .OrderBy(x => Guid.NewGuid()) // Lấy ngẫu nhiên
+                .Take(4)
+                .ProjectToCard()
+                .ToListAsync();
+
+            ViewBag.RelatedProducts = relatedProducts;
 
             return View(product);
         }

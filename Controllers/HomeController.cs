@@ -23,9 +23,10 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         {
             var categories = await _context.Categories.AsNoTracking().ToListAsync();
             
+            // Random Products for Featured
             var featuredProducts = await _context.Products
                 .AsNoTracking()
-                .OrderBy(x => Guid.NewGuid()) // Random Products from Database
+                .OrderBy(x => Guid.NewGuid()) 
                 .Take(8)
                 .ProjectToCard()
                 .ToListAsync();

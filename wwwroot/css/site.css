@@ -297,3 +297,107 @@ html, body {
   color: #1c1c1c;
   font-weight: 700;
 }
+
+/* ============================================
+   Product Details Image Constraints
+   ============================================ */
+.product__details__main-img {
+  height: 450px;
+  width: 100%;
+  object-fit: contain;
+  background-color: #f7f7f7;
+  border-radius: 4px;
+}
+
+.product__details__thumb-img {
+  height: 120px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* ============================================
+   Sidebar Category Styling
+   ============================================ */
+.sidebar__category--active {
+  font-weight: bold;
+  color: #560bad !important;
+}
+
+/* ============================================
+   Hero Categories Hierarchical Menu
+   ============================================ */
+.hero__categories ul {
+    padding-right: 20px; /* Thêm padding phải cho thẻ ul theo yêu cầu */
+}
+
+/* Style cho thẻ a ở menu chính để hỗ trợ text dài và Flexbox */
+.hero-cat-link {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Giới hạn độ dài chữ, ẩn bớt bằng dấu 3 chấm */
+.hero-cat-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
+/* Đổi màu hover cho cả menu chính và menu con thành màu tím, loại bỏ background */
+.hero__categories ul li a:hover,
+.hero-submenu li a:hover {
+    color: #560bad !important;
+    background: transparent !important;
+}
+
+/* Các css cũ cho submenu */
+.has-hero-submenu {
+    position: relative;
+}
+
+.hero-submenu {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 250px;
+    background: #ffffff;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 99;
+    padding: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #ebebeb;
+}
+
+.has-hero-submenu:hover .hero-submenu {
+    opacity: 1;
+    visibility: visible;
+}
+
+.hero-submenu li {
+    list-style: none;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.hero-submenu li:last-child {
+    border-bottom: none;
+}
+
+.hero-submenu li a {
+    display: block;
+    padding: 8px 20px;
+    color: #1c1c1c;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 14px;
+    
+    /* Ẩn bớt chữ ở submenu nếu quá dài */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
