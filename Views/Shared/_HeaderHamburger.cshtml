@@ -27,7 +27,17 @@
             </ul>
         </div>
         <div class="header__top__right__auth">
-            <a href="#"><i class="fa fa-user"></i> Login</a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="#"><i class="fa fa-user"></i> @User.Identity.Name</a>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline-block mt-2">
+                    <button type="submit" class="btn btn-link text-dark p-0 border-0" style="font-size:14px;"><i class="fa fa-sign-out"></i> Logout</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login"><i class="fa fa-user"></i> Login</a>
+            }
         </div>
     </div>
     <nav class="humberger__menu__nav mobile-menu">
