@@ -61,10 +61,7 @@ public partial class EcommerceHobbyShopContext : DbContext
     public virtual DbSet<WebPage> WebPages { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        // Connection string is configured via DI in Program.cs (appsettings.json).
-        // This method intentionally left without a fallback to avoid hardcoded credentials.
-    }
+        => optionsBuilder.UseSqlServer("Name=MyConnectString");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -75,6 +72,10 @@ public partial class EcommerceHobbyShopContext : DbContext
                 .HasColumnName("AccountID");
             entity.Property(e => e.Address).HasMaxLength(100);
             entity.Property(e => e.BirthDate).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.FullName).HasMaxLength(50);
             entity.Property(e => e.Gender).HasDefaultValue(true);
@@ -82,7 +83,7 @@ public partial class EcommerceHobbyShopContext : DbContext
                 .HasMaxLength(50)
                 .HasDefaultValue("~/images/user-default.png");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.Password).HasMaxLength(50);
+            entity.Property(e => e.Password).HasMaxLength(255);
             entity.Property(e => e.PhoneNumber).HasMaxLength(24);
             entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
@@ -103,7 +104,8 @@ public partial class EcommerceHobbyShopContext : DbContext
             entity.Property(e => e.Action).HasMaxLength(100);
             entity.Property(e => e.Timestamp)
                 .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Account).WithMany(p => p.AuditLogs)
                 .HasForeignKey(d => d.AccountId)
@@ -120,7 +122,8 @@ public partial class EcommerceHobbyShopContext : DbContext
                 .HasColumnName("AccountID");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Account).WithMany(p => p.Carts)
                 .HasForeignKey(d => d.AccountId)
@@ -150,6 +153,10 @@ public partial class EcommerceHobbyShopContext : DbContext
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
             entity.Property(e => e.CategoryName).HasMaxLength(50);
             entity.Property(e => e.CategorySlug).HasMaxLength(50);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
             entity.Property(e => e.Image).HasMaxLength(50);
         });
 
@@ -161,7 +168,8 @@ public partial class EcommerceHobbyShopContext : DbContext
                 .HasColumnName("AccountID");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
 
             entity.HasOne(d => d.Account).WithMany(p => p.Favorites)
@@ -183,7 +191,8 @@ public partial class EcommerceHobbyShopContext : DbContext
             entity.Property(e => e.FullName).HasMaxLength(50);
             entity.Property(e => e.OrderDate)
                 .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
             entity.Property(e => e.PaymentMethod)
                 .HasMaxLength(50)
                 .HasDefaultValue("COD");
@@ -229,6 +238,10 @@ public partial class EcommerceHobbyShopContext : DbContext
         {
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
             entity.Property(e => e.ProductName).HasMaxLength(200);
             entity.Property(e => e.ProductSlug).HasMaxLength(200);
             entity.Property(e => e.SeriesId).HasColumnName("SeriesID");
@@ -274,7 +287,8 @@ public partial class EcommerceHobbyShopContext : DbContext
                 .HasColumnName("AccountID");
             entity.Property(e => e.PostedDate)
                 .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
             entity.Property(e => e.TopicId).HasColumnName("TopicID");
 
             entity.HasOne(d => d.Account).WithMany(p => p.Questions)
@@ -295,7 +309,8 @@ public partial class EcommerceHobbyShopContext : DbContext
                 .HasColumnName("AccountID");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.Rating).HasDefaultValue(5);
 
@@ -320,6 +335,10 @@ public partial class EcommerceHobbyShopContext : DbContext
         modelBuilder.Entity<Series>(entity =>
         {
             entity.Property(e => e.SeriesId).HasColumnName("SeriesID");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
             entity.Property(e => e.SeriesName).HasMaxLength(100);
         });
 
@@ -396,6 +415,10 @@ public partial class EcommerceHobbyShopContext : DbContext
             entity.HasKey(e => e.VoucherCode);
 
             entity.Property(e => e.VoucherCode).HasMaxLength(50);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .ValueGeneratedOnAdd();
             entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.ExpiryDate).HasColumnType("datetime");
             entity.Property(e => e.IsActive).HasDefaultValue(true);

@@ -28,5 +28,8 @@ namespace TuNhanTamTInh_Ecommerce.Models.ViewModels
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Mật khẩu và Xác nhận Mật khẩu không khớp.")]
         public string ConfirmPassword { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng nhập mã xác thực email.")]
+        public string VerificationCode { get; set; }
     }
 }

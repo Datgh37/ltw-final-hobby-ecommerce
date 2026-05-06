@@ -12,6 +12,8 @@ using TuNhanTamTInh_Ecommerce.Helpers;
 using TuNhanTamTInh_Ecommerce.Models;
 using TuNhanTamTInh_Ecommerce.Models.ViewModels;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace TuNhanTamTInh_Ecommerce.Controllers
 {
     public class ProductsController : Controller
@@ -171,6 +173,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         // GET: Products/Create
+        [Authorize(Roles = "Quản trị viên")]
         public IActionResult Create()
         {
             PopulateDropdowns();
@@ -178,6 +181,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         // POST: Products/Create
+        [Authorize(Roles = "Quản trị viên")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductUpdateInfoDTO model)
@@ -196,6 +200,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         // GET: Products/Edit/5
+        [Authorize(Roles = "Quản trị viên")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -216,6 +221,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         // POST: Products/Edit/5
+        [Authorize(Roles = "Quản trị viên")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProductUpdateInfoDTO model)
@@ -253,6 +259,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize(Roles = "Quản trị viên")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -274,6 +281,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         // POST: Products/Delete/5
+        [Authorize(Roles = "Quản trị viên")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

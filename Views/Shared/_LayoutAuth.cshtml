@@ -3,49 +3,41 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TuNhanTamTInh_Ecommerce</title>
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>@ViewData["Title"] - Hobby Shop Auth</title>
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
-
+    
     <!-- Css Styles -->
     <link rel="stylesheet" href="~/css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="~/css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="~/css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="~/css/nice-select.css" type="text/css">
-    <link rel="stylesheet" href="~/css/jquery-ui.min.css" type="text/css">
-    <link rel="stylesheet" href="~/css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="~/css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="~/css/style.css" type="text/css">
     <link rel="stylesheet" href="~/css/site.css" type="text/css">
-    <link rel="stylesheet" href="~/css/admin-crud.css" type="text/css">
+    <link rel="stylesheet" href="~/css/auth.css" type="text/css">
 </head>
-<body>
-    <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
-    <!-- Sticky footer wrapper: push footer to bottom -->
-    <div class="page-wrapper">
-        @await Html.PartialAsync("_Header")
+<body class="auth-body">
+    <div id="toast-container"></div>
 
-        <main class="page-content">
-            @RenderBody()
-        </main>
-
-        @await Html.PartialAsync("_Footer")
-    </div>
+    @RenderBody()
 
     <!-- Js Plugins -->
     <script src="~/js/jquery-3.3.1.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/jquery.nice-select.min.js"></script>
-    <script src="~/js/jquery-ui.min.js"></script>
-    <script src="~/js/jquery.slicknav.js"></script>
-    <script src="~/js/mixitup.min.js"></script>
-    <script src="~/js/owl.carousel.min.js"></script>
     <script src="~/js/main.js"></script>
     <script>
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast-msg toast-${type}`;
+            toast.innerHTML = `<i class="fa ${type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle')} mr-2"></i> ${message}`;
+            
+            container.appendChild(toast);
+            
+            // Tự xóa sau 3 giây
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
         $(document).ready(function() {
             // Tự động đóng các alert có class .auto-hide sau 5 giây
             setTimeout(function() {
@@ -53,6 +45,15 @@
                     $(this).remove();
                 });
             }, 5000);
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <text>showToast('@TempData["SuccessMessage"]', 'success');</text>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>showToast('@TempData["ErrorMessage"]', 'error');</text>
+            }
 
             // Hiện/Ẩn mật khẩu toàn cục
             $(document).on('click', '.password-toggle', function() {

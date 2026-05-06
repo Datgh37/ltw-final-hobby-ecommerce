@@ -26,6 +26,7 @@
         finalPrice = Model.UnitPrice * (1m - (decimal)Model.Discount / 100m);
     }
 }
+@await Component.InvokeAsync("HeroSection");
 
 <!-- Breadcrumb Section Begin -->
 <partial name="_Breadcrumb" model="breadcrumb" />

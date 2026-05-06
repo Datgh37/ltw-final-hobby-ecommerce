@@ -9,6 +9,30 @@
     <div class="humberger__menu__logo">
         <a asp-controller="Home" asp-action="Index"><img src="~/images/Banner/logotoy.png" alt=""></a>
     </div>
+
+    <!-- Improved User Section -->
+    <div class="humberger__menu__user border-bottom pb-4 mb-4">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="d-flex align-items-center px-3">
+                <img src="@Url.Content(User.FindFirst("UserImage")?.Value ?? "~/images/user-default.png")" 
+                     alt="Avatar" class="rounded-circle header-mobile-avatar mr-3">
+                <div class="user-info">
+                    <span class="d-block text-dark fw-bold h6 mb-1">@User.Identity.Name</span>
+                    <a asp-controller="Account" asp-action="Profile" class="small text-purple text-decoration-none font-weight-bold">Hồ sơ cá nhân <i class="fa fa-angle-right"></i></a>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="px-3">
+                <a asp-controller="Account" asp-action="Login" class="btn auth-btn w-100 text-white rounded-pill py-2">
+                    <i class="fa fa-user mr-2"></i> Đăng nhập
+                </a>
+            </div>
+        }
+    </div>
+
     <div class="humberger__menu__cart">
         <ul>
             <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
@@ -26,19 +50,14 @@
                 <li><a href="#">English</a></li>
             </ul>
         </div>
-        <div class="header__top__right__auth">
-            @if (User.Identity.IsAuthenticated)
-            {
-                <a href="#"><i class="fa fa-user"></i> @User.Identity.Name</a>
-                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline-block mt-2">
-                    <button type="submit" class="btn btn-link text-dark p-0 border-0" style="font-size:14px;"><i class="fa fa-sign-out"></i> Logout</button>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="header__top__right__auth d-inline-block ml-3">
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="btn btn-link text-danger p-0 small text-decoration-none"><i class="fa fa-sign-out"></i> Logout</button>
                 </form>
-            }
-            else
-            {
-                <a asp-controller="Account" asp-action="Login"><i class="fa fa-user"></i> Login</a>
-            }
-        </div>
+            </div>
+        }
     </div>
     <nav class="humberger__menu__nav mobile-menu">
         <ul>
