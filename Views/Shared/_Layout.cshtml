@@ -48,4 +48,26 @@
     <script src="~/js/main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+<script>
+
+function showToast(message){
+
+    let toast = document.createElement("div");
+
+    toast.classList.add("toast-custom");
+
+    toast.innerText = message;
+
+    document
+        .getElementById("toast-box")
+        .appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.remove();
+
+    }, 3000);
+}
+
+</script>
 </html>

@@ -91,7 +91,7 @@
                             </div>
                         </div>
                     </div>
-                    <a href="#" class="primary-btn">THÊM VÀO GIỎ</a>
+                    <a href="#" class="primary-btn add-to-cart" data-product-id="@Model.ProductId">THÊM VÀO GIỎ</a>
                     <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
                     <ul>
                         <li><b>Tình trạng</b> <span>@(Model.StockQuantity > 0 ? $"Còn hàng ({Model.StockQuantity})" : "Hết hàng")</span></li>
@@ -227,5 +227,48 @@
             </div>
         </div>
     </section>
+}
+@section Scripts {
+
+    <script>
+
+        $(".add-to-cart").click(function () {
+
+            let productId = $(this).data("product-id");
+
+            $.ajax({
+
+                url: '/Cart/AddToCart',
+
+                type: 'POST',
+
+                data: {
+                    productId: productId
+                },
+
+                success: function (response) {
+
+                    if(response.success){
+
+                        $("#cart-count")
+                            .text(response.totalItems);
+
+                        showToast(response.message);
+
+                    }else{
+
+                        showToast(response.message);
+                    }
+                },
+
+                error: function () {
+
+                    showToast("Có lỗi xảy ra");
+                }
+            });
+        });
+
+    </script>
+
 }
 <!-- Related Product Section End -->
