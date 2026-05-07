@@ -27,7 +27,7 @@ namespace TuNhanTamTInh_Ecommerce.ViewComponents
                     query = query.OrderByDescending(x => x.ViewCount);
                     break;
                 default:
-                    query = query.OrderByDescending(x => x.ProductId);
+                    query = query.OrderByDescending(x => x.CreatedAt);
                     break;
             }
 

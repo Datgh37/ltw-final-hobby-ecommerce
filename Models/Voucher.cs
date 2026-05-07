@@ -19,5 +19,7 @@ public partial class Voucher
 
     public bool IsActive { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

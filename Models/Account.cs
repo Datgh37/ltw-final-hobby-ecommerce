@@ -27,6 +27,8 @@ public partial class Account
 
     public int RoleId { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
     public virtual ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
 
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();

@@ -54,10 +54,22 @@
                 <div class="header__login">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <a href="#"><i class="fa fa-user"></i> @User.Identity.Name</a>
-                        <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-link text-dark p-0 border-0" style="font-size:14px; margin-left:10px;"><i class="fa fa-sign-out"></i> Logout</button>
-                        </form>
+                        <div class="dropdown d-inline-block">
+                            <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="@Url.Content(User.FindFirst("UserImage")?.Value ?? "~/images/user-default.png")" alt="Avatar" class="header__user-avatar">
+                                <span class="header__user-name">@User.Identity.Name</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item py-2" asp-controller="Account" asp-action="Profile"><i class="fa fa-user me-2"></i> Hồ sơ</a></li>
+                                <li><a class="dropdown-item py-2" href="#"><i class="fa fa-shopping-bag me-2"></i> Đơn hàng</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        <button type="submit" class="dropdown-item text-danger py-2"><i class="fa fa-sign-out me-2"></i> Đăng xuất</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     }
                     else
                     {

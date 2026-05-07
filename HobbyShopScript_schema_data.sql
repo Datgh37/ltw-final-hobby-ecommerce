@@ -623,3 +623,12 @@ UPDATE [dbo].[Products]
 SET [Discount] = 0.2 
 WHERE [ProductID] IN (1, 16, 37, 45);
 GO
+
+-----------------------------------------------------------
+-- RANDOMIZE CreatedAt DATES (Giả lập dữ liệu trong quá khứ)
+-----------------------------------------------------------
+-- Lùi ngẫu nhiên từ 1 đến 365 ngày so với ngày hiện tại
+UPDATE [dbo].[Products] SET [CreatedAt] = DATEADD(day, -ABS(CHECKSUM(NEWID()) % 365), GETDATE());
+UPDATE [dbo].[Accounts] SET [CreatedAt] = DATEADD(day, -ABS(CHECKSUM(NEWID()) % 365), GETDATE());
+UPDATE [dbo].[Vouchers] SET [CreatedAt] = DATEADD(day, -ABS(CHECKSUM(NEWID()) % 365), GETDATE());
+GO

@@ -16,16 +16,17 @@ GO
 
 CREATE TABLE [dbo].[Accounts](
     [AccountID] [nvarchar](20) NOT NULL,
-    [Password] [nvarchar](50) NOT NULL,
+    [Password] [nvarchar](255) NOT NULL, --Maxiumum Length for Hashed Password
     [FullName] [nvarchar](50) NOT NULL,
     [Email] [nvarchar](50) NOT NULL,
     [PhoneNumber] [nvarchar](24) NULL,
     [Address] [nvarchar](100) NULL,
-    [BirthDate] [datetime] NULL,
+    [BirthDate] [datetime] NULL,  -- Đổi ngược lại thành datetime để đồng bộ với .NET DateTime
     [Gender] [bit] NOT NULL DEFAULT (1),
-    [Image] [nvarchar](50) NULL DEFAULT (N'~/images/user-default.png'),
+    [Image] [nvarchar](255) NULL DEFAULT (N'~/images/user-default.png'),
     [IsActive] [bit] NOT NULL DEFAULT (1),
     [RoleID] [int] NOT NULL DEFAULT (0), -- 0: Customer, 1: Admin
+    [CreatedAt] [datetime] NOT NULL DEFAULT (getdate()),  -- Thay datetime thành datetime2
  CONSTRAINT [PK_Accounts] PRIMARY KEY CLUSTERED ([AccountID] ASC)
 )
 GO
@@ -38,7 +39,8 @@ CREATE TABLE [dbo].[Categories](
     [CategoryID] [int] IDENTITY(1,1) NOT NULL,
     [CategoryName] [nvarchar](50) NOT NULL,
     [CategorySlug] [nvarchar](50) NULL,
-    [Image] [nvarchar](50) NULL,
+    [Image] [nvarchar](255) NULL,
+    [CreatedAt] [datetime] NOT NULL DEFAULT (getdate()),
  CONSTRAINT [PK_Categories] PRIMARY KEY CLUSTERED ([CategoryID] ASC)
 )
 GO
@@ -47,6 +49,7 @@ CREATE TABLE [dbo].[Series](
     [SeriesID] [int] IDENTITY(1,1) NOT NULL,
     [SeriesName] [nvarchar](100) NOT NULL,
     [Description] [nvarchar](max) NULL,
+    [CreatedAt] [datetime] NOT NULL DEFAULT (getdate()),
  CONSTRAINT [PK_Series] PRIMARY KEY CLUSTERED ([SeriesID] ASC)
 )
 GO
@@ -54,7 +57,7 @@ GO
 CREATE TABLE [dbo].[Suppliers](
     [SupplierID] [nvarchar](50) NOT NULL,
     [CompanyName] [nvarchar](50) NOT NULL,
-    [Logo] [nvarchar](50) NOT NULL,
+    [Logo] [nvarchar](255) NOT NULL,
  CONSTRAINT [PK_Suppliers] PRIMARY KEY CLUSTERED ([SupplierID] ASC)
 )
 GO
@@ -71,6 +74,7 @@ CREATE TABLE [dbo].[Products](
     [Discount] [float] NOT NULL DEFAULT (0),
     [ViewCount] [int] NOT NULL DEFAULT (0),
     [StockQuantity] [int] NOT NULL DEFAULT (0),
+    [CreatedAt] [datetime] NOT NULL DEFAULT (getdate()),
  CONSTRAINT [PK_Products] PRIMARY KEY CLUSTERED ([ProductID] ASC)
 )
 GO
@@ -126,8 +130,9 @@ CREATE TABLE [dbo].[Vouchers](
     [DiscountAmount] [decimal](18, 2) NULL,
     [UsageLimit] [int] NULL, -- Giới hạn số lượt dùng
     [UsedCount] [int] NOT NULL DEFAULT (0), -- Đã dùng bao nhiêu lượt
-    [ExpiryDate] [datetime] NULL,
+    [ExpiryDate] [datetime] NULL,  -- Thay datetime thành datetime2
     [IsActive] [bit] NOT NULL DEFAULT (1),
+    [CreatedAt] [datetime] NOT NULL DEFAULT (getdate()),  -- Thay datetime thành datetime2
  CONSTRAINT [PK_Vouchers] PRIMARY KEY CLUSTERED ([VoucherCode] ASC)
 )
 GO
@@ -142,7 +147,7 @@ GO
 CREATE TABLE [dbo].[Orders](
     [OrderID] [int] IDENTITY(1,1) NOT NULL,
     [AccountID] [nvarchar](20) NOT NULL,
-    [OrderDate] [datetime] NOT NULL DEFAULT (getdate()),
+    [OrderDate] [datetime] NOT NULL DEFAULT (getdate()),  -- Thay datetime thành datetime2
     [FullName] [nvarchar](50) NULL,
     [Address] [nvarchar](150) NOT NULL,
     [PhoneNumber] [nvarchar](24) NULL, 
@@ -184,7 +189,7 @@ CREATE TABLE [dbo].[Questions](
     [QuestionText] [nvarchar](max) NOT NULL,
     [AnswerText] [nvarchar](max) NULL,
     [AccountID] [nvarchar](20) NULL,
-    [PostedDate] [datetime] NOT NULL DEFAULT (getdate()),
+    [PostedDate] [datetime] NOT NULL DEFAULT (getdate()),  -- Thay datetime thành datetime2
  CONSTRAINT [PK_Questions] PRIMARY KEY CLUSTERED ([QuestionID] ASC)
 )
 GO
