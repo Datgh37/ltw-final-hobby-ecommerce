@@ -1,0 +1,83 @@
+﻿@model List<CartItem>
+<section class="shoping-cart spad">
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr data-id="@item.CartItemId">
+                        <td>
+                            @item.Product.ProductName
+                        </td>
+                        <td>
+                            @item.Product.UnitPrice
+                        </td>
+                        <td>
+                            <input type="number"
+                                   class="quantity-input"
+                                   data-id="@item.CartItemId"
+                                   value="@item.Quantity"
+                                   min="1" />
+                        </td>
+                        <td class="item-total">
+                            @((item.Product.UnitPrice) * item.Quantity)
+                        </td>
+                        <td>
+                            <button class="remove-item btn btn-danger"
+                                    data-id="@item.CartItemId">
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+@section Scripts{
+    <script>
+    $(document).ready(function(){
+        $(".quantity-input").change(function(){
+            let cartItemId = $(this).data("id");
+            let quantity = $(this).val();
+            $.ajax({
+                url: '/Cart/UpdateQuantity',
+                type: 'POST',
+                data: {
+                    cartItemId: cartItemId,
+                    quantity: quantity
+                },
+                success: function(response){
+                    if(response.success){
+                        location.reload();
+                    }
+                }
+            });
+        });
+        $(".remove-item").click(function(){
+            let cartItemId = $(this).data("id");
+            $.ajax({
+                url: '/Cart/RemoveItem',
+                type: 'POST',
+                data: {
+                    cartItemId: cartItemId
+                },
+                success: function(response){
+                    if(response.success){
+                        location.reload();
+                    }
+                }
+            });
+        });
+    });
+</script>
+}

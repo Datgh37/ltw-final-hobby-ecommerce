@@ -230,6 +230,7 @@
     </section>
 }
 @section Scripts {
+<<<<<<< Updated upstream
 
     <script>
 
@@ -272,4 +273,35 @@
     </script>
 
 }
+=======
+    <script>
+    $(document).ready(function(){
+        $(".add-to-cart").click(function(){
+            let productId = $(this).data("product-id");
+            $.ajax({
+                url: '/Cart/AddToCart',
+                type: 'POST',
+                data: {
+                    productId: productId
+                },
+                success: function(response){
+                if(response.success){
+                    $("#cart-count")
+                        .text(response.totalItems);
+                    showToast(response.message);
+                }
+                else{
+                    showToast(response.message);
+                }
+            },
+            error: function(){
+                showToast("Có lỗi xảy ra");
+            }
+        });
+    });
+});
+    </script>
+}
+
+>>>>>>> Stashed changes
 <!-- Related Product Section End -->

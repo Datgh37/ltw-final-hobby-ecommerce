@@ -47,6 +47,36 @@ a {
   border-color: #1861ac;
 }
 
+#toast-box {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.toast-custom {
+    background: #28a745;
+    color: white;
+    padding: 14px 20px;
+    margin-top: 10px;
+    border-radius: 10px;
+    min-width: 250px;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
   color: #fff;
   background-color: #1b6ec2;

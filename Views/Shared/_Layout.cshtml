@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="~/css/site.css" type="text/css">
     <link rel="stylesheet" href="~/css/admin-crud.css" type="text/css">
 </head>
+<div id="toast-box"></div>
 <body>
     <!-- Page Preloder -->
     <div id="preloder">
@@ -62,6 +63,19 @@
                 $(this).toggleClass('fa-eye fa-eye-slash');
             });
         });
+
+
+        function showToast(message){
+            let toast = document.createElement("div");
+            toast.classList.add("toast-custom");
+            toast.innerText = message;
+            document
+                .getElementById("toast-box")
+                .appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
