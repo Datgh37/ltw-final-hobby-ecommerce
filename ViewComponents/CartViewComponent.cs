@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using TuNhanTamTInh_Ecommerce.Data;
 
 namespace TuNhanTamTInh_Ecommerce.ViewComponents
@@ -8,27 +7,33 @@ namespace TuNhanTamTInh_Ecommerce.ViewComponents
     public class CartViewComponent : ViewComponent
     {
         private readonly EcommerceHobbyShopContext _context;
-
-        public CartViewComponent(EcommerceHobbyShopContext context)
+        public CartViewComponent(
+            EcommerceHobbyShopContext context)
         {
             _context = context;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult>
+            InvokeAsync()
         {
-            string userId = UserClaimsPrincipal?
-                .FindFirst(ClaimTypes.NameIdentifier)?
-                .Value;
-
-            if (userId == null)
+            int totalItems = 0;
+            if (User.Identity.IsAuthenticated)
             {
-                return View(0);
+                var accountId =
+                    UserClaimsPrincipal
+                    .FindFirst("AccountId")
+                    ?.Value;
+                var cart = await _context.Carts
+                    .Include(x => x.CartItems)
+                    .FirstOrDefaultAsync(x =>
+                        x.AccountId == accountId);
+                if (cart != null)
+                {
+                    totalItems =
+                        cart.CartItems.Sum(x =>
+                            x.Quantity);
+                }
             }
-
-            int totalItems = await _context.CartItems
-                .Where(x => x.Cart.AccountId == userId)
-                .SumAsync(x => x.Quantity);
-
             return View(totalItems);
         }
     }

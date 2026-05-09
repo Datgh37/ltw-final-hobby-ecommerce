@@ -18,12 +18,10 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToCart(int productId)
+        public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
-            int accountIdInt =
-                HttpContext.Session.GetInt32("AccountId") ?? 0;
-
-            if (accountIdInt == 0)
+            // Kiểm tra login
+            if (!User.Identity.IsAuthenticated)
             {
                 return Json(new
                 {
@@ -31,37 +29,61 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     message = "Vui lòng đăng nhập"
                 });
             }
-            string accountId = accountIdInt.ToString();
 
-            var cart = await _context.Carts.FirstOrDefaultAsync(c => c.AccountId == accountId);
+            // Lấy AccountId từ Claim
+            var accountId = User
+                .FindFirst("AccountId")?
+                .Value;
 
+            if (string.IsNullOrEmpty(accountId))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Không tìm thấy tài khoản"
+                });
+            }
+
+            // Tìm cart
+            var cart = await _context.Carts
+                .Include(x => x.CartItems)
+                .FirstOrDefaultAsync(x =>
+                    x.AccountId == accountId);
+
+            // Nếu chưa có cart
             if (cart == null)
             {
                 cart = new Cart
                 {
                     CartId = Guid.NewGuid().ToString(),
                     AccountId = accountId,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.Now
                 };
+
                 _context.Carts.Add(cart);
+
+                await _context.SaveChangesAsync();
             }
 
+            // Tìm sản phẩm trong cart
             var cartItem = await _context.CartItems
                 .FirstOrDefaultAsync(x =>
-                    x.ProductId == productId &&
-                    x.Cart.AccountId == accountId);
+                    x.CartId == cart.CartId &&
+                    x.ProductId == productId);
 
+            // Nếu đã có → tăng số lượng
             if (cartItem != null)
             {
-                cartItem.Quantity++;
+                cartItem.Quantity += quantity;
             }
             else
             {
+                // Nếu chưa có → tạo mới
                 cartItem = new CartItem
                 {
                     CartId = cart.CartId,
                     ProductId = productId,
-                    Quantity = 1,
+                    Quantity = quantity
                 };
 
                 _context.CartItems.Add(cartItem);
@@ -69,8 +91,9 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             await _context.SaveChangesAsync();
 
+            // Tổng số lượng cart
             int totalItems = await _context.CartItems
-                .Where(x => x.Cart.AccountId == accountId)
+                .Where(x => x.CartId == cart.CartId)
                 .SumAsync(x => x.Quantity);
 
             return Json(new
@@ -78,26 +101,151 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 success = true,
                 totalItems = totalItems,
                 message = "Đã thêm vào giỏ hàng"
+
             });
         }
-
         public async Task<IActionResult> Index()
         {
-            int accountIdInt =
-                HttpContext.Session.GetInt32("AccountId") ?? 0;
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction(
+                    "Login",
+                    "Account");
+            }
 
-            if (accountIdInt == 0)
+            var accountId =
+                User.FindFirst("AccountId")?.Value;
+
+            var cart = await _context.Carts
+                .Include(x => x.CartItems)
+                .ThenInclude(x => x.Product)
+                .ThenInclude(x => x.ProductImages)
+                .FirstOrDefaultAsync(x =>
+                    x.AccountId == accountId);
+            if (cart == null)
             {
                 return View(new List<CartItem>());
             }
-            string accountId = accountIdInt.ToString();
 
-            var cartItems = await _context.CartItems
+            return View(cart.CartItems.ToList());
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateQuantity(int cartItemId,int quantity)
+        {
+            if (quantity < 1)
+            {
+                return Json(new
+                {
+                    success = false
+                });
+            }
+            var cartItem = await _context.CartItems
                 .Include(x => x.Product)
-                .Where(x => x.Cart.AccountId == accountId)
-                .ToListAsync();
-
-            return View(cartItems);
+                .Include(x => x.Cart)
+                .FirstOrDefaultAsync(x =>
+                    x.CartItemId == cartItemId);
+            if (cartItem == null)
+            {
+                return Json(new
+                {
+                    success = false
+                });
+            }
+            cartItem.Quantity = quantity;
+            await _context.SaveChangesAsync();
+            var subtotal =
+                cartItem.Product.UnitPrice * quantity;
+            var grandTotal = await _context.CartItems
+                .Where(x => x.CartId == cartItem.CartId)
+                .SumAsync(x =>
+                    x.Product.UnitPrice * x.Quantity);
+            var totalItems = await _context.CartItems
+                .Where(x => x.CartId == cartItem.CartId)
+                .SumAsync(x => x.Quantity);
+            return Json(new
+            {
+                success = true,
+                quantity = cartItem.Quantity,
+                subtotal = subtotal.ToString("N0"),
+                grandTotal = grandTotal.ToString("N0"),
+                totalItems
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult> Delete(int cartItemId)
+        {
+            var cartItem = await _context.CartItems
+                .Include(x => x.Cart)
+                .FirstOrDefaultAsync(x =>
+                    x.CartItemId == cartItemId);
+            if (cartItem == null)
+            {
+                return Json(new
+                {
+                    success = false
+                });
+            }
+            string cartId = cartItem.CartId;
+            _context.CartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+            var grandTotal = await _context.CartItems
+                .Where(x => x.CartId == cartId)
+                .SumAsync(x =>
+                    x.Product.UnitPrice * x.Quantity);
+            var totalItems = await _context.CartItems
+                .Where(x => x.CartId == cartId)
+                .SumAsync(x => x.Quantity);
+            return Json(new
+            {
+                success = true,
+                grandTotal = grandTotal.ToString("N0"),
+                totalItems
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult>DeleteCartItem(int cartItemId)
+        {
+            var cartItem =
+                await _context.CartItems
+                .Include(x => x.Cart)
+                .Include(x => x.Product)
+                .FirstOrDefaultAsync(x =>
+                    x.CartItemId == cartItemId);
+            if (cartItem == null)
+            {
+                return Json(new
+                {
+                    success = false
+                });
+            }
+            _context.CartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+            var accountId =
+                User.FindFirst("AccountId")
+                ?.Value;
+            var totalItems =
+                await _context.CartItems
+                .Include(x => x.Cart)
+                .Where(x =>
+                    x.Cart.AccountId == accountId)
+                .SumAsync(x =>
+                    x.Quantity);
+            var grandTotal =
+                await _context.CartItems
+                .Include(x => x.Product)
+                .Include(x => x.Cart)
+                .Where(x =>
+                    x.Cart.AccountId == accountId)
+                .SumAsync(x =>
+                    x.Product.UnitPrice
+                    * x.Quantity);
+            return Json(new
+            {
+                success = true,
+                totalItems,
+                grandTotal =
+                    grandTotal.ToString("N0")
+            });
         }
     }
 }

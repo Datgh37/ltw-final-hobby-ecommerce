@@ -20,7 +20,57 @@
     <link rel="stylesheet" href="~/css/site.css" type="text/css">
     <link rel="stylesheet" href="~/css/admin-crud.css" type="text/css">
 </head>
-<div id="toast-box"></div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+<style>
+    #toast-container {
+        position: fixed;
+        top: 70px;
+        right: 20px;
+        z-index: 999999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .toast-custom {
+        min-width: 320px;
+        max-width: 380px;
+        background: #ffffff;
+        color: #333333;
+        padding: 16px 20px;
+        border-radius: 14px;
+        border-left: 5px solid #7fad39;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        font-size: 15px;
+        font-weight: 600;
+        animation: toastSlideIn 0.35s ease;
+    }
+    @@keyframes toastSlideIn {
+        from {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    @@keyframes toastSlideOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        to {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    }
+    <!-- Toast Container End -->
+</style>
 <body>
     <!-- Page Preloder -->
     <div id="preloder">
@@ -64,41 +114,45 @@
             });
         });
 
-
         function showToast(message){
             let toast = document.createElement("div");
             toast.classList.add("toast-custom");
             toast.innerText = message;
             document
-                .getElementById("toast-box")
+                .getElementById("toast-container")
                 .appendChild(toast);
             setTimeout(() => {
                 toast.remove();
             }, 3000);
         }
+        $(document).on("click",".add-to-cart-btn",function(e){
+                e.preventDefault();
+                let productId =
+                    $(this).data("product-id");
+                $.ajax({
+                    url: "/Cart/AddToCart",type: "POST",data:{productId: productId},
+                success: function(response){
+                    console.log(response);
+                    if(response.success)
+                    {
+                        // UPDATE ICON REALTIME
+                        $(".cart-count")
+                            .text(response.totalItems);
+                        // TOAST
+                        showToast(response.message);
+                    }
+                    else
+                    {
+                        showToast(response.message);
+                    }
+                },
+                error: function()
+                {
+                    showToast("Có lỗi xảy ra");
+                }
+            });
+        });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-<script>
-
-function showToast(message){
-
-    let toast = document.createElement("div");
-
-    toast.classList.add("toast-custom");
-
-    toast.innerText = message;
-
-    document
-        .getElementById("toast-box")
-        .appendChild(toast);
-
-    setTimeout(() => {
-
-        toast.remove();
-
-    }, 3000);
-}
-
-</script>
 </html>

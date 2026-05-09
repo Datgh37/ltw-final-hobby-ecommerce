@@ -230,78 +230,41 @@
     </section>
 }
 @section Scripts {
-<<<<<<< Updated upstream
-
     <script>
-
-        $(".add-to-cart").click(function () {
-
+        let isLoading = false;
+        $(document).on("click", ".add-to-cart", function (e) {
+            e.preventDefault();
+            if (isLoading) return;
+            isLoading = true;
             let productId = $(this).data("product-id");
-
+            let quantity = parseInt(
+                $("#productQuantity").val()
+            ) || 1;
             $.ajax({
-
-                url: '/Cart/AddToCart',
-
-                type: 'POST',
-
+                url: "/Cart/AddToCart",
+                type: "POST",
                 data: {
-                    productId: productId
+                    productId: productId,
+                    quantity: quantity
                 },
-
                 success: function (response) {
-
-                    if(response.success){
-
-                        $("#cart-count")
+                    if (response.success) {
+                        $(".cart-count")
                             .text(response.totalItems);
-
                         showToast(response.message);
-
-                    }else{
-
+                    }
+                    else {
                         showToast(response.message);
                     }
                 },
-
                 error: function () {
-
                     showToast("Có lỗi xảy ra");
+                },
+                complete: function () {
+                    isLoading = false;
                 }
             });
         });
-
-    </script>
-
-}
-=======
-    <script>
-    $(document).ready(function(){
-        $(".add-to-cart").click(function(){
-            let productId = $(this).data("product-id");
-            $.ajax({
-                url: '/Cart/AddToCart',
-                type: 'POST',
-                data: {
-                    productId: productId
-                },
-                success: function(response){
-                if(response.success){
-                    $("#cart-count")
-                        .text(response.totalItems);
-                    showToast(response.message);
-                }
-                else{
-                    showToast(response.message);
-                }
-            },
-            error: function(){
-                showToast("Có lỗi xảy ra");
-            }
-        });
-    });
-});
     </script>
 }
-
->>>>>>> Stashed changes
 <!-- Related Product Section End -->
