@@ -1,0 +1,211 @@
+﻿@model List<CartItem>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+    decimal grandTotal = 0;
+}
+
+<section class="shoping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping__cart__table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="shoping__product">Products</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var primaryImage =
+                                    item.Product.ProductImages
+                                        .FirstOrDefault(x => x.IsPrimary);
+                                decimal subtotal =
+                                    item.Product.UnitPrice
+                                    * item.Quantity;
+                                grandTotal += subtotal;
+                                <tr class="cart-row" data-cart-item-id="@item.CartItemId">
+                                    <td class="shoping__cart__item">
+                                        <img src="@Url.Content(primaryImage.ImageUrl)"
+                                             width="100">
+                                        <h5>
+                                            @item.Product.ProductName
+                                        </h5>
+                                    </td>
+                                    <td class="shoping__cart__price">
+                                        @item.Product.UnitPrice.ToString("N0") ₫
+                                    </td>
+                                    <td class="shoping__cart__quantity">
+                                        <div class="pro-qty">
+                                            <input type="text"
+                                                   class="qty-input"
+                                                   value="@item.Quantity"
+                                                   readonly>
+                                        </div>
+                                    </td>
+                                    <td class="shoping__cart__total subtotal">
+                                        @subtotal.ToString("N0") ₫
+                                    </td>
+                                    <td class="shoping__cart__item__close">
+                                        <a href="#" class="delete-cart-item" data-cart-item-id="@item.CartItemId">
+                                            <span class="icon_close"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping__cart__btns">
+                    <a href="#" class="primary-btn cart-btn">CONTINUE SHOPPING</a>
+                    @* <a href="#" class="primary-btn cart-btn cart-btn-right">
+                        <span class="icon_loading"></span>
+                        Upadate Cart
+                    </a> *@
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="shoping__continue">
+                    <div class="shoping__discount">
+                        <h5>Discount Codes</h5>
+                        <form action="#">
+                            <input type="text" placeholder="Enter your coupon code">
+                            <button type="submit" class="site-btn">APPLY COUPON</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="shoping__checkout">
+                    <h5>Cart Total</h5>
+                    <ul>
+                        <li>Subtotal <span> Hell Yeah ₫</span></li>
+                        <li>Total <span id="grand-total">@grandTotal.ToString("N0") ₫</span></li>
+                    </ul>
+                    <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+
+    <script>
+        $(document).on("click",".qtybtn",function(){
+            let button =$(this);
+            // CHỜ OGANI UPDATE INPUT XONG
+            setTimeout(function(){
+                let row =
+                    button.closest(".cart-row");
+
+                let cartItemId =
+                    row.data("cart-item-id");
+
+                let input =
+                    row.find(".qty-input");
+
+                // LẤY GIÁ TRỊ SAU KHI OGANI ĐÃ TĂNG/GIẢM
+                let quantity =
+                    parseInt(input.val()) || 1;
+
+                $.ajax({
+
+                    url: "/Cart/UpdateQuantity",
+
+                    type: "POST",
+
+                    data: {
+                        cartItemId: cartItemId,
+                        quantity: quantity
+                    },
+
+                    success: function(response){
+
+                        if(response.success)
+                        {
+                            // UPDATE INPUT
+                            input.val(
+                                response.quantity);
+
+                            // SUBTOTAL
+                            row.find(".subtotal")
+
+                                .text(
+                                    response.subtotal
+                                    + " ₫");
+
+                            // GRAND TOTAL
+                            $("#grand-total")
+
+                                .text(
+                                    response.grandTotal
+                                    + " ₫");
+
+                            // HEADER
+                            $(".cart-count")
+
+                                .text(
+                                    response.totalItems);
+                        }
+                    }
+                });
+
+            }, 50);
+        });
+
+        $(document).on(
+            "click",
+            ".delete-cart-item",
+            function (e)
+        {
+            e.preventDefault();
+
+            let row =
+                $(this).closest(".cart-row");
+
+            let cartItemId =
+                $(this).data("cart-item-id");
+
+            $.ajax({
+
+                url: "/Cart/DeleteCartItem",
+
+                type: "POST",
+
+                data: {
+                    cartItemId: cartItemId
+                },
+
+                success: function (response)
+                {
+                    if(response.success)
+                    {
+                        row.remove();
+
+                        $(".cart-count")
+                            .text(response.totalItems);
+
+                        $("#grand-total")
+                            .text(
+                                response.grandTotal
+                                + " ₫");
+
+                        showToast(
+                            "Item removed");
+                    }
+                }
+            });
+        });
+    </script>
+
+}
