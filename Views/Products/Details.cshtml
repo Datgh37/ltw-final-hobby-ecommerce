@@ -5,12 +5,12 @@
     ViewData["Title"] = Model.ProductName;
     var breadcrumb = new BreadcrumbViewModel
     {
-        Title = "Product Details",
+        Title = "Chi tiết sản phẩm",
         Items = new List<BreadcrumbItem>
         {
-            new BreadcrumbItem("Home", Url.Action("Index", "Home")),
+            new BreadcrumbItem("Trang chủ", Url.Action("Index", "Home")),
             // new BreadcrumbItem(Model.Category?.CategoryName ?? "Product", Url.Action("Index", "Products", new { categoryId = Model.CategoryId })),
-            new BreadcrumbItem("Product", Url.Action("Index", "Products", new { categoryId = Model.CategoryId })),
+            new BreadcrumbItem("Sản phẩm", Url.Action("Index", "Products", new { categoryId = Model.CategoryId })),
             new BreadcrumbItem(Model.ProductName)
         }
     };
@@ -229,42 +229,5 @@
         </div>
     </section>
 }
-@section Scripts {
-    <script>
-        let isLoading = false;
-        $(document).on("click", ".add-to-cart", function (e) {
-            e.preventDefault();
-            if (isLoading) return;
-            isLoading = true;
-            let productId = $(this).data("product-id");
-            let quantity = parseInt(
-                $("#productQuantity").val()
-            ) || 1;
-            $.ajax({
-                url: "/Cart/AddToCart",
-                type: "POST",
-                data: {
-                    productId: productId,
-                    quantity: quantity
-                },
-                success: function (response) {
-                    if (response.success) {
-                        $(".cart-count")
-                            .text(response.totalItems);
-                        showToast(response.message);
-                    }
-                    else {
-                        showToast(response.message);
-                    }
-                },
-                error: function () {
-                    showToast("Có lỗi xảy ra");
-                },
-                complete: function () {
-                    isLoading = false;
-                }
-            });
-        });
-    </script>
-}
+
 <!-- Related Product Section End -->

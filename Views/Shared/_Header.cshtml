@@ -18,27 +18,25 @@
                 <nav class="header__menu">
                     <ul>
                         <li class="@(currentController == "Home" && currentAction == "Index" ? "active" : "")">
-                            <a asp-controller="Home" asp-action="Index">Home</a>
+                            <a asp-controller="Home" asp-action="Index">Trang chủ</a>
                         </li>
                         <li class="@(currentController == "Products" ? "active" : "")">
-                            <a asp-controller="Products" asp-action="Index">Shop</a>
+                            <a asp-controller="Products" asp-action="Index">Cửa hàng</a>
                         </li>
                         <li>
-                            <a href="#">Pages</a>
+                            <a href="#">Trang</a>
                             <ul class="header__menu__dropdown">
-                                <li><a href="./shop-details.html">Shop Details</a></li>
-                                <li><a href="./shoping-cart.html">Shoping Cart</a></li>
-                                <li><a href="./checkout.html">Check Out</a></li>
+                                <li><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
                             </ul>
                         </li>
-                        <li><a href="./contact.html">Contact</a></li>
+                        <li><a href="#">Liên hệ</a></li>
                     </ul>
                 </nav>
             </div>
             <div class="col-lg-4 h-right d-none d-lg-flex">
                 <div class="header__lang">
-                    <img src="~/img/language.png" alt="">
-                    <span class="header__lang__text">EN</span>
+                    <img src="~/images/vietnam.png" alt="" />
+                    <span class="header__lang__text">VI</span>
                     <span class="arrow_carrot-down"></span>
                     <ul>
                         <li><a href="#">Tiếng Việt</a></li>
@@ -48,13 +46,10 @@
                 <div class="header__tabs">
                     <ul>
                         <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
-                        <li>
-                            <a href="@Url.Action("Index", "Cart")">
-                                <i class="fa fa-shopping-bag"></i>
-                                <span class="cart-count" style="color: black;">
-                                    @await Component.InvokeAsync("Cart")
-                                </span>
-                            </a>
+                        <li class="cart-preview-wrapper">
+                            <div class="cart-vc-content">
+                                @await Component.InvokeAsync("Cart")
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -68,7 +63,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item py-2" asp-controller="Account" asp-action="Profile"><i class="fa fa-user me-2"></i> Hồ sơ</a></li>
-                                <li><a class="dropdown-item py-2" href="#"><i class="fa fa-shopping-bag me-2"></i> Đơn hàng</a></li>
+                                <li><a class="dropdown-item py-2" asp-controller="Cart" asp-action="Index"><i class="fa fa-shopping-bag me-2"></i> Đơn hàng</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form asp-controller="Account" asp-action="Logout" method="post">
@@ -80,7 +75,7 @@
                     }
                     else
                     {
-                        <a asp-controller="Account" asp-action="Login"><i class="fa fa-user"></i> Login</a>
+                        <a asp-controller="Account" asp-action="Login"><i class="fa fa-user"></i> Đăng nhập</a>
                     }
                 </div>
             </div>

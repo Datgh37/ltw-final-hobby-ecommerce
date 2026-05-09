@@ -4,7 +4,7 @@
     <div class="row align-items-center">
         <div class="col-lg-4 col-md-5 col-sm-5 col-6">
             <div class="filter__sort">
-                <span>Sort By</span>
+                <span>Sắp xếp</span>
                 <form asp-controller="Products" asp-action="Index" method="get">
                     <input type="hidden" name="categoryId" value="@Model.Query.CategoryId" />
                     <input type="hidden" name="seriesId" value="@Model.Query.SeriesId" />
@@ -30,7 +30,7 @@
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-6">
             <div class="filter__found">
-                <h6><span>@Model.TotalCount</span> Products found</h6>
+                <h6><span>@Model.TotalCount</span> sản phẩm tìm thấy</h6>
             </div>
         </div>
         <div class="col-lg-4 col-md-3 col-sm-3 d-none d-sm-block">

@@ -2,15 +2,15 @@
 @model TuNhanTamTInh_Ecommerce.Models.ViewModels.ProductIndexViewModel
 
 @{
-    ViewData["Title"] = "Products";
+    ViewData["Title"] = "Cửa hàng";
 
     var breadcrumb = new BreadcrumbViewModel
     {
-        Title = "Products",
+        Title = "Cửa hàng",
         Items = new List<BreadcrumbItem>
         {
-            new BreadcrumbItem("Home", Url.Action("Index", "Home")),
-            new BreadcrumbItem("Shop")
+            new BreadcrumbItem("Trang chủ", Url.Action("Index", "Home")),
+            new BreadcrumbItem("Cửa hàng")
         }
     };
 }
@@ -36,7 +36,7 @@
                     <div class="sidebar">
                         <!--Categories Filter Sidebar-->
                         <div class="sidebar__item">
-                            <h4>Categories</h4>
+                            <h4>Danh mục</h4>
                             <ul>
                                 @await Component.InvokeAsync("ProductSidebarCategories")
                             </ul>
@@ -44,14 +44,14 @@
 
                         <!-- Price Sidebar-->
                         <div class="sidebar__item">
-                            <h4>Price</h4>
+                            <h4>Giá</h4>
                             <partial name="_PriceFilter" model="Model.PriceFilter" />
                         </div>
 
                         <!--Latest Product Sidebar-->
                         <div class="sidebar__item">
                             <div class="latest-product__text">
-                                <h4>Latest Products</h4>
+                                <h4>Sản phẩm mới nhất</h4>
                                 @await Component.InvokeAsync("ProductLatestProducts", new { take = 6 })
                             </div>
                         </div>

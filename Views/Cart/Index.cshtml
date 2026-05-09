@@ -1,9 +1,23 @@
-﻿@model List<CartItem>
-
+@using TuNhanTamTInh_Ecommerce.Models.ViewModels
+@model List<CartItem>
 @{
-    ViewData["Title"] = "Shopping Cart";
-    decimal grandTotal = 0;
+    ViewData["Title"] = "Giỏ hàng";
+    decimal grandTotal = Model.Sum(x => x.Quantity * x.Product.UnitPrice);
+
+    var breadcrumb = new BreadcrumbViewModel
+    {
+        Title = "Giỏ hàng",
+        Items = new List<BreadcrumbItem>
+        {
+            new BreadcrumbItem("Trang chủ", Url.Action("Index", "Home")),
+            new BreadcrumbItem("Chi tiết giỏ hàng")
+        }
+    };
 }
+
+@await Component.InvokeAsync("HeroSection", new { isHome = false })
+
+<partial name="_Breadcrumb" model="breadcrumb" />
 
 <section class="shoping-cart spad">
     <div class="container">
@@ -13,49 +27,53 @@
                     <table>
                         <thead>
                             <tr>
-                                <th class="shoping__product">Products</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
+                                <th class="shoping__product">Sản phẩm</th>
+                                <th>Giá</th>
+                                <th>Số lượng</th>
+                                <th>Tổng cộng</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model)
+                            @if (Model.Any())
                             {
-                                var primaryImage =
-                                    item.Product.ProductImages
-                                        .FirstOrDefault(x => x.IsPrimary);
-                                decimal subtotal =
-                                    item.Product.UnitPrice
-                                    * item.Quantity;
-                                grandTotal += subtotal;
-                                <tr class="cart-row" data-cart-item-id="@item.CartItemId">
-                                    <td class="shoping__cart__item">
-                                        <img src="@Url.Content(primaryImage.ImageUrl)"
-                                             width="100">
-                                        <h5>
-                                            @item.Product.ProductName
-                                        </h5>
-                                    </td>
-                                    <td class="shoping__cart__price">
-                                        @item.Product.UnitPrice.ToString("N0") ₫
-                                    </td>
-                                    <td class="shoping__cart__quantity">
-                                        <div class="pro-qty">
-                                            <input type="text"
-                                                   class="qty-input"
-                                                   value="@item.Quantity"
-                                                   readonly>
+                                @foreach (var item in Model)
+                                {
+                                    var primaryImage = item.Product.ProductImages.FirstOrDefault(x => x.IsPrimary);
+                                    decimal subtotal = item.Product.UnitPrice * item.Quantity;
+                                    <tr class="cart-row" data-cart-item-id="@item.CartItemId">
+                                        <td class="shoping__cart__item">
+                                            <img src="@Url.Content(primaryImage?.ImageUrl ?? "~/images/product-default.png")" width="100" alt="">
+                                            <h5>@item.Product.ProductName</h5>
+                                        </td>
+                                        <td class="shoping__cart__price">
+                                            @item.Product.UnitPrice.ToString("N0") ₫
+                                        </td>
+                                        <td class="shoping__cart__quantity">
+                                            <div class="pro-qty">
+                                                <input type="text" class="qty-input" value="@item.Quantity" readonly>
+                                            </div>
+                                        </td>
+                                        <td class="shoping__cart__total subtotal">
+                                            @subtotal.ToString("N0") ₫
+                                        </td>
+                                        <td class="shoping__cart__item__close">
+                                            <a href="javascript:void(0)" class="delete-cart-item" data-cart-item-id="@item.CartItemId">
+                                                <span class="icon_close"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-5">
+                                        <div class="empty-cart-content">
+                                            <i class="fa fa-shopping-basket mb-3" style="font-size: 48px; color: #ddd;"></i>
+                                            <p class="mb-4">Giỏ hàng của bạn đang trống</p>
+                                            <a asp-controller="Products" asp-action="Index" class="site-btn rounded-pill">MUA SẮM NGAY</a>
                                         </div>
-                                    </td>
-                                    <td class="shoping__cart__total subtotal">
-                                        @subtotal.ToString("N0") ₫
-                                    </td>
-                                    <td class="shoping__cart__item__close">
-                                        <a href="#" class="delete-cart-item" data-cart-item-id="@item.CartItemId">
-                                            <span class="icon_close"></span>
-                                        </a>
                                     </td>
                                 </tr>
                             }
@@ -64,148 +82,37 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="shoping__cart__btns">
-                    <a href="#" class="primary-btn cart-btn">CONTINUE SHOPPING</a>
-                    @* <a href="#" class="primary-btn cart-btn cart-btn-right">
-                        <span class="icon_loading"></span>
-                        Upadate Cart
-                    </a> *@
+        
+        @if (Model.Any())
+        {
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__btns">
+                        <a asp-controller="Products" asp-action="Index" class="site-btn rounded-pill">TIẾP TỤC MUA SẮM</a>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="shoping__continue">
-                    <div class="shoping__discount">
-                        <h5>Discount Codes</h5>
-                        <form action="#">
-                            <input type="text" placeholder="Enter your coupon code">
-                            <button type="submit" class="site-btn">APPLY COUPON</button>
-                        </form>
+                <div class="col-lg-6">
+                    <div class="shoping__continue">
+                        <div class="shoping__discount">
+                            <h5>Mã giảm giá</h5>
+                            <form action="#">
+                                <input type="text" placeholder="Nhập mã giảm giá...">
+                                <button type="submit" class="site-btn rounded-pill">ÁP DỤNG</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="shoping__checkout">
+                        <h5>Tổng đơn hàng</h5>
+                        <ul>
+                            <li>Tạm tính <span>@grandTotal.ToString("N0") ₫</span></li>
+                            <li>Tổng cộng <span id="grand-total">@grandTotal.ToString("N0") ₫</span></li>
+                        </ul>
+                        <a asp-controller="Checkout" asp-action="Index" class="primary-btn rounded-pill w-100 text-center">TIẾN HÀNH THANH TOÁN</a>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="shoping__checkout">
-                    <h5>Cart Total</h5>
-                    <ul>
-                        <li>Subtotal <span> Hell Yeah ₫</span></li>
-                        <li>Total <span id="grand-total">@grandTotal.ToString("N0") ₫</span></li>
-                    </ul>
-                    <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
-                </div>
-            </div>
-        </div>
+        }
     </div>
 </section>
-@section Scripts {
-
-    <script>
-        $(document).on("click",".qtybtn",function(){
-            let button =$(this);
-            // CHỜ OGANI UPDATE INPUT XONG
-            setTimeout(function(){
-                let row =
-                    button.closest(".cart-row");
-
-                let cartItemId =
-                    row.data("cart-item-id");
-
-                let input =
-                    row.find(".qty-input");
-
-                // LẤY GIÁ TRỊ SAU KHI OGANI ĐÃ TĂNG/GIẢM
-                let quantity =
-                    parseInt(input.val()) || 1;
-
-                $.ajax({
-
-                    url: "/Cart/UpdateQuantity",
-
-                    type: "POST",
-
-                    data: {
-                        cartItemId: cartItemId,
-                        quantity: quantity
-                    },
-
-                    success: function(response){
-
-                        if(response.success)
-                        {
-                            // UPDATE INPUT
-                            input.val(
-                                response.quantity);
-
-                            // SUBTOTAL
-                            row.find(".subtotal")
-
-                                .text(
-                                    response.subtotal
-                                    + " ₫");
-
-                            // GRAND TOTAL
-                            $("#grand-total")
-
-                                .text(
-                                    response.grandTotal
-                                    + " ₫");
-
-                            // HEADER
-                            $(".cart-count")
-
-                                .text(
-                                    response.totalItems);
-                        }
-                    }
-                });
-
-            }, 50);
-        });
-
-        $(document).on(
-            "click",
-            ".delete-cart-item",
-            function (e)
-        {
-            e.preventDefault();
-
-            let row =
-                $(this).closest(".cart-row");
-
-            let cartItemId =
-                $(this).data("cart-item-id");
-
-            $.ajax({
-
-                url: "/Cart/DeleteCartItem",
-
-                type: "POST",
-
-                data: {
-                    cartItemId: cartItemId
-                },
-
-                success: function (response)
-                {
-                    if(response.success)
-                    {
-                        row.remove();
-
-                        $(".cart-count")
-                            .text(response.totalItems);
-
-                        $("#grand-total")
-                            .text(
-                                response.grandTotal
-                                + " ₫");
-
-                        showToast(
-                            "Item removed");
-                    }
-                }
-            });
-        });
-    </script>
-
-}
