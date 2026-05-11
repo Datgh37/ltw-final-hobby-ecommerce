@@ -92,16 +92,32 @@ function updateCartQuantity(cartItemId, quantity, row) {
         data: { cartItemId, quantity },
         success: function(response) {
             if (response.success) {
-                row.find(".subtotal").text(response.subtotal + " ₫");
+                // Update specific row elements
+                if (row && row.length) {
+                    row.find(".qty-input").val(response.quantity);
+                    row.find(".subtotal").text(response.subtotal + " ₫");
+                }
+                
+                // Update global totals
                 updateGlobalTotals(response.grandTotal, response.totalItems);
+                
+                // Update header cart preview
                 reloadCartPreview();
+            } else if (response.message) {
+                showToast(response.message, 'error');
+                if (row && row.length && response.quantity) {
+                    row.find(".qty-input").val(response.quantity);
+                }
             }
+        },
+        error: function() {
+            showToast("Không thể cập nhật số lượng", "error");
         }
     });
 }
 
 // 5. Delete Cart Item
-function deleteCartItem(cartItemId, row, silent = false) {
+function deleteCartItem(cartItemId, row, silent = false, onCancel) {
     const performDelete = function() {
         $.ajax({
             url: "/Cart/DeleteCartItem",
@@ -126,7 +142,7 @@ function deleteCartItem(cartItemId, row, silent = false) {
     if (silent) {
         performDelete();
     } else {
-        showConfirm("Bạn có chắc chắn muốn xóa sản phẩm này?", performDelete);
+        showConfirm("Bạn có chắc chắn muốn xóa sản phẩm này?", performDelete, onCancel);
     }
 }
 
@@ -141,52 +157,75 @@ function reloadCartPreview() {
 
 // 7. Update Totals in Cart Index
 function updateGlobalTotals(grandTotal, totalItems) {
+    // Update main checkout box
     $("#grand-total").text(grandTotal + " ₫");
-    $(".shoping__checkout ul li:first-child span").text(grandTotal + " ₫"); 
+    
+    // Target the first <li> for subtotal (Tạm tính)
+    $(".shoping__checkout ul li:contains('Tạm tính') span").text(grandTotal + " ₫");
+    
+    // Target the second <li> for total (Tổng cộng) - fallback if #grand-total is not enough
+    $(".shoping__checkout ul li:contains('Tổng cộng') span").text(grandTotal + " ₫");
+    
+    // Update cart icon badge
     $(".cart-count").text(totalItems);
 }
 
-// 8. Event Listeners
-$(document).ready(function() {
-    // Add to Cart
-    $(document).on("click", ".add-to-cart-btn, .add-to-cart", function(e) {
-        e.preventDefault();
-        const productId = $(this).data("product-id");
-        const quantity = parseInt($("#productQuantity").val()) || 1;
-        addToCart(productId, quantity);
-    });
+    // 8. Event Listeners
+    $(document).ready(function() {
+        // Add to Cart
+        $(document).on("click", ".add-to-cart-btn, .add-to-cart", function(e) {
+            e.preventDefault();
+            const productId = $(this).data("product-id");
+            const quantity = parseInt($("#productQuantity").val()) || 1;
+            addToCart(productId, quantity);
+        });
 
-    // Main Cart Page Quantity
-    $(document).on("click", ".qtybtn", function() {
-        const container = $(this).parent();
-        const maxStock = parseInt(container.data("max-stock")) || 999;
-        const row = $(this).closest(".cart-row");
-        if (!row.length) return;
-        const cartItemId = row.data("cart-item-id");
-        const input = row.find(".qty-input");
+        // Main Cart Page Quantity Logic (Manual control for pro-qty-cart)
+        $(document).on("click", ".pro-qty-cart .qtybtn", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-        setTimeout(function() {
-            let quantity = parseInt(input.val());
+            const $button = $(this);
+            const $row = $button.closest(".cart-row");
+            const $input = $row.find(".qty-input");
+            const cartItemId = $row.data("cart-item-id");
+            const maxStock = parseInt($button.parent().data("max-stock")) || 999;
             
-            if (quantity > maxStock) {
-                showToast(`Chỉ còn ${maxStock} sản phẩm trong kho`, "error");
-                input.val(maxStock);
-                quantity = maxStock;
-            }
+            let currentVal = parseInt($input.val()) || 0;
+            let newVal = currentVal;
 
-            if (isNaN(quantity) || quantity <= 0) {
-                deleteCartItem(cartItemId, row);
+            if ($button.hasClass('inc')) {
+                newVal = currentVal + 1;
             } else {
-                updateCartQuantity(cartItemId, quantity, row);
+                newVal = currentVal - 1;
             }
-        }, 150);
-    });
 
-    // Main Cart Page Delete
-    $(document).on("click", ".delete-cart-item", function(e) {
-        e.preventDefault();
-        deleteCartItem($(this).data("cart-item-id"), $(this).closest(".cart-row"));
-    });
+            // Validation
+            if (newVal > maxStock) {
+                showToast(`Chỉ còn ${maxStock} sản phẩm trong kho`, "error");
+                $input.val(maxStock);
+                updateCartQuantity(cartItemId, maxStock, $row);
+                return;
+            }
+
+            if (newVal <= 0) {
+                $input.val(0); 
+                deleteCartItem(cartItemId, $row, false, function() {
+                    // ON CANCEL: Reset to 1 and sync
+                    $input.val(1);
+                    updateCartQuantity(cartItemId, 1, $row);
+                });
+            } else {
+                $input.val(newVal);
+                updateCartQuantity(cartItemId, newVal, $row);
+            }
+        });
+
+        // Main Cart Page Delete
+        $(document).on("click", ".delete-cart-item", function(e) {
+            e.preventDefault();
+            deleteCartItem($(this).data("cart-item-id"), $(this).closest(".cart-row"));
+        });
 
     // --- Preview Dropdown Quantity Controls ---
     $(document).on("click", ".cart-preview-dec", function(e) {

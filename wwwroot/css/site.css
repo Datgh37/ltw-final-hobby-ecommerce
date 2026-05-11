@@ -961,8 +961,95 @@ html, body {
     text-decoration: underline;
 }
 
-/* Custom Scrollbar for live search */
-.live-search-results::-webkit-scrollbar { width: 6px; }
-.live-search-results::-webkit-scrollbar-track { background: #f1f1f1; }
-.live-search-results::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-.live-search-results::-webkit-scrollbar-thumb:hover { background: #560bad; }
+/* ============================================
+   Favorite Icon Styling
+   ============================================ */
+.toggle-favorite i {
+    transition: all 0.3s ease;
+    color: #1c1c1c; /* Màu đen mặc định của Ogani */
+}
+
+.toggle-favorite i.is-favorite {
+    color: #dd2222 !important;
+}
+
+/* Fix for featured item icon color inheritance */
+.featured__item__pic__hover li a i,
+.product__item__pic__hover li a i {
+    color: inherit;
+}
+
+/* ============================================
+   Cart Quantity Control (Manual)
+   ============================================ */
+.pro-qty-cart {
+	width: 140px;
+	height: 50px;
+	display: inline-block;
+	position: relative;
+	text-align: center;
+	background: #f5f5f5;
+	margin-bottom: 5px;
+}
+
+.pro-qty-cart input {
+	height: 100%;
+	width: 100%;
+	font-size: 16px;
+	color: #6f6f6f;
+	width: 50px;
+	border: none;
+	background: #f5f5f5;
+	text-align: center;
+}
+
+/* ============================================
+   Cart Quantity Control (Manual)
+   ============================================ */
+.pro-qty-cart {
+    width: 124px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    margin: 0 auto;
+    border: 1px solid #ebebeb;
+    overflow: hidden;
+}
+
+.pro-qty-cart .qtybtn {
+    width: 35px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: #1c1c1c;
+    transition: all 0.3s ease;
+    user-select: none;
+    font-weight: 500;
+}
+
+.pro-qty-cart .qtybtn:hover {
+    background: #7209B7; /* Purple background from layout */
+    color: #ffffff;
+}
+
+.pro-qty-cart input {
+    width: 54px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 16px;
+    color: #1c1c1c;
+    font-weight: 700;
+    pointer-events: none; /* Already readonly, but this is safer */
+}
+
+/* Specific overrides for shopping cart table context */
+.shoping__cart__table table tbody tr td.shoping__cart__quantity .pro-qty-cart {
+    /* Keeping it contained within the table cell */
+    display: inline-flex;
+}

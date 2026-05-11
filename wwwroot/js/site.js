@@ -114,9 +114,8 @@ $(document).ready(function () {
                     // Cập nhật số lượng trên header
                     $('#favoriteCount, #favoriteCountMobile').text(response.totalCount);
                     
-                    // Cập nhật UI icon
+                    // Cập nhật UI icon (nếu là trang Details)
                     if ($btn.hasClass('heart-icon')) {
-                        // Trang Details: dùng elegant icon (span)
                         const icon = $btn.find('span');
                         if (response.isAdded) {
                             icon.removeClass('icon_heart_alt').addClass('icon_heart');
@@ -126,12 +125,12 @@ $(document).ready(function () {
                             $btn.removeClass('active');
                         }
                     } else {
-                        // Product Card: dùng Font Awesome icon (i) - chỉ đổi màu
+                        // Nếu là ở Product Card
                         const icon = $btn.find('i');
                         if (response.isAdded) {
-                            icon.css('color', '#dd2222');
+                            icon.addClass('is-favorite');
                         } else {
-                            icon.css('color', '#999');
+                            icon.removeClass('is-favorite');
                         }
                     }
                 } else {

@@ -21,21 +21,13 @@
         <div class="row featured__filter">
             @foreach (var item in Model.FeaturedProducts)
             {
-                <div class="col-lg-3 col-md-4 col-sm-6 mix cat-@item.CategoryId">
-                    <div class="featured__item">
-                        <div class="featured__item__pic set-bg" data-setbg="@Url.Content(item.PrimaryImage ?? "~/img/featured/feature-1.jpg")">
-                            <ul class="featured__item__pic__hover">
-                                <li><a href="#"><i class="fa fa-heart"></i></a></li>
-                                <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                                <li><a href="javascript:void(0)" class="add-to-cart-btn" data-product-id="@item.ProductId"><i class="fa fa-shopping-cart"></i></a></li>
-                            </ul>
-                        </div>
-                        <div class="featured__item__text" onclick="window.location.href='@Url.Action("Details", "Products", new { id = item.ProductId })'" style="cursor: pointer;">
-                            <h6><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">@item.ProductName</a></h6>
-                            <h5>@item.FinalPrice.ToString("N0")₫</h5>
-                        </div>
-                    </div>
-                </div>
+                var viewData = new ViewDataDictionary(ViewData)
+                {
+                    { "ColClass", "col-lg-3 col-md-4 col-sm-6" },
+                    { "ExtraClasses", $"mix cat-{item.CategoryId}" },
+                    { "IsFeatured", true }
+                };
+                @await Html.PartialAsync("../Products/_ProductCard", item, viewData)
             }
         </div>
     </div>
