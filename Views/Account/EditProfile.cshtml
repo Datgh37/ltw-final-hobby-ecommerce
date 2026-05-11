@@ -111,8 +111,36 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
         $(document).ready(function() {
-            // Vô hiệu hóa nice-select cho ô chọn giới tính để tránh lỗi bind dữ liệu
+            // Vô hiệu hóa nice-select cho ô chọn giới tính
             $('.no-nice-select').niceSelect('destroy');
+
+            // AJAX Edit Profile
+            $('form[asp-action="EditProfile"]').on('submit', function(e) {
+                e.preventDefault();
+                const form = $(this);
+                const formData = new FormData(this);
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            showToast(response.message, 'success');
+                            setTimeout(() => {
+                                window.location.href = '@Url.Action("Profile", "Account")';
+                            }, 1500);
+                        } else {
+                            showToast(response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        showToast("Đã có lỗi xảy ra khi cập nhật hồ sơ.", "error");
+                    }
+                });
+            });
         });
 
         function previewImage(input) {

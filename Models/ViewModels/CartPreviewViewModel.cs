@@ -18,6 +18,7 @@ namespace TuNhanTamTInh_Ecommerce.Models.ViewModels
         public string ImageUrl { get; set; } = string.Empty;
         public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }
+        public int StockQuantity { get; set; }
         public decimal Subtotal => UnitPrice * Quantity;
     }
 }

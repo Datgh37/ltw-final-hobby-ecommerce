@@ -33,7 +33,8 @@ namespace TuNhanTamTInh_Ecommerce.Helpers
                     ? x.Reviews.Average(r => (double)r.Rating)
                     : 0,
                 ViewCount = x.ViewCount,
-                StockQuantity = x.StockQuantity
+                StockQuantity = x.StockQuantity,
+                IsFavorite = false // Default false, will be set on client-side or in controller
             });
         }
     }

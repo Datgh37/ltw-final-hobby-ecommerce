@@ -158,13 +158,22 @@ $(document).ready(function() {
 
     // Main Cart Page Quantity
     $(document).on("click", ".qtybtn", function() {
+        const container = $(this).parent();
+        const maxStock = parseInt(container.data("max-stock")) || 999;
         const row = $(this).closest(".cart-row");
         if (!row.length) return;
         const cartItemId = row.data("cart-item-id");
         const input = row.find(".qty-input");
 
         setTimeout(function() {
-            const quantity = parseInt(input.val());
+            let quantity = parseInt(input.val());
+            
+            if (quantity > maxStock) {
+                showToast(`Chỉ còn ${maxStock} sản phẩm trong kho`, "error");
+                input.val(maxStock);
+                quantity = maxStock;
+            }
+
             if (isNaN(quantity) || quantity <= 0) {
                 deleteCartItem(cartItemId, row);
             } else {
@@ -190,18 +199,23 @@ $(document).ready(function() {
         if (qty <= 0) {
             deleteCartItem(cartItemId, null, true); // Auto delete silent
         } else {
-            // Update UI immediately for smoothness
             countSpan.text(qty);
-            updateCartQuantity(cartItemId, qty, $()); // Passing empty jQuery object since no row exists
+            updateCartQuantity(cartItemId, qty, $()); 
         }
     });
 
     $(document).on("click", ".cart-preview-inc", function(e) {
         e.preventDefault();
         const item = $(this).closest(".cart-dropdown__item");
+        const maxStock = parseInt(item.data("max-stock")) || 999;
         const cartItemId = item.data("cart-item-id");
         const countSpan = item.find(".cart-preview-count");
         let qty = parseInt(countSpan.text()) + 1;
+
+        if (qty > maxStock) {
+            showToast(`Vượt quá số lượng tồn kho (${maxStock})`, "error");
+            return;
+        }
 
         countSpan.text(qty);
         updateCartQuantity(cartItemId, qty, $());

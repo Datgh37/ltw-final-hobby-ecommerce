@@ -50,7 +50,7 @@
                                             @item.Product.UnitPrice.ToString("N0") ₫
                                         </td>
                                         <td class="shoping__cart__quantity">
-                                            <div class="pro-qty">
+                                            <div class="pro-qty" data-max-stock="@item.Product.StockQuantity">
                                                 <input type="text" class="qty-input" value="@item.Quantity" readonly>
                                             </div>
                                         </td>

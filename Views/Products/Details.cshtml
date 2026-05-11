@@ -87,15 +87,24 @@
                     </p>
                     <div class="product__details__quantity">
                         <div class="quantity">
-                            <div class="pro-qty">
-                                <input type="text" value="1" id="productQuantity">
+                            <div class="pro-qty" data-max-stock="@Model.StockQuantity">
+                                <input type="text" value="@(Model.StockQuantity > 0 ? "1" : "0")" id="productQuantity" readonly>
                             </div>
                         </div>
                     </div>
-                    <a href="#" class="primary-btn add-to-cart" data-product-id="@Model.ProductId">THÊM VÀO GIỎ</a>
-                    <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
+                    @if (Model.StockQuantity > 0)
+                    {
+                        <a href="#" class="primary-btn add-to-cart" data-product-id="@Model.ProductId">THÊM VÀO GIỎ</a>
+                    }
+                    else
+                    {
+                        <a href="javascript:void(0)" class="primary-btn bg-secondary cursor-not-allowed" style="cursor: not-allowed;">HẾT HÀNG</a>
+                    }
+                    <a href="javascript:void(0)" class="heart-icon toggle-favorite" data-product-id="@Model.ProductId" id="fav-btn-@Model.ProductId">
+                        <span class="@((bool)ViewBag.IsFavorite ? "icon_heart" : "icon_heart_alt")"></span>
+                    </a>
                     <ul>
-                        <li><b>Tình trạng</b> <span>@(Model.StockQuantity > 0 ? $"Còn hàng ({Model.StockQuantity})" : "Hết hàng")</span></li>
+                        <li><b>Tình trạng</b> <span class="@(Model.StockQuantity > 0 ? "text-success" : "text-danger")">@(Model.StockQuantity > 0 ? $"Còn hàng ({Model.StockQuantity})" : "Hết hàng")</span></li>
                         <li><b>Danh mục</b> <span>@Model.Category?.CategoryName</span></li>
                         @if (Model.Supplier != null)
                         {

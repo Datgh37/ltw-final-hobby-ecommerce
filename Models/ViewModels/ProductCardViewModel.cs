@@ -35,5 +35,7 @@ namespace TuNhanTamTInh_Ecommerce.Models.ViewModels
         public bool IsInStock => StockQuantity > 0;
 
         public decimal DiscountPercent => Discount > 1 ? (decimal)Discount : (decimal)(Discount * 100);
+
+        public bool IsFavorite { get; set; } // Thêm property này để theo dõi trạng thái yêu thích của người dùng
     }
 }

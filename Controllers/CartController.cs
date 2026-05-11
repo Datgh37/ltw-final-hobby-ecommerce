@@ -72,14 +72,26 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             }
 
             var cartItem = await _context.CartItems
+                .Include(x => x.Product)
                 .FirstOrDefaultAsync(x => x.CartId == cart.CartId && x.ProductId == productId);
+
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null) return Json(new { success = false, message = "Sản phẩm không tồn tại" });
 
             if (cartItem != null)
             {
+                if (cartItem.Quantity + quantity > product.StockQuantity)
+                {
+                    return Json(new { success = false, message = $"Chỉ còn {product.StockQuantity} sản phẩm trong kho" });
+                }
                 cartItem.Quantity += quantity;
             }
             else
             {
+                if (quantity > product.StockQuantity)
+                {
+                    return Json(new { success = false, message = $"Chỉ còn {product.StockQuantity} sản phẩm trong kho" });
+                }
                 cartItem = new CartItem
                 {
                     CartId = cart.CartId,
@@ -111,6 +123,11 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 .FirstOrDefaultAsync(x => x.CartItemId == cartItemId);
 
             if (cartItem == null) return Json(new { success = false });
+
+            if (quantity > cartItem.Product.StockQuantity)
+            {
+                return Json(new { success = false, message = $"Số lượng vượt quá tồn kho ({cartItem.Product.StockQuantity})" });
+            }
 
             cartItem.Quantity = quantity;
             await _context.SaveChangesAsync();

@@ -89,6 +89,26 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 .ProjectToCard()
                 .ToListAsync();
 
+            // Populate favorite status if user is authenticated
+            if (User.Identity.IsAuthenticated)
+            {
+                var accountId = User.FindFirst("AccountId")?.Value;
+                var favoriteProductIds = await _context.Favorites
+                    .Where(f => f.AccountId == accountId)
+                    .Select(f => f.ProductId)
+                    .ToListAsync();
+
+                foreach (var product in products)
+                {
+                    product.IsFavorite = favoriteProductIds.Contains(product.ProductId);
+                }
+
+                foreach (var product in saleOffProducts)
+                {
+                    product.IsFavorite = favoriteProductIds.Contains(product.ProductId);
+                }
+            }
+
             // Shared query object
             var queryVM = new ProductIndexQueryViewModel
             {
@@ -168,6 +188,16 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 .ToListAsync();
 
             ViewBag.RelatedProducts = relatedProducts;
+
+            // Check if product is favorited by current user
+            bool isFavorite = false;
+            if (User.Identity.IsAuthenticated)
+            {
+                var accountId = User.FindFirst("AccountId")?.Value;
+                isFavorite = await _context.Favorites
+                    .AnyAsync(f => f.AccountId == accountId && f.ProductId == product.ProductId);
+            }
+            ViewBag.IsFavorite = isFavorite;
 
             return View(product);
         }
@@ -294,6 +324,96 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Products/LiveSearch (AJAX)
+        public async Task<IActionResult> LiveSearch(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword) || keyword.Length < 2)
+            {
+                return Json(new List<object>());
+            }
+
+            var results = await _context.Products
+                .AsNoTracking()
+                .Where(x => x.ProductName.Contains(keyword))
+                .OrderByDescending(x => x.ViewCount)
+                .Take(10) // Lấy tối đa 10 kết quả nhưng chỉ hiện 5 trong CSS (scroll)
+                .Select(x => new
+                {
+                    productId = x.ProductId,
+                    productName = x.ProductName,
+                    unitPrice = x.UnitPrice,
+                    discount = x.Discount,
+                    imageUrl = x.ProductImages.FirstOrDefault(img => img.IsPrimary).ImageUrl ?? 
+                               x.ProductImages.FirstOrDefault().ImageUrl ?? "~/images/product-default.png"
+                })
+                .ToListAsync();
+
+            return Json(results);
+        }
+
+        // POST: Products/ToggleFavorite (AJAX)
+        [HttpPost]
+        public async Task<IActionResult> ToggleFavorite(int productId)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập để lưu sản phẩm yêu thích." });
+            }
+
+            var accountId = User.FindFirst("AccountId")?.Value;
+            var favorite = await _context.Favorites
+                .FirstOrDefaultAsync(f => f.AccountId == accountId && f.ProductId == productId);
+
+            bool isAdded = false;
+            if (favorite == null)
+            {
+                favorite = new Favorite
+                {
+                    AccountId = accountId,
+                    ProductId = productId
+                };
+                _context.Favorites.Add(favorite);
+                isAdded = true;
+            }
+            else
+            {
+                _context.Favorites.Remove(favorite);
+                isAdded = false;
+            }
+
+            await _context.SaveChangesAsync();
+            var totalCount = await _context.Favorites.CountAsync(f => f.AccountId == accountId);
+
+            return Json(new { 
+                success = true, 
+                isAdded = isAdded, 
+                totalCount = totalCount,
+                message = isAdded ? "Đã thêm vào yêu thích" : "Đã xóa khỏi yêu thích" 
+            });
+        }
+
+        // GET: Products/GetFavoriteCount (AJAX)
+        public async Task<IActionResult> GetFavoriteCount()
+        {
+            if (!User.Identity.IsAuthenticated) return Json(0);
+            var accountId = User.FindFirst("AccountId")?.Value;
+            var count = await _context.Favorites.CountAsync(f => f.AccountId == accountId);
+            return Json(count);
+        }
+
+        // GET: Products/CheckFavoriteStatus (AJAX)
+        public async Task<IActionResult> CheckFavoriteStatus(int productId)
+        {
+            if (!User.Identity.IsAuthenticated)
+                return Json(new { isFavorite = false });
+
+            var accountId = User.FindFirst("AccountId")?.Value;
+            var isFavorite = await _context.Favorites
+                .AnyAsync(f => f.AccountId == accountId && f.ProductId == productId);
+
+            return Json(new { isFavorite = isFavorite });
         }
 
         private bool ProductExists(int id)

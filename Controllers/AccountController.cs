@@ -86,8 +86,10 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
                         var authProperties = new AuthenticationProperties
                         {
-                            IsPersistent = true,
-                            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+                            IsPersistent = model.RememberMe,
+                            ExpiresUtc = model.RememberMe 
+                                ? DateTimeOffset.UtcNow.AddDays(7)      // 7 ngày nếu tick
+                                : DateTimeOffset.UtcNow.AddHours(1)     // 1 giờ nếu không tick
                         };
 
                         await HttpContext.SignInAsync(
@@ -95,11 +97,27 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                             new ClaimsPrincipal(claimsIdentity),
                             authProperties);
 
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return Json(new { success = true, message = "Đăng nhập thành công! Đang chuyển hướng...", returnUrl = returnUrl });
+                        }
+
                         return LocalRedirect(returnUrl);
                     }
                 }
                 
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = "Tên đăng nhập, email hoặc mật khẩu không đúng." });
+                }
+
                 ModelState.AddModelError(string.Empty, "Tên đăng nhập, email hoặc mật khẩu không đúng.");
+            }
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, message = string.Join("<br/>", errors) });
             }
 
             ViewData["ReturnUrl"] = returnUrl;
@@ -325,8 +343,19 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     new ClaimsPrincipal(claimsIdentity),
                     authProperties);
 
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = true, message = "Cập nhật hồ sơ thành công!" });
+                }
+
                 TempData["SuccessMessage"] = "Cập nhật hồ sơ thành công!";
                 return RedirectToAction(nameof(Profile));
+            }
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, message = string.Join("<br/>", errors) });
             }
 
             return View(model);

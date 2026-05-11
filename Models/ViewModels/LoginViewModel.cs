@@ -10,5 +10,7 @@ namespace TuNhanTamTInh_Ecommerce.Models.ViewModels
         [Required(ErrorMessage = "Vui lòng nhập Mật khẩu.")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        public bool RememberMe { get; set; }  
     }
 }

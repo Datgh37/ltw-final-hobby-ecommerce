@@ -48,24 +48,7 @@
     <script src="~/js/mixitup.min.js"></script>
     <script src="~/js/owl.carousel.min.js"></script>
     <script src="~/js/main.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Tự động đóng các alert có class .auto-hide sau 5 giây
-            setTimeout(function() {
-                $(".alert.auto-hide").fadeOut(500, function() {
-                    $(this).remove();
-                });
-            }, 5000);
-
-            // Hiện/Ẩn mật khẩu toàn cục
-            $(document).on('click', '.password-toggle', function() {
-                const input = $(this).siblings('input');
-                const type = input.attr('type') === 'password' ? 'text' : 'password';
-                input.attr('type', type);
-                $(this).toggleClass('fa-eye fa-eye-slash');
-            });
-        });
-    </script>
+    <script src="~/js/site.js"></script>
     <script src="~/js/cart.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

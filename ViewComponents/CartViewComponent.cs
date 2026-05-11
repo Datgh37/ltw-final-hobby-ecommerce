@@ -48,7 +48,8 @@ namespace TuNhanTamTInh_Ecommerce.ViewComponents
                                             .FirstOrDefault()?.ImageUrl
                                         ?? "~/images/product-default.png",
                                     UnitPrice = ci.Product?.UnitPrice ?? 0,
-                                    Quantity = ci.Quantity
+                                    Quantity = ci.Quantity,
+                                    StockQuantity = ci.Product?.StockQuantity ?? 0
                                 })
                                 .ToList();
                         }

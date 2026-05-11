@@ -17,7 +17,7 @@
         <div class="cart-dropdown__items">
             @foreach (var item in Model.Items)
             {
-                <div class="cart-dropdown__item" data-cart-item-id="@item.CartItemId">
+                <div class="cart-dropdown__item" data-cart-item-id="@item.CartItemId" data-max-stock="@item.StockQuantity">
                     <img src="@Url.Content(item.ImageUrl)" alt="@item.ProductName" class="cart-dropdown__img">
                     <div class="cart-dropdown__info">
                         <span class="cart-dropdown__name">@item.ProductName</span>

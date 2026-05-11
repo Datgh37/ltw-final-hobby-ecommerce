@@ -127,7 +127,7 @@
                 var username = $('#Username').val();
                 var email = $('#Email').val();
                 if(!email || !username) {
-                    alert("Vui lòng nhập tên đăng nhập và email trước khi nhận mã.");
+                    showToast("Vui lòng nhập tên đăng nhập và email trước khi nhận mã.", 'error');
                     return;
                 }
 
@@ -169,7 +169,7 @@
                 var confirm = $('#ConfirmPassword').val();
 
                 if(!username || !email || !password || password !== confirm) {
-                    alert("Vui lòng điền đầy đủ và chính xác thông tin trước khi nhận mã OTP.");
+                    showToast("Vui lòng điền đầy đủ và chính xác thông tin trước khi nhận mã OTP.", 'error');
                     return;
                 }
                 sendOTP();
