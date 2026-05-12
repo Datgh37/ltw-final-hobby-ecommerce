@@ -2,6 +2,7 @@
 
 ## Project Guidelines
 - Khi chỉnh HeroSection, cần giữ nguyên layout/CSS structure hiện có và chỉ thay đổi nội dung bên trong các class cũ; các phần như All Series phải bám đúng markup để không làm lệch tông giao diện.
+- Keep `appsettings.json` database password/config aligned with teacher grading standard for local DB setup, and prefer not to modify it. Use `HobbyShop@2026` as the SQL/database password in Docker-related configuration.
 
 ## Notification Handling
 - Replace `alert()` with toast notifications in `Register.cshtml` when validation fails.
