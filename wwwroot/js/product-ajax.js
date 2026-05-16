@@ -1,48 +1,46 @@
 /**
- * Product AJAX Filtering & Pagination
- * Separated logic for better maintainability
+ * Product AJAX Filtering, Pagination & View Mode Switcher
  */
 
 $(document).ready(function () {
-    // Selectors
     const container = '#product-list-container';
     const paginationSelector = '.product__pagination a';
     const filterFormSelector = '.price-filter-form, .filter__sort form';
+    
+    let currentViewMode = 'grid'; // Default to grid every time page loads
 
-    // 1. Handle Pagination Clicks
+    // 1. Global Preloader Safeguard
+    $(document).ajaxStart(function() {
+        $("#preloder").hide(); // Force hide preloader during AJAX
+        $(".loader").hide();
+    });
+
+    // 2. Handle Pagination Clicks
     $(document).on('click', paginationSelector, function (e) {
         e.preventDefault();
         const url = $(this).attr('href');
         if (!url || url === '#' || url === '') return;
-
         loadProductList(url);
-        
-        // Update Browser URL
         window.history.pushState({ path: url }, '', url);
     });
 
-    // 2. Handle Filter/Sort Form Submissions
+    // 3. Handle Filter/Sort Form Submissions (AJAX)
     $(document).on('submit', filterFormSelector, function (e) {
         e.preventDefault();
         const $form = $(this);
         const url = $form.attr('action');
         const formData = $form.serialize();
         const fullUrl = url + (url.includes('?') ? '&' : '?') + formData;
-
         loadProductList(fullUrl);
-
-        // Update Browser URL
         window.history.pushState({ path: fullUrl }, '', fullUrl);
     });
 
-    // 3. Main AJAX Loader
+    // 4. Main AJAX Loader
     function loadProductList(url) {
-        // Convert to Filter partial URL
-        const ajaxUrl = url.replace('/Products/Index', '/Products/Filter')
+        let ajaxUrl = url.replace('/Products/Index', '/Products/Filter')
                            .replace('/Products?', '/Products/Filter?')
                            .replace('/Products#', '/Products/Filter#');
-
-        // Show loading state
+        
         $(container).css('opacity', '0.5');
         
         $.ajax({
@@ -51,8 +49,7 @@ $(document).ready(function () {
             success: function (result) {
                 $(container).html(result);
                 $(container).css('opacity', '1');
-                
-                // Re-initialize plugins
+                applyCurrentViewMode();
                 initializePlugins();
             },
             error: function () {
@@ -62,22 +59,51 @@ $(document).ready(function () {
         });
     }
 
-    // 4. Helper to re-initialize Ogani plugins
+    // 5. View Mode Switcher with Animation
+    $(document).on('click', '.view-mode-btn', function () {
+        const $btn = $(this);
+        if ($btn.hasClass('active')) return;
+
+        const mode = $btn.data('mode');
+        const $partial = $('#product-list-partial');
+
+        // Start Transition Animation
+        $partial.addClass('view-switching');
+
+        setTimeout(() => {
+            currentViewMode = mode; // Save to variable instead of localStorage
+            applyCurrentViewMode();
+            $partial.removeClass('view-switching');
+        }, 300);
+    });
+
+    function applyCurrentViewMode() {
+        const mode = currentViewMode; // Use the local variable
+        const $partial = $('#product-list-partial');
+        
+        $partial.removeClass('grid-view list-view').addClass(mode + '-view');
+        $('.view-mode-btn').removeClass('active');
+        $('.view-mode-btn[data-mode="' + mode + '"]').addClass('active');
+    }
+
+    // 6. Helpers
     function initializePlugins() {
         $('.set-bg').each(function () {
             var bg = $(this).data('setbg');
             $(this).css('background-image', 'url(' + bg + ')');
         });
-
         if ($.fn.niceSelect) {
             $('select').niceSelect();
         }
     }
 
-    // 5. Handle Browser Back/Forward
     window.onpopstate = function (e) {
         if (e.state && e.state.path) {
             loadProductList(e.state.path);
         }
     };
+
+    // Initial setup
+    applyCurrentViewMode();
+    initializePlugins();
 });

@@ -36,8 +36,14 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-6">
-                <div class="product__details__pic">
+                <div class="product__details__pic @(Model.StockQuantity <= 0 ? "is-sold-out" : "")">
                     <div class="product__details__pic__item">
+                        @if (Model.StockQuantity <= 0)
+                        {
+                            <div class="sold-out-overlay">
+                                <span class="sold-out-text">Hết hàng</span>
+                            </div>
+                        }
                         <img class="product__details__pic__item--large product__details__main-img"
                              src="@Url.Content(primaryImage)" alt="@Model.ProductName">
                     </div>
@@ -87,7 +93,7 @@
                     </p>
                     <div class="product__details__quantity">
                         <div class="quantity">
-                            <div class="pro-qty" data-max-stock="@Model.StockQuantity">
+                            <div class="pro-qty @(Model.StockQuantity <= 0 ? "qty-disabled" : "")" data-max-stock="@Model.StockQuantity">
                                 <input type="text" value="@(Model.StockQuantity > 0 ? "1" : "0")" id="productQuantity" readonly>
                             </div>
                         </div>
@@ -98,7 +104,7 @@
                     }
                     else
                     {
-                        <a href="javascript:void(0)" class="primary-btn bg-secondary cursor-not-allowed" style="cursor: not-allowed;">HẾT HÀNG</a>
+                        <a href="javascript:void(0)" class="primary-btn btn-disabled" style="cursor: not-allowed;">HẾT HÀNG</a>
                     }
                     <a href="javascript:void(0)" class="heart-icon toggle-favorite" data-product-id="@Model.ProductId" id="fav-btn-@Model.ProductId">
                         <span class="@((bool)ViewBag.IsFavorite ? "icon_heart" : "icon_heart_alt")"></span>

@@ -5,6 +5,7 @@
     var extraClasses = ViewData["ExtraClasses"] as string ?? "";
     var showCategory = ViewData["ShowCategory"] as bool? ?? false;
     var isFeatured = ViewData["IsFeatured"] as bool? ?? false;
+    var isOutOfStock = Model.StockQuantity <= 0;
     
     // Determine the base class (Featured uses featured__item, others use product__item)
     var baseClass = isFeatured ? "featured__item" : "product__item";
@@ -13,8 +14,15 @@
 }
 
 <div class="@colClass @extraClasses">
-    <div class="@baseClass">
+    <div class="@baseClass @(isOutOfStock ? "is-sold-out" : "")">
         <div class="@picClass set-bg" data-setbg="@Url.Content(Model.PrimaryImage ?? "~/img/product/product-1.jpg")">
+            @if (isOutOfStock)
+            {
+                <div class="sold-out-overlay">
+                    <span class="sold-out-text">Hết hàng</span>
+                </div>
+            }
+            
             @if (Model.IsOnSale)
             {
                 <div class="product__discount__percent">-@Model.DiscountPercent.ToString("0")%</div>
@@ -22,20 +30,27 @@
             <ul class="@(isFeatured ? "featured__item__pic__hover" : "product__item__pic__hover")">
                 <li><a href="javascript:void(0)" class="toggle-favorite" data-product-id="@Model.ProductId"><i class="fa fa-heart @(Model.IsFavorite ? "is-favorite" : "")"></i></a></li>
                 <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                <li><a href="javascript:void(0)" class="add-to-cart-btn" data-product-id="@Model.ProductId"><i class="fa fa-shopping-cart"></i></a></li>
+                <li>
+                    <a href="javascript:void(0)" 
+                       class="add-to-cart-btn @(isOutOfStock ? "btn-disabled" : "")" 
+                       data-product-id="@Model.ProductId"
+                       disabled="@(isOutOfStock ? "disabled" : null)">
+                        <i class="fa fa-shopping-cart"></i>
+                    </a>
+                </li>
             </ul>
         </div>
-        <div class="@textClass" onclick="window.location.href='@Url.Action("Details", "Products", new { id = Model.ProductId })'" style="cursor: pointer;">
+        <div class="@textClass cursor-pointer" onclick="window.location.href='@Url.Action("Details", "Products", new { id = Model.ProductId })'">
             @if (showCategory && !string.IsNullOrEmpty(Model.CategoryName))
             {
-                <span class="d-block text-muted small mb-1" style="letter-spacing: 1px; text-transform: uppercase;">@Model.CategoryName</span>
+                <span class="product-category-label d-block text-muted small mb-1">@Model.CategoryName</span>
             }
             <h6><a asp-controller="Products" asp-action="Details" asp-route-id="@Model.ProductId">@Model.ProductName</a></h6>
             @if (Model.IsOnSale)
             {
                 <div class="product__item__price">
                     @Model.FinalPrice.ToString("N0")₫
-                    <span style="text-decoration: line-through; color: #b2b2b2; font-weight: 400; margin-left: 10px; font-size: 14px;">@Model.UnitPrice.ToString("N0")₫</span>
+                    <span class="old-price old-price-sm">@Model.UnitPrice.ToString("N0")₫</span>
                 </div>
             }
             else

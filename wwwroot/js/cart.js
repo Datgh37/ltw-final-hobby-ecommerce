@@ -175,8 +175,22 @@ function updateGlobalTotals(grandTotal, totalItems) {
         // Add to Cart
         $(document).on("click", ".add-to-cart-btn, .add-to-cart", function(e) {
             e.preventDefault();
-            const productId = $(this).data("product-id");
+            const $btn = $(this);
+            
+            // Prevent adding to cart if out of stock
+            if ($btn.hasClass('btn-disabled') || $btn.is(':disabled')) {
+                showToast("Sản phẩm hiện đã hết hàng", "error");
+                return false;
+            }
+
+            const productId = $btn.data("product-id");
             const quantity = parseInt($("#productQuantity").val()) || 1;
+            
+            if (quantity <= 0) {
+                showToast("Số lượng không hợp lệ", "error");
+                return false;
+            }
+            
             addToCart(productId, quantity);
         });
 

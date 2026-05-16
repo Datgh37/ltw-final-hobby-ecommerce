@@ -88,8 +88,382 @@ html, body {
 }
 
 /* ============================================
-   Product Card Responsive Fixes
+   ADVANCED VIEW MODE SYSTEM (REWRITTEN)
    ============================================ */
+
+/* 1. Animation & Transition Classes */
+#product-list-partial {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#product-list-partial.view-switching {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+/* 2. Sort Bar Stability (Mobile Fix) */
+.filter__option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.view-mode-btn {
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 15px;
+    color: #b2b2b2;
+    transition: all 0.3s ease;
+}
+
+.view-mode-btn.active, .view-mode-btn:hover {
+    color: #560bad;
+}
+
+@media only screen and (max-width: 767px) {
+    .filter__sort span { font-size: 13px; }
+    .filter__sort .nice-select { font-size: 13px; height: 35px; line-height: 33px; }
+    .filter__found h6 { font-size: 12px; }
+    .view-mode-btn { margin-left: 10px; font-size: 16px; }
+}
+
+/* 3. Global Card Enhancements (Sale Badge for Home/Featured) */
+.product__discount__percent {
+    height: 40px;
+    width: 40px;
+    background: #dd2222;
+    border-radius: 50%;
+    font-size: 12px;
+    color: #ffffff;
+    line-height: 40px;
+    text-align: center;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index: 5;
+    font-weight: 700;
+}
+
+/* Global Card Enhancements (Minimalist by default) */
+.product__category-label,
+.product__item__list-meta,
+.product__item__list-actions {
+    display: none; 
+}
+
+/* Sold Out Overlay */
+.product__item__pic, .product__details__pic__item {
+    position: relative;
+    overflow: hidden;
+}
+
+.sold-out-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.sold-out-text {
+    color: #fff;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: rgba(221, 34, 34, 0.8); /* Aesthetic red from initial request */
+    border: 2px solid #fff;
+    padding: 5px 15px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    font-size: 14px; /* Default for PC */
+    transform: rotate(-20deg); /* Reintroduced diagonal rotation */
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* Tablet Scaling */
+@media only screen and (max-width: 991px) {
+    .sold-out-text {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+}
+
+/* Mobile Scaling */
+@media only screen and (max-width: 767px) {
+    .sold-out-text {
+        font-size: 10px;
+        padding: 3px 8px;
+        letter-spacing: 0.5px;
+    }
+}
+
+/* Global Sold Out Image Style (Cards) */
+.product__item.is-sold-out .product__item__pic,
+.featured__item.is-sold-out .featured__item__pic {
+    /* filter: grayscale(80%); */ /* MOVED to backdrop-filter below */
+    /* opacity: 0.8; */
+}
+
+/* Product Details: ONLY Main Image gets grayscale, NOT carousel */
+.product__details__pic.is-sold-out .product__details__main-img {
+    filter: grayscale(80%);
+    opacity: 0.8;
+}
+
+/* Ensure carousel thumbnails stay in full color */
+.product__details__pic__slider img {
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+.btn-disabled {
+    background-color: #999 !important;
+    border-color: #999 !important;
+    color: #fff !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.stock-status {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.stock-status.out-of-stock {
+    color: #dd2222;
+}
+
+/* Reusable Utility & Product Card Classes */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.product-category-label {
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    display: block;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #b2b2b2;
+    font-weight: 400;
+}
+
+.old-price-sm {
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.old-price-lg {
+    margin-left: 10px;
+    font-size: 15px;
+}
+
+.star-rating-icon {
+    color: #EDBB0E;
+    font-size: 13px;
+}
+
+.badge-stock {
+    font-weight: 400;
+    padding: 4px 8px;
+}
+
+.badge-stock-in {
+    background-color: #7fad39 !important;
+}
+
+.badge-stock-out {
+    background-color: #dd2222 !important;
+}
+
+.product-list-price-final {
+    font-size: 20px;
+    color: #1c1c1c;
+    font-weight: 700;
+    text-decoration: none !important; /* Fix: Ensure official price has no strikethrough */
+}
+
+.product-list-price-heading {
+    color: #1c1c1c;
+    font-weight: 700;
+}
+
+/* Cart Specific Styles */
+.shoping__cart__item {
+    padding-left: 30px !important;
+}
+
+.cart-item-img {
+    width: 100px !important;
+    height: 100px !important;
+    object-fit: contain !important;
+    background-color: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.shoping__cart__item h5 {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 20px;
+    font-weight: 700;
+    font-size: 16px;
+    color: #1c1c1c;
+    margin-bottom: 0;
+}
+
+.stock-status.in-stock {
+    color: #2b9348;
+}
+
+.product__discount__percent {
+    height: 40px;
+    width: 40px;
+    background: #dd2222;
+    border-radius: 50%;
+    font-size: 12px;
+    color: #ffffff;
+    line-height: 40px;
+    text-align: center;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index: 5;
+    font-weight: 700;
+}
+
+/* 4. LIST VIEW (Detailed & Balanced Pillar Layout) */
+.list-view .product__item {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 20px !important;
+    position: relative;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.list-view .product__category-label,
+.list-view .product__item__list-meta,
+.list-view .product__item__list-actions {
+    display: block !important;
+}
+
+.list-view .product__item__list-actions {
+    display: flex !important;
+}
+
+/* Hover Effect: Purple border & subtle shadow */
+.list-view .product__item:hover {
+    border-color: #560bad;
+    box-shadow: 0 8px 25px rgba(86, 11, 173, 0.1);
+    transform: translateY(-2px);
+}
+
+.list-view .product__item__pic {
+    width: 180px;
+    height: 180px;
+    margin-right: 25px;
+    flex-shrink: 0;
+}
+
+.list-view .product__item__text {
+    flex-grow: 1;
+    text-align: left;
+    padding-top: 0 !important;
+}
+
+.list-view .product__item__text h6 {
+    margin-bottom: 12px;
+}
+
+.list-view .product__item__text h6 a {
+    font-size: 19px;
+    font-weight: 700;
+    color: #1c1c1c;
+}
+
+.list-view .product__item__list-actions {
+    display: flex !important;
+    align-items: center;
+    margin-left: 20px;
+    flex-shrink: 0;
+}
+
+/* Rounded Button */
+.list-view .product__item__list-actions .primary-btn {
+    border-radius: 8px; /* Bo góc nhẹ như yêu cầu */
+    padding: 12px 25px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* 5. RESPONSIVE LIST (Horizontal Compact) */
+@media only screen and (max-width: 575px) {
+    .list-view .product__item {
+        padding: 10px;
+        align-items: flex-start;
+    }
+
+    .list-view .product__item__pic {
+        width: 105px;
+        height: 105px;
+        margin-right: 12px;
+    }
+
+    .list-view .product__item__text h6 a {
+        font-size: 14px;
+    }
+
+    .list-view .product__item__list-actions {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        margin-left: 0;
+    }
+
+    .list-view .product__item__list-actions .primary-btn {
+        padding: 4px 10px;
+        font-size: 10px;
+        border-radius: 4px;
+    }
+
+    /* Grid Mode: Ensure 2 columns don't overflow */
+    .grid-view .product__item__pic {
+        height: 155px;
+    }
+
+    .list-view .product__item__list-meta {
+        display: none;
+    }
+}
+
+/* Force 1 column in List View regardless of Bootstrap classes */
+.list-view #product-grid-row > div {
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+}
 
 /* Use flexbox on the card so image + text stack properly */
 .product__item {
@@ -210,23 +584,69 @@ html, body {
 }
 
 /* Mobile: shrink font and center the "Products found" text */
-@media (max-width: 575.98px) {
-  .filter__sort span,
+@media (max-width: 767px) {
+  .filter__item {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 15px !important;
+    border-bottom: 1px solid #f2f2f2;
+  }
+
+  .filter__item .row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin: 0 !important; /* Remove negative row margins */
+  }
+
+  .filter__item .row > div {
+    width: auto !important;
+    flex: 0 0 auto !important;
+    max-width: none !important;
+    padding: 0 5px !important;
+  }
+
+  /* Only hide the label "Sort By", keep the selected text */
+  .filter__sort > span {
+    display: none !important;
+  }
+
   .filter__sort .nice-select {
-    font-size: 13px;
+    font-size: 13px !important;
+    height: 36px !important;
+    line-height: 34px !important;
+    padding-left: 12px !important;
+    padding-right: 28px !important;
+    border-radius: 4px !important;
+    min-width: 120px;
+  }
+
+  /* Perfect arrow alignment */
+  .filter__sort .nice-select:after {
+    right: 12px !important;
+    top: 50% !important;
+    margin-top: 0 !important;
+    transform: translateY(-50%) rotate(45deg) !important;
   }
 
   .filter__found {
-    text-align: right;
+    text-align: center !important;
   }
 
   .filter__found h6 {
-    font-size: 13px;
+    font-size: 13px !important;
+    margin: 0 !important;
+    white-space: nowrap;
   }
 
-  .filter__item {
-    padding-top: 25px;
-    padding-bottom: 10px;
+  .filter__option {
+    text-align: right !important;
+  }
+
+  .filter__option span {
+    font-size: 16px !important;
+    margin-left: 8px !important;
   }
 }
 
@@ -314,7 +734,6 @@ html, body {
 /* 2. Xử lý các khung ảnh dùng thẻ <img> (Trang chi tiết, Giỏ hàng, Latest) */
 .product__details__pic__item img,
 .product__details__pic__slider img,
-.shoping__cart__table table tbody tr td.shoping__cart__item img,
 .latest-product__item__pic img {
   width: 100% !important;
   height: 100% !important;
@@ -349,7 +768,7 @@ html, body {
 
 /* Sale price span (the original price) should be normal weight */
 .product__item__text h5 span,
-.product__item__price span {
+.product__item__price span.old-price {
   display: inline-block;
   font-size: 14px;
   font-weight: 400 !important;
@@ -622,7 +1041,17 @@ html, body {
 
 
 /* Mobile & Card Enhancement */
-.header-mobile-avatar { width: 80px; height: 80px; object-fit: cover; border: 3px solid #560bad; box-shadow: 0 4px 10px rgba(86, 11, 173, 0.2); }
+.header-mobile-avatar { 
+    width: 55px !important; 
+    height: 55px !important; 
+    object-fit: cover; 
+    border: 2px solid #560bad !important; 
+    box-shadow: 0 4px 10px rgba(86, 11, 173, 0.2); 
+    margin-right: 15px !important; 
+}
+.user-info {
+    text-align: left !important;
+}
 .auth-card-premium { box-shadow: 0 15px 35px rgba(0,0,0,0.12) !important; border: 1px solid rgba(0,0,0,0.08) !important; transition: transform 0.3s ease; }
 .auth-card-premium:hover { transform: translateY(-5px); }
 
@@ -1113,6 +1542,541 @@ html, body {
 }
 
 /* ============================================
+   PRODUCT LIST VIEW (DETAILS MODE) - RESPONSIVE
+   ============================================ */
+
+/* Force full width for columns in List View mode */
+.list-view #product-grid-row > div {
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+}
+
+/* Force horizontal layout for list mode across all screens */
+#product-list-partial.list-view .product__item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    gap: 20px;
+    width: 100%;
+    overflow: hidden;
+}
+
+#product-list-partial.list-view .product__item__pic {
+    flex: 0 0 180px !important;
+    width: 180px !important;
+    max-width: 180px !important;
+    height: 180px !important;
+    margin-bottom: 0 !important;
+    overflow: hidden !important;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #ebebeb;
+}
+
+#product-list-partial.list-view .product__item__pic img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+
+#product-list-partial.list-view .product__item__text {
+    flex: 1 !important;
+    min-width: 0 !important; /* Prevents flex items from growing beyond their container */
+    text-align: left;
+    padding-top: 0;
+    overflow: hidden;
+}
+
+#product-list-partial.list-view .product__item__text h6 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+#product-list-partial.list-view .product__item__list-meta {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 10px;
+}
+
+#product-list-partial.list-view .product__item__list-actions {
+    flex: 0 0 160px !important;
+    width: 160px !important;
+    max-width: 160px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Tablet & Smaller Desktop Fix (991px and down) */
+@media only screen and (max-width: 991px) {
+    #product-list-partial.list-view .product__item__pic {
+        flex: 0 0 140px !important;
+        width: 140px !important;
+        max-width: 140px !important;
+        height: 140px !important;
+    }
+    
+    #product-list-partial.list-view .product__item__list-actions {
+        flex: 0 0 130px !important;
+        width: 130px !important;
+        max-width: 130px !important;
+    }
+}
+
+/* Mobile Specific (Horizontal Compact - 767px and down) */
+@media only screen and (max-width: 767px) {
+    #product-list-partial.list-view .product__item {
+        padding: 10px 8px !important;
+        gap: 12px !important;
+        align-items: center;
+    }
+
+    #product-list-partial.list-view .product__item__pic {
+        flex: 0 0 95px !important;
+        width: 95px !important;
+        max-width: 95px !important;
+        height: 95px !important;
+    }
+
+    #product-list-partial.list-view .product__item__text h6 {
+        font-size: 13px !important;
+        margin-bottom: 2px !important;
+        line-height: 1.3 !important;
+    }
+
+    #product-list-partial.list-view .product-category-label {
+        font-size: 9px !important;
+        margin-bottom: 2px !important;
+    }
+
+    #product-list-partial.list-view .product__item__list-meta {
+        margin-bottom: 4px !important;
+        line-height: 1 !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow: hidden;
+    }
+
+    #product-list-partial.list-view .product__item__list-meta > div {
+        margin-right: 6px !important;
+        font-size: 10px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80px; /* Limit width of each meta item on mobile */
+    }
+    
+    #product-list-partial.list-view .product__item__list-meta .badge-stock {
+        padding: 2px 4px !important;
+        font-size: 9px !important;
+        max-width: none; /* Badge should show full text if possible or be very short */
+    }
+
+    #product-list-partial.list-view .product__item .product-list-price-final {
+        font-size: 15px !important;
+    }
+
+    #product-list-partial.list-view .product__item .old-price {
+        font-size: 11px !important;
+    }
+
+    #product-list-partial.list-view .product__item__list-actions {
+        position: static !important; /* Fix: Reset from absolute positioning */
+        flex: 0 0 80px !important;
+        width: 80px !important;
+        max-width: 80px !important;
+        margin-left: 5px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 100% !important; /* Allow centering within container height */
+    }
+
+    #product-list-partial.list-view .product__item__list-actions .primary-btn {
+        padding: 8px 4px !important;
+        font-size: 10px !important;
+        letter-spacing: 0;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Fix popup icons: Very small & Hover synchronized */
+    #product-list-partial.list-view .product__item__pic__hover {
+        bottom: -40px !important; /* Hide by default */
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    #product-list-partial.list-view .product__item:hover .product__item__pic__hover {
+        bottom: 5px !important; /* Show on hover */
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #product-list-partial.list-view .product__item__pic__hover li a {
+        width: 24px !important;
+        height: 24px !important;
+        line-height: 24px !important;
+        font-size: 10px !important;
+    }
+    
+    #product-list-partial.list-view .product__item__pic__hover li {
+        margin-right: 1px !important;
+    }
+
+    #product-list-partial.list-view .product__item__pic__hover li {
+        margin-right: 1px !important;
+    }
+}
+
+/* Base adjustment for List View icons (Tablet/Desktop) */
+#product-list-partial.list-view .product__item__pic__hover {
+    bottom: -50px; /* Hide by default in list mode */
+}
+
+#product-list-partial.list-view .product__item:hover .product__item__pic__hover {
+    bottom: 15px; /* Show on hover */
+}
+
+#product-list-partial.list-view .product__item__pic__hover li a {
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+}
+
+/* Proportional Discount Tag Scaling (approx 16% of image size) */
+.product__discount__percent {
+    height: 45px !important; /* PC Grid (270px image) */
+    width: 45px !important;
+    line-height: 45px !important;
+    font-size: 13px !important;
+    left: 10px !important;
+    top: 10px !important;
+}
+
+/* Tablet / Mobile Grid (2-column, image approx 160-200px) */
+@media only screen and (max-width: 991px) {
+    .product__discount__percent {
+        height: 32px !important;
+        width: 32px !important;
+        line-height: 32px !important;
+        font-size: 10px !important;
+        left: 8px !important;
+        top: 8px !important;
+    }
+}
+
+/* List View (PC/Tablet) - Thumb approx 200px */
+#product-list-partial.list-view .product__discount__percent {
+    height: 36px !important;
+    width: 36px !important;
+    line-height: 36px !important;
+    font-size: 11px !important;
+}
+
+/* List View (Mobile) - Thumb is 95px */
+@media only screen and (max-width: 767px) {
+    #product-list-partial.list-view .product__discount__percent {
+        height: 18px !important; /* ~18% ratio for readability */
+        width: 18px !important;
+        line-height: 18px !important;
+        font-size: 7px !important;
+        left: 4px !important;
+        top: 4px !important;
+    }
+}
+
+/* Global Components - Auth Button (Minimal Soft Rounded) */
+.auth-btn {
+    background-color: #560bad !important;
+    color: white !important;
+    border-radius: 5px !important; /* Minimal rounded */
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+    transition: all 0.3s ease !important;
+    border: none !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+.auth-btn:hover {
+    background-color: #3a0ca3 !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(86, 11, 173, 0.4);
+}
+
+/* Global Colors - Bright Accent Override */
+:root {
+    --bright-accent: #00a2ff; /* New brighter blue for active state only */
+}
+
+/* CUSTOM SLIM SCROLLBAR (PC & Tablet) */
+@media (min-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 8px; /* Slim width */
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent; /* Makes it look like an overlay */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(86, 11, 173, 0.3); /* Glassmorphism Purple */
+        border-radius: 10px;
+        border: 2px solid transparent; /* Padding around the thumb */
+        background-clip: content-box;
+        transition: background 0.3s;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(86, 11, 173, 0.6);
+        background-clip: content-box;
+    }
+    
+    /* Firefox Support */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(86, 11, 173, 0.3) transparent;
+    }
+}
+
+/* HIDE SCROLLBAR ON MOBILE */
+@media (max-width: 767px) {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    * {
+        scrollbar-width: none;
+    }
+}
+
+/* Upgrade Active states that were originally blue */
+.header__menu ul li.active a {
+    color: var(--bright-accent) !important;
+}
+
+/* Revert Hover states to original muted blue */
+.header__menu ul li:hover a,
+.header__menu__dropdown li a:hover {
+    color: #4361ee !important; 
+}
+
+/* Sidebar Categories - Purple Theme */
+.sidebar__item ul li a:hover,
+.sidebar__category--active a {
+    color: #560bad !important;
+}
+
+/* Fix Header Menu Overflow on PC/Tablet (below 1200px) - Balanced Version */
+@media only screen and (max-width: 1200px) {
+    /* Slightly increase spacing back to 35px for a more relaxed look */
+    .header__menu ul li {
+        margin-right: 35px !important;
+    }
+    
+    .header__menu ul li:last-child {
+        margin-right: 0 !important;
+    }
+    
+    /* Restore font size to original but keep letter-spacing tight */
+    .header__menu ul li a {
+        font-size: 14px !important;
+        letter-spacing: -0.2px !important;
+    }
+    
+    /* Optimize right-side spacing */
+    .header__cart ul {
+        margin-right: 15px !important;
+    }
+}
+
+/* ============================================
+   MODERN MINIMAL SOFT ROUNDED (4px - 8px)
+   ============================================ */
+
+/* 1. Buttons & Links */
+.primary-btn, .site-btn, .blog__btn, .contact__form button, .sidebar__item__size label, .auth-btn {
+    border-radius: 5px !important;
+    color: #ffffff !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Smooth premium transition */
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Specific rounding for humberger without breaking desktop display */
+.humberger__open {
+    border-radius: 5px !important;
+}
+
+/* Fix: Align "Add to Cart" button height with Quantity input */
+.product__details__text .primary-btn {
+    height: 50px !important;
+    padding: 0 30px !important;
+    line-height: 50px !important;
+    margin-bottom: 10px !important;
+    vertical-align: middle;
+}
+
+.product__details__quantity {
+    vertical-align: middle;
+}
+
+/* Simple & Clean Hover for all Buttons */
+.primary-btn:hover, .site-btn:hover, .blog__btn:hover, .contact__form button:hover, .auth-btn:hover {
+    color: #ffffff !important;
+    text-decoration: none !important;
+    opacity: 0.85; /* Gentle opacity change instead of moving */
+}
+
+.primary-btn:active, .site-btn:active, .blog__btn:active, .contact__form button:active, .auth-btn:active {
+    transform: translateY(1px); /* Very subtle push down */
+}
+
+/* Fix for buttons getting "stuck" */
+.primary-btn:focus, .site-btn:focus, .blog__btn:focus, .contact__form button:focus {
+    color: #ffffff !important;
+    outline: none !important;
+}
+
+.hero__categories__all {
+    border-radius: 5px 5px 0 0 !important;
+}
+
+/* Disable text selection for Hero Banner */
+.hero__text {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* 2. Form Inputs & Selects */
+input[type="text"], input[type="password"], input[type="email"], input[type="tel"],
+textarea, select, .nice-select, .form-control, .checkout__input input, .checkout__input__select {
+    border-radius: 5px !important;
+}
+
+/* 3. Hero Search Form & Button */
+.hero__search__form {
+    border-radius: 6px !important;
+    position: relative;
+    /* overflow: hidden; */ /* REMOVED: This was cutting off the dropdown list */
+}
+
+.hero__search__form .nice-select {
+    z-index: 1001 !important; /* Ensure series dropdown is on top */
+}
+
+.hero__search__form form button {
+    border-radius: 0 6px 6px 0 !important;
+}
+
+/* 4. Category Section Cards */
+.categories__item {
+    border-radius: 8px !important;
+}
+
+/* 5. Product Cards & Images */
+.product__item__pic, .featured__item__pic, .product__discount__item__pic, .latest-product__item__pic {
+    border-radius: 6px !important;
+}
+
+.product__item, .list-view .product__item {
+    border-radius: 8px !important;
+}
+
+/* 6. Shopping Cart & Checkout Blocks */
+.shoping__checkout, .checkout-premium, .custom-modal {
+    border-radius: 10px !important;
+}
+
+.cart-item-img {
+    border-radius: 5px !important;
+}
+
+.pro-qty, .pro-qty-cart {
+    border-radius: 5px !important;
+}
+
+/* 7. Profile & Account Specifics - Circular Avatars */
+.profile-avatar-preview, .user-avatar-lg, .header__user-avatar, .user-avatar-sm {
+    border-radius: 50% !important;
+}
+
+.profile-avatar-label {
+    border-radius: 5px !important;
+}
+
+.user-dropdown-menu, .dropdown-menu {
+    border-radius: 6px !important;
+    overflow: hidden;
+}
+
+.hero__categories ul {
+    border-radius: 0 0 6px 6px !important;
+    z-index: 999 !important; /* Fix: Ensure dropdown is above all content */
+    background: #ffffff !important;
+}
+
+/* Fix for Hero Categories on non-home pages being "pushed" or "hidden" */
+.hero.hero-normal .hero__categories {
+    overflow: visible !important;
+}
+
+/* ============================================
+   MOBILE HUMBERGER MENU OPTIMIZATION
+   ============================================ */
+
+.humberger__menu__wrapper {
+    overflow-x: hidden !important; /* Block horizontal scroll */
+    max-width: 100vw;
+}
+
+/* Hide scrollbars but keep functionality */
+.humberger__menu__wrapper {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.humberger__menu__wrapper::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Webkit */
+}
+
+/* Ensure content fits within the 300px width */
+.humberger__menu__wrapper > * {
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+.humberger__menu__nav ul li a {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+/* Fix social icons or widgets that might overflow */
+.humberger__menu__widget, .header__top__right__social, .humberger__menu__contact {
+    width: 100% !important;
+    overflow: hidden;
+}
+
+/* ============================================
    MOBILE RESPONSIVE FIXES
    ============================================ */
 
@@ -1132,6 +2096,11 @@ html, body {
     .hero__search__phone {
         float: none !important;
         margin-top: 20px;
+    }
+
+    /* Tablet: Align banner with layout by reducing left padding */
+    .hero__item {
+        padding-left: 45px !important; /* Adjust as needed for alignment */
     }
 }
 
@@ -1153,7 +2122,7 @@ html, body {
         height: auto !important;
         min-height: 250px;
         padding: 30px 20px !important;
-        padding-left: 0 !important; /* Removed left padding */
+        padding-left: 20px !important; /* Fix: Add a little padding to prevent touching edge */
         background-size: cover !important;
         background-position: center right !important;
         display: flex;
@@ -1204,3 +2173,77 @@ html, body {
 
 }
 
+/* ============================================
+   PRODUCT DETAIL & CARD FIXES
+   ============================================ */
+
+/* 1. Align Add to Cart button with Quantity Input */
+.product__details__quantity {
+    display: inline-block !important;
+    vertical-align: middle !important;
+    margin-right: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+.product__details__text .primary-btn {
+    display: inline-block !important;
+    vertical-align: middle !important;
+    height: 50px !important; /* Match Ogani pro-qty height */
+    line-height: 48px !important; /* Adjust for border if any */
+    padding: 0 30px !important;
+    margin-bottom: 10px !important;
+}
+
+/* 2. Sold Out Overlay & Hover Icons Priority */
+.sold-out-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3); /* Subtle white wash */
+    backdrop-filter: grayscale(80%) blur(1px); /* Professional grayscale effect on background only */
+    -webkit-backdrop-filter: grayscale(80%) blur(1px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2 !important; /* Below the hover icons */
+    pointer-events: none; /* Allow clicks to pass through to the image/icons if needed */
+}
+
+/* Sold out text styles moved to top consolidated block */
+
+/* Ensure Hover Icons are always on top */
+.product__item__pic__hover, 
+.featured__item__pic__hover,
+.product__discount__item__pic__hover {
+    z-index: 10 !important;
+}
+
+/* Make icons more visible on the white overlay */
+.is-sold-out .product__item__pic__hover li a,
+.is-sold-out .featured__item__pic__hover li a {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* 3. Lock Quantity to 0 for Out of Stock */
+.qty-disabled {
+    pointer-events: none !important;
+    opacity: 0.6;
+    background: #ebebeb !important;
+}
+
+.qty-disabled .qtybtn {
+    visibility: hidden; /* Hide +/- buttons */
+}
+
+.qty-disabled input {
+    color: #999 !important;
+}
+
+/* 4. Fine-tuning List View 'Chi tiết' Button */
+.product__item__list-actions .primary-btn {
+    padding: 10px 20px 10px 15px !important; /* Thụt padding phải vào và giảm diện tích ngang */
+    letter-spacing: 1px !important; /* Giảm khoảng cách chữ để nút gọn hơn */
+    font-size: 13px !important;
+}

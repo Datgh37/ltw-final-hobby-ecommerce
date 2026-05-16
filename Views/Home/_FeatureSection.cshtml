@@ -25,7 +25,8 @@
                 {
                     { "ColClass", "col-lg-3 col-md-4 col-sm-6 col-6" },
                     { "ExtraClasses", $"mix cat-{item.CategoryId}" },
-                    { "IsFeatured", true }
+                    { "IsFeatured", true },
+                    { "ShowCategory", true }
                 };
                 @await Html.PartialAsync("../Products/_ProductCard", item, viewData)
             }

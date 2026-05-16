@@ -5,6 +5,13 @@ $(document).ready(function () {
             $(this).remove();
         });
     }, 5000);
+    
+    // Global AJAX setup for Anti-Forgery Token
+    $.ajaxSetup({
+        headers: {
+            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+        }
+    });
 
     // 2. Hiện/Ẩn mật khẩu toàn cục
     $(document).on('click', '.password-toggle', function() {
@@ -150,4 +157,22 @@ $(document).ready(function () {
         });
     }
     updateFavCount();
+
+    // 6. Xử lý dọn dẹp URL tìm kiếm (Clean URL)
+    $(document).on('submit', '.hero-search-container', function (e) {
+        const $form = $(this);
+        const keyword = $('#heroSearchInput').val().trim();
+        const seriesId = $form.find('select[name="seriesId"]').val();
+
+        // Nếu cả 2 đều trống, chuyển hướng về trang Products sạch
+        if (!keyword && !seriesId) {
+            e.preventDefault();
+            window.location.href = $form.attr('action') || '/Products';
+        }
+        // Nếu từ khóa trống nhưng có chọn Series, dọn dẹp để URL chỉ còn seriesId
+        else if (!keyword && seriesId) {
+            e.preventDefault();
+            window.location.href = '/Products?seriesId=' + seriesId;
+        }
+    });
 });

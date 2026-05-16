@@ -43,7 +43,7 @@
                                     decimal subtotal = item.Product.UnitPrice * item.Quantity;
                                     <tr class="cart-row" data-cart-item-id="@item.CartItemId">
                                         <td class="shoping__cart__item">
-                                            <img src="@Url.Content(primaryImage?.ImageUrl ?? "~/images/product-default.png")" width="100" alt="">
+                                            <img src="@Url.Content(primaryImage?.ImageUrl ?? "~/images/product-default.png")" class="cart-item-img" alt="@item.Product.ProductName">
                                             <h5>@item.Product.ProductName</h5>
                                         </td>
                                         <td class="shoping__cart__price">

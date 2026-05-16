@@ -42,13 +42,16 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
         // POST: /Cart/AddToCart (AJAX)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
+            if (quantity <= 0) return Json(new { success = false, message = "Số lượng không hợp lệ" });
             if (!User.Identity.IsAuthenticated)
             {
                 return Json(new { success = false, message = "Vui lòng đăng nhập để mua hàng" });
             }
 
+            // Lấy AccountId từ Identity (xác thực người dùng hiện tại)
             var accountId = User.FindFirst("AccountId")?.Value;
             if (string.IsNullOrEmpty(accountId))
             {
@@ -113,14 +116,20 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
         // POST: /Cart/UpdateQuantity (AJAX)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateQuantity(int cartItemId, int quantity)
         {
-            if (quantity < 1) return Json(new { success = false });
+            if (quantity < 1) return Json(new { success = false, message = "Số lượng không hợp lệ" });
+
+            // Lấy danh tính người dùng hiện tại để đảm bảo quyền sở hữu (Chống lỗi IDOR)
+            var accountId = User.FindFirst("AccountId")?.Value;
+            if (string.IsNullOrEmpty(accountId)) return Json(new { success = false, message = "Vui lòng đăng nhập" });
 
             var cartItem = await _context.CartItems
                 .Include(x => x.Product)
                 .Include(x => x.Cart)
-                .FirstOrDefaultAsync(x => x.CartItemId == cartItemId);
+                // Chỉ tìm sản phẩm nếu nó thuộc về AccountId của người đang đăng nhập
+                .FirstOrDefaultAsync(x => x.CartItemId == cartItemId && x.Cart.AccountId == accountId);
 
             if (cartItem == null) return Json(new { success = false });
 
@@ -145,15 +154,20 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
         // POST: /Cart/DeleteCartItem (AJAX)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCartItem(int cartItemId)
         {
+            // Bảo mật: Xác thực danh tính từ Cookie/Token thay vì tin tưởng ID từ client
+            var accountId = User.FindFirst("AccountId")?.Value;
+            if (string.IsNullOrEmpty(accountId)) return Json(new { success = false, message = "Vui lòng đăng nhập" });
+
             var cartItem = await _context.CartItems
                 .Include(x => x.Cart)
-                .FirstOrDefaultAsync(x => x.CartItemId == cartItemId);
+                // Verification: Kiểm tra chéo ID món hàng với ID chủ sở hữu
+                .FirstOrDefaultAsync(x => x.CartItemId == cartItemId && x.Cart.AccountId == accountId);
 
             if (cartItem == null) return Json(new { success = false });
 
-            var accountId = cartItem.Cart.AccountId;
             _context.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
 
