@@ -284,20 +284,24 @@ html, body {
   top: 15px;
 }
 
-/* Discounted price styling in grid */
-.product__item__text h5 span {
+/* Ensure the main price stays prominent and bold across all card types */
+.product__item__text h5,
+.featured__item__text h5,
+.product__item__price,
+.product__discount__item__text .product__item__price {
+  color: #1c1c1c;
+  font-weight: 700 !important;
+}
+
+/* Sale price span (the original price) should be normal weight */
+.product__item__text h5 span,
+.product__item__price span {
   display: inline-block;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 400 !important;
   text-decoration: line-through;
   margin-left: 10px;
   color: #b2b2b2;
-}
-
-/* Ensure the main price stays prominent */
-.product__item__text h5 {
-  color: #1c1c1c;
-  font-weight: 700;
 }
 
 /* ============================================
@@ -1053,3 +1057,96 @@ html, body {
     /* Keeping it contained within the table cell */
     display: inline-flex;
 }
+
+/* ============================================
+   MOBILE RESPONSIVE FIXES
+   ============================================ */
+
+/* Global overflow prevention */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+/* Fix search form width causing horizontal scroll */
+@media only screen and (max-width: 991px) {
+    .hero__search__form {
+        width: 100% !important;
+        float: none !important;
+    }
+    
+    .hero__search__phone {
+        float: none !important;
+        margin-top: 20px;
+    }
+}
+
+/* Fix Product Card Aspect Ratio on Tablet & Mobile */
+@media only screen and (max-width: 991px) {
+    .product__item__pic,
+    .featured__item__pic {
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important; /* Force a perfect square */
+        background-size: cover !important;
+        background-position: center !important;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    /* Banner Responsive Adjustments */
+    .hero__item {
+        height: auto !important;
+        min-height: 250px;
+        padding: 30px 20px !important;
+        padding-left: 0 !important; /* Removed left padding */
+        background-size: cover !important;
+        background-position: center right !important;
+        display: flex;
+        align-items: center;
+    }
+
+    .hero__text {
+        padding: 0 !important;
+    }
+
+    .hero__text h2 {
+        font-size: 24px !important;
+        line-height: 30px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .hero__text span {
+        font-size: 12px !important;
+        letter-spacing: 2px !important;
+    }
+
+    .hero__text p {
+        font-size: 14px !important;
+        margin-bottom: 15px !important;
+    }
+
+    .hero__text .primary-btn {
+        padding: 10px 20px !important;
+        font-size: 13px !important;
+    }
+
+    /* Shrink footer logo on mobile */
+    .footer__about__logo img {
+        max-width: 150px;
+        height: auto;
+    }
+}
+
+@media only screen and (max-width: 479px) {
+    .hero__item {
+        min-height: 200px;
+    }
+    
+    .hero__text h2 {
+        font-size: 20px !important;
+        line-height: 26px !important;
+    }
+
+}
+

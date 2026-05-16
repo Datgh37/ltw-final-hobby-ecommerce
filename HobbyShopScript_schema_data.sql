@@ -1,4 +1,4 @@
-﻿USE Ecommerce_Hobby_Shop
+USE Ecommerce_Hobby_Shop
 GO
 
 -----------------------------------------------------------
@@ -20,7 +20,7 @@ GO
 -----------------------------------------------------------
 SET IDENTITY_INSERT [dbo].[Categories] ON;
 INSERT INTO [dbo].[Categories] (CategoryID, CategoryName, CategorySlug, Image) VALUES 
-(1, N'Mô hình xe', N'cars', N'~/images/Categories/cars.png'),
+(1, N'MiniGT', N'cars', N'~/images/Categories/cars.png'),
 (2, N'Gundam', N'gundam', N'~/images/Categories/gundam.png'),
 (3, N'Figure', N'figure', N'~/images/Categories/figure.png'),
 (4, N'Dụng cụ', N'tools', N'~/images/Categories/tools.png'),
