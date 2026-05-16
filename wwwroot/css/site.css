@@ -1553,6 +1553,33 @@ html, body {
 }
 
 /* Force horizontal layout for list mode across all screens */
+#product-list-partial.list-view #product-grid-row {
+    max-height: 1040px; /* PC/Tablet height */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 2px; /* Để không bị che hiệu ứng hover của item đầu tiên */
+}
+
+/* Mobile height adjustment for List View */
+@media only screen and (max-width: 767px) {
+    #product-list-partial.list-view #product-grid-row {
+        max-height: 600px; /* Smaller height for mobile screens */
+    }
+}
+
+/* Custom scrollbar for Product Grid internal scroll */
+#product-list-partial.list-view #product-grid-row::-webkit-scrollbar {
+    width: 6px;
+}
+#product-list-partial.list-view #product-grid-row::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+#product-list-partial.list-view #product-grid-row::-webkit-scrollbar-thumb {
+    background: rgba(86, 11, 173, 0.4);
+    border-radius: 10px;
+}
+
 #product-list-partial.list-view .product__item {
     display: flex;
     flex-direction: row;
@@ -1565,6 +1592,13 @@ html, body {
     gap: 20px;
     width: 100%;
     overflow: hidden;
+    transition: all 0.3s ease; /* Smooth hover transition */
+}
+
+#product-list-partial.list-view .product__item:hover {
+    border-color: #7209B7 !important; /* Purple glow border */
+    box-shadow: 0 4px 15px rgba(114, 9, 183, 0.15); /* Soft purple shadow */
+    transform: translateY(-2px);
 }
 
 #product-list-partial.list-view .product__item__pic {
@@ -2241,9 +2275,97 @@ html, body {
     color: #999 !important;
 }
 
-/* 4. Fine-tuning List View 'Chi tiết' Button */
-.product__item__list-actions .primary-btn {
-    padding: 10px 20px 10px 15px !important; /* Thụt padding phải vào và giảm diện tích ngang */
-    letter-spacing: 1px !important; /* Giảm khoảng cách chữ để nút gọn hơn */
-    font-size: 13px !important;
+/* 4. Fine-tuning List View 'Chi tiết' Button (Mobile Only) */
+@media only screen and (max-width: 767px) {
+    .product__item__list-actions .primary-btn {
+        padding: 8px 8px 8px 6px !important; /* Thu hẹp thêm chiều ngang */
+        letter-spacing: 0.5px !important;
+        font-size: 11px !important;
+        text-align: center !important;
+        justify-content: center !important;
+        width: auto !important;
+        min-width: 80px; /* Thu hẹp min-width */
+        margin-right: 5px; /* Giữ khoảng cách với mép container */
+    }
+}
+
+/* 5. Header & Hamburger Icon Alignment Fix */
+.header__tabs ul, 
+.humberger__menu__cart ul {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 0 !important;
+    list-style: none;
+    padding: 0;
+}
+
+.header__tabs ul li, 
+.humberger__menu__cart ul li {
+    display: flex !important;
+    align-items: center !important;
+    margin-right: 25px !important;
+}
+
+.header__tabs ul li:last-child, 
+.humberger__menu__cart ul li:last-child {
+    margin-right: 0 !important;
+}
+
+.header__tabs ul li a, 
+.humberger__menu__cart ul li a {
+    display: flex !important;
+    align-items: center !important;
+    line-height: 1 !important;
+}
+
+/* Fix vertical offset for heart icon */
+.header__tabs ul li a i, 
+.humberger__menu__cart ul li a i {
+    margin-top: 2px; /* Slight nudge for optical alignment */
+}
+
+/* Ensure the cart view component content also aligns */
+.cart-vc-content {
+    display: flex;
+    align-items: center;
+}
+
+/* 6. Synchronize Notification Badges (Counts) */
+.header__tabs ul li a span, 
+.humberger__menu__cart ul li a span,
+.cart-count {
+    position: absolute !important;
+    top: -2px !important; /* Giống nhau về độ cao */
+    right: -10px !important; /* Giống nhau về khoảng cách lề */
+    height: 14px !important;
+    width: 14px !important;
+    line-height: 14px !important;
+    font-size: 9px !important;
+    background: #7fad39 !important; /* Green for Header & Cart */
+    color: #ffffff !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 700 !important;
+    padding: 0 !important;
+}
+
+/* Revert Hamburger badges to original Purple theme */
+.humberger__menu__cart ul li a span {
+    background: #560bad !important;
+}
+
+/* Specific nudge for heart icon badge as it is wider */
+.header__tabs ul li a span, 
+.humberger__menu__cart ul li a span {
+    right: -13px !important;
+}
+
+/* Reset relative positioning for the icon containers to anchor the badges */
+.header__tabs ul li a, 
+.humberger__menu__cart ul li a,
+.cart-link-icon {
+    position: relative !important;
+    display: inline-block !important;
 }
