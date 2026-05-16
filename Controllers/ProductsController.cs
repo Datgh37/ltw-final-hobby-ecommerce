@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -30,58 +26,10 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         // GET: Products
         public async Task<IActionResult> Index(int? categoryId, int? seriesId, string? keyword, string? sort, decimal? minPrice, decimal? maxPrice, int page = 1, int pageSize = 12)
         {
-            var productQuery = _context.Products
-                .AsNoTracking()
-                .AsQueryable();
-
-            if (categoryId.HasValue)
-            {
-                productQuery = productQuery.Where(x => x.CategoryId == categoryId.Value);
-            }
-
-            if (seriesId.HasValue)
-            {
-                productQuery = productQuery.Where(x => x.SeriesId == seriesId.Value);
-            }
-
-            if (!string.IsNullOrWhiteSpace(keyword))
-            {
-                productQuery = productQuery.Where(x => x.ProductName.Contains(keyword));
-            }
-
-            var overallMaxPrice = await _context.Products.AsNoTracking().Select(x => (decimal?)x.UnitPrice).MaxAsync() ?? 0m;
-            var selectedMinPrice = minPrice ?? 0m;
-            var selectedMaxPrice = maxPrice ?? overallMaxPrice;
-
-            if (selectedMinPrice > 0 || selectedMaxPrice < overallMaxPrice)
-            {
-                productQuery = productQuery.Where(x => x.UnitPrice >= selectedMinPrice && x.UnitPrice <= selectedMaxPrice);
-            }
-
-            productQuery = sort?.ToLowerInvariant() switch
-            {
-                "price_asc" => productQuery.OrderBy(x => x.UnitPrice),
-                "price_desc" => productQuery.OrderByDescending(x => x.UnitPrice),
-                "newest" => productQuery.OrderByDescending(x => x.ProductId),
-                "top_rated" => productQuery.OrderByDescending(x => x.Reviews.Any() ? x.Reviews.Average(r => r.Rating) : 0).ThenByDescending(x => x.ProductId),
-                "discount_desc" => productQuery.OrderByDescending(x => x.Discount).ThenByDescending(x => x.ProductId),
-                "viewcount_desc" => productQuery.OrderByDescending(x => x.ViewCount).ThenByDescending(x => x.ProductId),
-                _ => productQuery.OrderBy(x => x.ProductName)
-            };
-
-            var totalCount = await productQuery.CountAsync();
-            var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)pageSize));
-            page = Math.Clamp(page, 1, totalPages);
-            var skipItems = (page - 1) * pageSize;
-
-            // Use centralized ProjectToCard()
-            var products = await productQuery
-                .Skip(skipItems)
-                .Take(pageSize)
-                .ProjectToCard()
-                .ToListAsync();
-
-            var saleOffProducts = await _context.Products
+            var viewModel = await PrepareProductIndexViewModel(categoryId, seriesId, keyword, sort, minPrice, maxPrice, page, pageSize);
+            
+            // For full Index request, we also need SaleOffProducts
+            viewModel.SaleOffProducts = await _context.Products
                 .AsNoTracking()
                 .Where(x => x.Discount > 0)
                 .OrderByDescending(x => x.Discount)
@@ -89,7 +37,6 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 .ProjectToCard()
                 .ToListAsync();
 
-            // Populate favorite status if user is authenticated
             if (User.Identity.IsAuthenticated)
             {
                 var accountId = User.FindFirst("AccountId")?.Value;
@@ -98,62 +45,23 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     .Select(f => f.ProductId)
                     .ToListAsync();
 
-                foreach (var product in products)
-                {
-                    product.IsFavorite = favoriteProductIds.Contains(product.ProductId);
-                }
-
-                foreach (var product in saleOffProducts)
+                foreach (var product in viewModel.SaleOffProducts)
                 {
                     product.IsFavorite = favoriteProductIds.Contains(product.ProductId);
                 }
             }
 
-            // Shared query object
-            var queryVM = new ProductIndexQueryViewModel
-            {
-                CategoryId = categoryId,
-                SeriesId = seriesId,
-                Keyword = keyword,
-                Sort = sort,
-                MinPrice = minPrice,
-                MaxPrice = maxPrice,
-                Page = page,
-                PageSize = pageSize
-            };
-
-            var viewModel = new ProductIndexViewModel
-            {
-                Query = queryVM,
-                PriceFilter = new PriceFilterViewModel
-                {
-                    MinPrice = 0m,
-                    MaxPrice = overallMaxPrice,
-                    SelectedMinPrice = selectedMinPrice,
-                    SelectedMaxPrice = selectedMaxPrice,
-                    Query = queryVM
-                },
-                SortOptions = new SortOptionsViewModel
-                {
-                    SelectedSort = sort,
-                    TotalCount = totalCount,
-                    Query = queryVM
-                },
-                Pagination = new PaginationViewModel
-                {
-                    CurrentPage = page,
-                    TotalPages = totalPages,
-                    TotalCount = totalCount,
-                    PageSize = pageSize,
-                    ShowArrows = totalPages > 1,
-                    Query = queryVM
-                },
-                Products = products,
-                SaleOffProducts = saleOffProducts
-            };
-
             return View(viewModel);
         }
+
+        // GET: Products/Filter (AJAX Partial)
+        public async Task<IActionResult> Filter(int? categoryId, int? seriesId, string? keyword, string? sort, decimal? minPrice, decimal? maxPrice, int page = 1, int pageSize = 12)
+        {
+            var viewModel = await PrepareProductIndexViewModel(categoryId, seriesId, keyword, sort, minPrice, maxPrice, page, pageSize);
+            return PartialView("_ProductListPartial", viewModel);
+        }
+
+
         // GET: Products/AdminIndex
         public async Task<IActionResult> AdminIndex()
         {
@@ -429,6 +337,115 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", selectedCategory);
             ViewData["SeriesId"] = new SelectList(_context.Series, "SeriesId", "SeriesName", selectedSeries);
             ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "CompanyName", selectedSupplier);
+        }
+        
+        // Helper để dùng chung cho Index và Filter AJAX
+        private async Task<ProductIndexViewModel> PrepareProductIndexViewModel(int? categoryId, int? seriesId, string? keyword, string? sort, decimal? minPrice, decimal? maxPrice, int page = 1, int pageSize = 12)
+        {
+            var productQuery = _context.Products
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (categoryId.HasValue)
+            {
+                productQuery = productQuery.Where(x => x.CategoryId == categoryId.Value);
+            }
+
+            if (seriesId.HasValue)
+            {
+                productQuery = productQuery.Where(x => x.SeriesId == seriesId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                productQuery = productQuery.Where(x => x.ProductName.Contains(keyword));
+            }
+
+            var overallMaxPrice = await _context.Products.AsNoTracking().Select(x => (decimal?)x.UnitPrice).MaxAsync() ?? 0m;
+            var selectedMinPrice = minPrice ?? 0m;
+            var selectedMaxPrice = maxPrice ?? overallMaxPrice;
+
+            if (selectedMinPrice > 0 || selectedMaxPrice < overallMaxPrice)
+            {
+                productQuery = productQuery.Where(x => x.UnitPrice >= selectedMinPrice && x.UnitPrice <= selectedMaxPrice);
+            }
+
+            productQuery = sort?.ToLowerInvariant() switch
+            {
+                "price_asc" => productQuery.OrderBy(x => x.UnitPrice),
+                "price_desc" => productQuery.OrderByDescending(x => x.UnitPrice),
+                "newest" => productQuery.OrderByDescending(x => x.ProductId),
+                "top_rated" => productQuery.OrderByDescending(x => x.Reviews.Any() ? x.Reviews.Average(r => r.Rating) : 0).ThenByDescending(x => x.ProductId),
+                "discount_desc" => productQuery.OrderByDescending(x => x.Discount).ThenByDescending(x => x.ProductId),
+                "viewcount_desc" => productQuery.OrderByDescending(x => x.ViewCount).ThenByDescending(x => x.ProductId),
+                _ => productQuery.OrderBy(x => x.ProductName)
+            };
+
+            var totalCount = await productQuery.CountAsync();
+            var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)pageSize));
+            page = Math.Clamp(page, 1, totalPages);
+            var skipItems = (page - 1) * pageSize;
+
+            var products = await productQuery
+                .Skip(skipItems)
+                .Take(pageSize)
+                .ProjectToCard()
+                .ToListAsync();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var accountId = User.FindFirst("AccountId")?.Value;
+                var favoriteProductIds = await _context.Favorites
+                    .Where(f => f.AccountId == accountId)
+                    .Select(f => f.ProductId)
+                    .ToListAsync();
+
+                foreach (var product in products)
+                {
+                    product.IsFavorite = favoriteProductIds.Contains(product.ProductId);
+                }
+            }
+
+            var queryVM = new ProductIndexQueryViewModel
+            {
+                CategoryId = categoryId,
+                SeriesId = seriesId,
+                Keyword = keyword,
+                Sort = sort,
+                MinPrice = minPrice,
+                MaxPrice = maxPrice,
+                Page = page,
+                PageSize = pageSize
+            };
+
+            return new ProductIndexViewModel
+            {
+                Query = queryVM,
+                PriceFilter = new PriceFilterViewModel
+                {
+                    MinPrice = 0m,
+                    MaxPrice = overallMaxPrice,
+                    SelectedMinPrice = selectedMinPrice,
+                    SelectedMaxPrice = selectedMaxPrice,
+                    Query = queryVM
+                },
+                SortOptions = new SortOptionsViewModel
+                {
+                    SelectedSort = sort,
+                    TotalCount = totalCount,
+                    Query = queryVM
+                },
+                Pagination = new PaginationViewModel
+                {
+                    CurrentPage = page,
+                    TotalPages = totalPages,
+                    TotalCount = totalCount,
+                    PageSize = pageSize,
+                    ShowArrows = totalPages > 1,
+                    Query = queryVM
+                },
+                Products = products
+            };
         }
     }
 }

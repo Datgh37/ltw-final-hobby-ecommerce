@@ -1,9 +1,8 @@
 @using TuNhanTamTInh_Ecommerce.Models.ViewModels
-@model TuNhanTamTInh_Ecommerce.Models.ViewModels.ProductIndexViewModel
-
+@model ProductIndexViewModel
 @{
     ViewData["Title"] = "Cửa hàng";
-
+    
     var breadcrumb = new BreadcrumbViewModel
     {
         Title = "Cửa hàng",
@@ -14,7 +13,7 @@
         }
     };
 }
-    
+
 @await Component.InvokeAsync("HeroSection", new { isHome = false })
 
 <partial name="_Breadcrumb" model="breadcrumb" />
@@ -33,25 +32,25 @@
             <!-- Sidebar -->
             <div class="col-lg-3 col-md-12">
                 <div class="collapse d-lg-block" id="shopSidebar">
-                    <div class="sidebar">
+                <div class="sidebar">
                         <!--Categories Filter Sidebar-->
-                        <div class="sidebar__item">
-                            <h4>Danh mục</h4>
-                            <ul>
-                                @await Component.InvokeAsync("ProductSidebarCategories")
-                            </ul>
-                        </div>
+                    <div class="sidebar__item">
+                        <h4>Danh mục</h4>
+                        <ul>
+                            @await Component.InvokeAsync("ProductSidebarCategories")
+                        </ul>
+                    </div>
 
                         <!-- Price Sidebar-->
-                        <div class="sidebar__item">
-                            <h4>Giá</h4>
-                            <partial name="_PriceFilter" model="Model.PriceFilter" />
-                        </div>
+                    <div class="sidebar__item">
+                        <h4>Giá</h4>
+                        <partial name="_PriceFilter" model="Model.PriceFilter" />
+                    </div>
 
                         <!--Latest Product Sidebar-->
-                        <div class="sidebar__item">
-                            <div class="latest-product__text">
-                                <h4>Sản phẩm mới</h4>
+                    <div class="sidebar__item">
+                        <div class="latest-product__text">
+                            <h4>Sản phẩm mới</h4>
                                 @await Component.InvokeAsync("ProductLatestProducts", new { take = 6 })
                             </div>
                         </div>
@@ -62,9 +61,9 @@
             <!-- Main Content -->
             <div class="col-lg-9 col-md-12">
                 <partial name="_SaleOffCarousel" model="Model.SaleOffProducts" />
-                <partial name="_SortBar" model="Model.SortOptions" />
-                <partial name="_ProductGrid" model="Model.Products" />
-                <partial name="_Pagination" model="Model.Pagination" />
+                <div id="product-list-container">
+                    <partial name="_ProductListPartial" model="Model" />
+                </div>
             </div>
         </div>
     </div>

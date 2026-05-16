@@ -284,6 +284,60 @@ html, body {
   top: 15px;
 }
 
+/* ============================================
+   FIX: Product Image Sizing (Contain vs Cover)
+   ============================================ */
+
+/* 1. Xử lý các khung ảnh dùng background-image (Card ngoài danh sách) */
+.product__item__pic,
+.product__discount__item__pic,
+.featured__item__pic,
+.categories__slider .categories__item,
+.latest-product__item__pic {
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+/* Hiệu ứng hover nhẹ cho khung ảnh */
+.product__item:hover .product__item__pic,
+.product__discount__item:hover .product__discount__item__pic,
+.featured__item:hover .featured__item__pic {
+  border-color: #d1d1d1;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* 2. Xử lý các khung ảnh dùng thẻ <img> (Trang chi tiết, Giỏ hàng, Latest) */
+.product__details__pic__item img,
+.product__details__pic__slider img,
+.shoping__cart__table table tbody tr td.shoping__cart__item img,
+.latest-product__item__pic img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  background-color: #ffffff !important;
+}
+
+/* Đảm bảo khung ảnh trong trang Chi tiết luôn vuông vắn và bám sát */
+.product__details__pic__item {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  overflow: hidden;
+  border: 1px solid #ebebeb;
+}
+
+/* Fix cho ảnh nhỏ (thumbnails) trong slider trang chi tiết */
+.product__details__pic__slider img {
+  aspect-ratio: 1 / 1;
+}
+
 /* Ensure the main price stays prominent and bold across all card types */
 .product__item__text h5,
 .featured__item__text h5,
@@ -744,8 +798,8 @@ html, body {
 .cart-dropdown__img {
     width: 48px;
     height: 48px;
-    border-radius: 10px;
-    object-fit: cover;
+    border-radius: 0;
+    object-fit: contain;
     flex-shrink: 0;
     border: 1px solid #eee;
 }
