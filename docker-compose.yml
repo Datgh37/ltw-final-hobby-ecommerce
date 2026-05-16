@@ -1,4 +1,4 @@
-﻿# version: '3.8'
+# version: '3.8'
 
 services:
   # Dịch vụ 1: SQL Server
@@ -17,10 +17,8 @@ services:
   hobbyshop-web:
     build: .
     container_name: aspnet_web_app
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__MyConnectString=Server=hobbyshop-db;Database=Ecommerce_Hobby_Shop;User Id=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True
-      - ASPNETCORE_URLS=http://+:8080
+    env_file:
+      - .env
     ports:
       - "8080:8080" # Truy cập localhost:8080 trên máy thật để kiểm tra
     depends_on:
