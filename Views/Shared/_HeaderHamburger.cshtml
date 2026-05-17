@@ -15,7 +15,7 @@
         @if (User.Identity.IsAuthenticated)
         {
             <div class="d-flex align-items-center px-3">
-                <img src="@Url.Content(User.FindFirst("UserImage")?.Value ?? "~/images/user-default.png")" 
+                <img src="@Url.Content(User.FindFirst("UserImage")?.Value ?? "~/images/user-default.png")"
                      alt="Avatar" class="rounded-circle header-mobile-avatar mr-3">
                 <div class="user-info">
                     <span class="d-block text-dark fw-bold h6 mb-1">@User.Identity.Name</span>
@@ -35,7 +35,7 @@
 
     <div class="humberger__menu__cart">
         <ul>
-            <li><a href="#"><i class="fa fa-heart"></i> <span id="favoriteCountMobile">0</span></a></li>
+            <li><a asp-controller="Favorites" asp-action="Index"><i class="fa fa-heart"></i> <span id="favoriteCountMobile">0</span></a></li>
             <li>
                 <div class="cart-vc-content">
                     @await Component.InvokeAsync("Cart")
