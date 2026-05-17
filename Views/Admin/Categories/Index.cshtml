@@ -1,7 +1,7 @@
 @model IEnumerable<TuNhanTamTInh_Ecommerce.Models.Category>
 
 @{
-    ViewData["Title"] = "Categories";
+    ViewData["Title"] = "Quản lý Danh mục";
 }
 
 <section class="crud-page">
@@ -9,17 +9,17 @@
         <!-- Page Header -->
         <div class="crud-page__header">
             <div class="crud-page__breadcrumb">
-                <a asp-controller="Home" asp-action="Index">Home</a>
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
                 <span>/</span>
-                <span>Categories</span>
+                <span>Danh mục</span>
             </div>
-            <h1><i class="fa fa-th-list"></i> Category Management</h1>
-            <p>Manage all product categories in your store.</p>
+            <h1><i class="fa fa-th-list"></i> Quản lý Danh mục</h1>
+            <p>Quản lý danh sách tất cả danh mục sản phẩm trong cửa hàng của bạn.</p>
         </div>
 
         <!-- Create Button -->
-        <a asp-action="Create" class="crud-btn crud-btn--create">
-            <i class="fa fa-plus"></i> Add New Category
+        <a asp-controller="Admin" asp-action="CategoryCreate" class="crud-btn crud-btn--create">
+            <i class="fa fa-plus"></i> Thêm Danh mục Mới
         </a>
 
         <!-- Table Card -->
@@ -28,10 +28,10 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Image</th>
-                        <th>Category Name</th>
+                        <th>Hình ảnh</th>
+                        <th>Tên danh mục</th>
                         <th>Slug</th>
-                        <th>Actions</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,13 +53,13 @@
                             <td><strong>@Html.DisplayFor(modelItem => item.CategoryName)</strong></td>
                             <td><code>@Html.DisplayFor(modelItem => item.CategorySlug)</code></td>
                             <td class="crud-actions">
-                                <a asp-action="Edit" asp-route-id="@item.CategoryId" class="crud-btn--edit" title="Edit">
+                                <a asp-controller="Admin" asp-action="CategoryEdit" asp-route-id="@item.CategoryId" class="crud-btn--edit" title="Sửa">
                                     <i class="fa fa-pencil"></i>
                                 </a>
-                                <a asp-action="Details" asp-route-id="@item.CategoryId" class="crud-btn--detail" title="Details">
+                                <a asp-controller="Admin" asp-action="CategoryDetails" asp-route-id="@item.CategoryId" class="crud-btn--detail" title="Chi tiết">
                                     <i class="fa fa-eye"></i>
                                 </a>
-                                <a asp-action="Delete" asp-route-id="@item.CategoryId" class="crud-btn--delete" title="Delete">
+                                <a asp-controller="Admin" asp-action="CategoryDelete" asp-route-id="@item.CategoryId" class="crud-btn--delete" title="Xóa">
                                     <i class="fa fa-trash"></i>
                                 </a>
                             </td>

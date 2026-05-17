@@ -1,0 +1,185 @@
+@model TuNhanTamTInh_Ecommerce.DTOs.ProductUpdateInfoDTO
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Sản phẩm";
+}
+
+<section class="crud-page">
+    <div class="container">
+        <div class="crud-page__header">
+            <div class="crud-page__breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                <span>/</span>
+                <a asp-controller="Products" asp-action="Index">Sản phẩm</a>
+                <span>/</span>
+                <span>Chỉnh sửa</span>
+            </div>
+            <h1><i class="fa fa-pencil-square-o"></i> Chỉnh sửa Sản phẩm</h1>
+            <p>Cập nhật thông tin chi tiết sản phẩm bên dưới.</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 col-md-10">
+                <div class="crud-card">
+                    <h3 class="crud-card__title">
+                        <i class="fa fa-cube"></i> Thông tin sản phẩm
+                    </h3>
+                    <form asp-controller="Admin" asp-action="ProductEdit" class="crud-form" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="ProductId" />
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ProductName" class="control-label">Tên sản phẩm</label>
+                                    <input asp-for="ProductName" class="form-control" />
+                                    <span asp-validation-for="ProductName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ProductSlug" class="control-label">Slug (Đường dẫn thân thiện)</label>
+                                    <input asp-for="ProductSlug" class="form-control" />
+                                    <span asp-validation-for="ProductSlug" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="CategoryId" class="control-label">Danh mục</label>
+                                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="SeriesId" class="control-label">Series</label>
+                                    <select asp-for="SeriesId" class="form-control" asp-items="ViewBag.SeriesId"></select>
+                                    <span asp-validation-for="SeriesId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="SupplierId" class="control-label">Nhà cung cấp</label>
+                                    <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId"></select>
+                                    <span asp-validation-for="SupplierId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="UnitPrice" class="control-label">Đơn giá</label>
+                                    <input asp-for="UnitPrice" class="form-control" />
+                                    <span asp-validation-for="UnitPrice" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="Discount" class="control-label">Giảm giá (%)</label>
+                                    <input asp-for="Discount" class="form-control" />
+                                    <span asp-validation-for="Discount" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="StockQuantity" class="control-label">Số lượng tồn kho</label>
+                                    <input asp-for="StockQuantity" class="form-control" />
+                                    <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label">Mô tả sản phẩm</label>
+                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Nhập mô tả chi tiết sản phẩm..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="PrimaryImageFile" class="control-label">Ảnh chính mới</label>
+                                    <input asp-for="PrimaryImageFile" type="file" class="form-control-file" accept="image/*" />
+                                    <span asp-validation-for="PrimaryImageFile" class="text-danger"></span>
+                                    <small class="form-text text-muted">Để trống nếu không muốn thay đổi ảnh chính hiện tại.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-center">
+                                <div class="form-group form-check mb-0">
+                                    <input type="checkbox" class="form-check-input crud-has-sub-images-check" id="hasSubImages" />
+                                    <label class="form-check-label font-weight-bold crud-has-sub-images-label" for="hasSubImages">Thêm ảnh phụ mới</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dropdown-like sliding container for Sub-Images -->
+                        <div id="subImagesSection" style="display: none;" class="crud-sub-images-section">
+                            <h5 class="crud-sub-images-title"><i class="fa fa-images text-primary"></i> Thêm danh sách ảnh phụ</h5>
+                            <div id="subImagesContainer">
+                                <div class="form-group mb-2 d-flex align-items-center">
+                                    <input name="SubImageFiles" type="file" class="form-control-file" accept="image/*" />
+                                    <button type="button" class="btn btn-danger btn-sm ml-2 btn-remove-sub" style="display: none;"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <button type="button" class="crud-btn crud-btn--create crud-sub-image-input-btn mt-2" id="btnAddSubImage">
+                                <i class="fa fa-plus"></i> Thêm hình ảnh phụ
+                            </button>
+                        </div>
+
+                        <div class="crud-btn-group">
+                            <button type="submit" class="crud-btn crud-btn--primary">
+                                <i class="fa fa-save"></i> Lưu thay đổi
+                            </button>
+                            <a asp-controller="Admin" asp-action="Products" class="crud-btn crud-btn--secondary">
+                                <i class="fa fa-arrow-left"></i> Quay lại danh sách
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            // Toggle Sub-images section with a smooth slide animation
+            $('#hasSubImages').change(function () {
+                if (this.checked) {
+                    $('#subImagesSection').slideDown(300);
+                } else {
+                    $('#subImagesSection').slideUp(300);
+                    // Clear inputs if unticked
+                    $('#subImagesContainer').html(
+                        '<div class="form-group mb-2 d-flex align-items-center">' +
+                        '    <input name="SubImageFiles" type="file" class="form-control-file" accept="image/*" />' +
+                        '    <button type="button" class="btn btn-danger btn-sm ml-2 btn-remove-sub" style="display: none;"><i class="fa fa-trash"></i></button>' +
+                        '</div>'
+                    );
+                }
+            });
+
+            // Add new sub-image input
+            $('#btnAddSubImage').click(function () {
+                var newInput = 
+                    '<div class="form-group mb-2 d-flex align-items-center">' +
+                    '    <input name="SubImageFiles" type="file" class="form-control-file" accept="image/*" />' +
+                    '    <button type="button" class="btn btn-danger btn-sm ml-2 btn-remove-sub"><i class="fa fa-trash"></i></button>' +
+                    '</div>';
+                $('#subImagesContainer').append(newInput);
+            });
+
+            // Remove sub-image input
+            $(document).on('click', '.btn-remove-sub', function () {
+                $(this).closest('.d-flex').remove();
+            });
+        });
+    </script>
+}

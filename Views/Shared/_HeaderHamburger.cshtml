@@ -71,16 +71,20 @@
             <li class="@(currentController == "Products" ? "active" : "")">
                 <a asp-controller="Products" asp-action="Index">Cửa hàng</a>
             </li>
-            @if (User.IsInRole("Quản trị viên"))
-            {
-                <li>
-                    <a href="#">Trang</a>
-                    <ul class="header__menu__dropdown">
-                        <li><a asp-controller="Products" asp-action="AdminIndex">Quản lý SP</a></li>
+            <li>
+                <a href="#">Trang</a>
+                <ul class="header__menu__dropdown">
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        @if (User.FindFirst("RoleId")?.Value == "0")
+                        {
+                            <li><a asp-controller="Admin" asp-action="Products">Quản lý sản phẩm</a></li>
+                            <li><a asp-controller="Admin" asp-action="Categories">Quản lý danh mục</a></li>
+                        }
                         <li><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
-                    </ul>
-                </li>
-            }
+                    }
+                </ul>
+            </li>
             <li><a href="#">Liên hệ</a></li>
         </ul>
     </nav>

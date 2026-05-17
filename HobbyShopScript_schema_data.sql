@@ -5,14 +5,14 @@ GO
 -- 1. TÀI KHOẢN & PHÂN QUYỀN
 -----------------------------------------------------------
 INSERT INTO [dbo].[Roles] (RoleID, RoleName) VALUES 
-(0, N'Khách hàng'), 
-(1, N'Quản trị viên');
+(0, N'Quản trị viên'), 
+(1, N'Khách hàng');
 GO
 
 INSERT INTO [dbo].[Accounts] (AccountID, Password, FullName, Email, PhoneNumber, Address, Gender, IsActive, RoleID) VALUES
-(N'admin', N'admin123', N'Quản trị viên hệ thống', N'admin@hobbyshop.com', N'0123456789', N'Biên Hòa, Đồng Nai', 1, 1, 1),
-(N'customer1', N'cust123', N'Nguyễn Văn A', N'nva@gmail.com', N'0987654321', N'TP. Hồ Chí Minh', 1, 1, 0),
-(N'customer2', N'cust123', N'Trần Thị B', N'ttb@gmail.com', N'0912345678', N'Đà Nẵng', 0, 1, 0);
+(N'admin', N'admin123', N'Quản trị viên hệ thống', N'admin@hobbyshop.com', N'0123456789', N'Biên Hòa, Đồng Nai', 1, 1, 0),
+(N'customer1', N'cust123', N'Nguyễn Văn A', N'nva@gmail.com', N'0987654321', N'TP. Hồ Chí Minh', 1, 1, 1),
+(N'customer2', N'cust123', N'Trần Thị B', N'ttb@gmail.com', N'0912345678', N'Đà Nẵng', 0, 1, 1);
 GO
 
 -----------------------------------------------------------

@@ -20,6 +20,10 @@
                             
                             <li class="@(hasSubmenu ? "has-hero-submenu" : "")">
                                 <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@catItem.CategoryId" class="hero-cat-link">
+                                    @if (!string.IsNullOrEmpty(catItem.Image))
+                                    {
+                                        <img src="@Url.Content(catItem.Image)" alt="@catItem.CategoryName" class="hero-cat-img" />
+                                    }
                                     <span class="hero-cat-text">@catItem.CategoryName</span>
                                     @if (hasSubmenu)
                                     {

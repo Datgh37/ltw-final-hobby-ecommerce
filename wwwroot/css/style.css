@@ -792,7 +792,7 @@ ol {
 
 .hero__categories ul {
 	border: 1px solid #ebebeb;
-	padding-left: 40px;
+	padding-left: 30px;
 	padding-top: 10px;
 	padding-bottom: 12px;
 }
@@ -3765,4 +3765,30 @@ ol {
 	.blog__details__hero__text h2 {
 		font-size: 24px;
 	}
+}
+
+/* Custom Category Image Styles in Hero Categories list */
+.hero-cat-link {
+	display: flex !important;
+	align-items: center;
+	padding: 5px 0;
+	text-align: left !important;
+	justify-content: flex-start !important;
+	width: 100%;
+}
+.hero-cat-img {
+	width: 26px;
+	height: 26px;
+	object-fit: cover;
+	border-radius: 4px;
+	margin-right: 12px;
+	border: 1px solid #eaeaea;
+	flex-shrink: 0;
+}
+.hero-cat-text {
+	text-align: left !important;
+}
+.hero-cat-link i.fa-angle-right {
+	margin-left: auto !important;
+	margin-right: 15px;
 }

@@ -1,0 +1,146 @@
+@model TuNhanTamTInh_Ecommerce.Models.Product
+
+@{
+    ViewData["Title"] = "Chi tiết Sản phẩm";
+}
+
+<section class="crud-page">
+    <div class="container">
+        <div class="crud-page__header">
+            <div class="crud-page__breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                <span>/</span>
+                <a asp-controller="Products" asp-action="Index">Sản phẩm</a>
+                <span>/</span>
+                <span>Chi tiết</span>
+            </div>
+            <h1><i class="fa fa-info-circle"></i> Chi tiết Sản phẩm</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-7 col-md-6">
+                <div class="crud-card">
+                    <h3 class="crud-card__title">
+                        <i class="fa fa-cube"></i> @Model.ProductName
+                    </h3>
+                    <dl class="crud-detail-list">
+                        <dt>Tên sản phẩm</dt>
+                        <dd>@Html.DisplayFor(model => model.ProductName)</dd>
+
+                        <dt>Slug</dt>
+                        <dd><code>@Html.DisplayFor(model => model.ProductSlug)</code></dd>
+
+                        <dt>Đơn giá</dt>
+                        <dd><strong>@Html.DisplayFor(model => model.UnitPrice)</strong></dd>
+
+                        <dt>Giảm giá</dt>
+                        <dd>
+                            @if (Model.Discount > 0)
+                            {
+                                <span class="crud-badge crud-badge--green">@(Model.Discount * 100)%</span>
+                            }
+                            else
+                            {
+                                <span>Không</span>
+                            }
+                        </dd>
+
+                        <dt>Số lượng tồn kho</dt>
+                        <dd>
+                            @if (Model.StockQuantity > 0)
+                            {
+                                <span class="crud-badge crud-badge--green">@Model.StockQuantity</span>
+                            }
+                            else
+                            {
+                                <span class="crud-badge crud-badge--red">Hết hàng</span>
+                            }
+                        </dd>
+
+                        <dt>Lượt xem</dt>
+                        <dd>@Html.DisplayFor(model => model.ViewCount)</dd>
+
+                        <dt>Mô tả chi tiết</dt>
+                        <dd>@Html.DisplayFor(model => model.Description)</dd>
+
+                        <dt>Danh mục</dt>
+                        <dd>@Html.DisplayFor(model => model.Category.CategoryId)</dd>
+
+                        <dt>Series</dt>
+                        <dd>@Html.DisplayFor(model => model.Series.SeriesId)</dd>
+
+                        <dt>Nhà cung cấp</dt>
+                        <dd>@Html.DisplayFor(model => model.Supplier.SupplierId)</dd>
+                    </dl>
+                    <div class="crud-btn-group">
+                        <a asp-controller="Admin" asp-action="ProductEdit" asp-route-id="@Model.ProductId" class="crud-btn crud-btn--primary">
+                            <i class="fa fa-pencil"></i> Chỉnh sửa
+                        </a>
+                        <a asp-controller="Admin" asp-action="Products" class="crud-btn crud-btn--secondary">
+                            <i class="fa fa-arrow-left"></i> Quay lại danh sách
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 col-md-6">
+                <div class="crud-card">
+                    <h3 class="crud-card__title">
+                        <i class="fa fa-picture-o"></i> Album ảnh sản phẩm
+                    </h3>
+                    <div class="product-gallery">
+                        @if (Model.ProductImages != null && Model.ProductImages.Any())
+                        {
+                            var primaryImg = Model.ProductImages.FirstOrDefault(x => x.IsPrimary) ?? Model.ProductImages.First();
+                            var subImages = Model.ProductImages.Where(x => !x.IsPrimary).ToList();
+
+                            <!-- Main Image -->
+                            <div class="crud-main-image-wrapper">
+                                <span class="crud-main-image-badge">
+                                    <i class="fa fa-star"></i> Ảnh chính
+                                </span>
+                                <img id="mainGalleryImage" src="@Url.Content(primaryImg.ImageUrl)" alt="Primary Image" class="crud-main-gallery-img" />
+                            </div>
+
+                            <!-- Thumbnail List -->
+                            <h6 class="font-weight-bold text-muted mb-2">Danh sách ảnh (@Model.ProductImages.Count)</h6>
+                            <div class="crud-thumbnails-container">
+                                <!-- The primary image as a thumbnail -->
+                                <div class="crud-thumbnail-item active" onclick="changeMainImage('@Url.Content(primaryImg.ImageUrl)', this)">
+                                    <img src="@Url.Content(primaryImg.ImageUrl)" alt="Primary Image Thumbnail" />
+                                </div>
+
+                                @foreach (var img in subImages)
+                                {
+                                    <div class="crud-thumbnail-item" onclick="changeMainImage('@Url.Content(img.ImageUrl)', this)">
+                                        <img src="@Url.Content(img.ImageUrl)" alt="Sub Image" />
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center p-5 text-muted border rounded bg-light">
+                                <i class="fa fa-image fa-3x mb-2 text-secondary"></i>
+                                <p>Sản phẩm này chưa có hình ảnh tải lên.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        function changeMainImage(url, element) {
+            $('#mainGalleryImage').fadeOut(150, function() {
+                $(this).attr('src', url).fadeIn(150);
+            });
+            // highlight active border using classes
+            $('.crud-thumbnail-item').removeClass('active');
+            $(element).addClass('active');
+        }
+    </script>
+}

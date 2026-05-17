@@ -61,13 +61,6 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             return PartialView("_ProductListPartial", viewModel);
         }
 
-
-        // GET: Products/AdminIndex
-        public async Task<IActionResult> AdminIndex()
-        {
-            var ecommerceHobbyShopContext = _context.Products.Include(p => p.Category).Include(p => p.Series).Include(p => p.Supplier);
-            return View(await ecommerceHobbyShopContext.ToListAsync());
-        }
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -108,130 +101,6 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             ViewBag.IsFavorite = isFavorite;
 
             return View(product);
-        }
-
-        // GET: Products/Create
-        [Authorize(Roles = "Quản trị viên")]
-        public IActionResult Create()
-        {
-            PopulateDropdowns();
-            return View();
-        }
-
-        // POST: Products/Create
-        [Authorize(Roles = "Quản trị viên")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductUpdateInfoDTO model)
-        {
-            if (ModelState.IsValid)
-            {
-                var product = _mapper.Map<Product>(model);
-                product.ProductSlug = SlugHelper.GenerateSlug(product.ProductName);
-
-                _context.Products.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            PopulateDropdowns(model.CategoryId, model.SeriesId, model.SupplierId);
-            return View(model);
-        }
-
-        // GET: Products/Edit/5
-        [Authorize(Roles = "Quản trị viên")]
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            var model = _mapper.Map<ProductUpdateInfoDTO>(product);
-
-            PopulateDropdowns(product.CategoryId, product.SeriesId, product.SupplierId);
-            return View(model);
-        }
-
-        // POST: Products/Edit/5
-        [Authorize(Roles = "Quản trị viên")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProductUpdateInfoDTO model)
-        {
-            if (ModelState.IsValid)
-            {
-                var product = await _context.Products.FindAsync(id);
-                if (product == null)
-                {
-                    return NotFound();
-                }
-
-                _mapper.Map(model, product);
-                product.ProductSlug = SlugHelper.GenerateSlug(product.ProductName);
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            PopulateDropdowns(model.CategoryId, model.SeriesId, model.SupplierId);
-            return View(model);
-        }
-
-        // GET: Products/Delete/5
-        [Authorize(Roles = "Quản trị viên")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.Series)
-                .Include(p => p.Supplier)
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
-        }
-
-        // POST: Products/Delete/5
-        [Authorize(Roles = "Quản trị viên")]
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/LiveSearch (AJAX)
@@ -322,21 +191,6 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 .AnyAsync(f => f.AccountId == accountId && f.ProductId == productId);
 
             return Json(new { isFavorite = isFavorite });
-        }
-
-        private bool ProductExists(int id)
-        {
-            return _context.Products.Any(e => e.ProductId == id);
-        }
-
-        /// <summary>
-        /// Populates Category/Series/Supplier dropdowns showing Name instead of ID.
-        /// </summary>
-        private void PopulateDropdowns(int? selectedCategory = null, int? selectedSeries = null, string? selectedSupplier = null)
-        {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", selectedCategory);
-            ViewData["SeriesId"] = new SelectList(_context.Series, "SeriesId", "SeriesName", selectedSeries);
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "CompanyName", selectedSupplier);
         }
         
         // Helper để dùng chung cho Index và Filter AJAX

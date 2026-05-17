@@ -1,0 +1,61 @@
+@model TuNhanTamTInh_Ecommerce.Models.Category
+
+@{
+    ViewData["Title"] = "Thêm Danh mục";
+}
+
+<section class="crud-page">
+    <div class="container">
+        <div class="crud-page__header">
+            <div class="crud-page__breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                <span>/</span>
+                <a asp-controller="Categories" asp-action="Index">Danh mục</a>
+                <span>/</span>
+                <span>Thêm mới</span>
+            </div>
+            <h1><i class="fa fa-plus-circle"></i> Thêm Danh mục Mới</h1>
+            <p>Nhập đầy đủ thông tin bên dưới để thêm danh mục mới.</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 col-md-10">
+                <div class="crud-card">
+                    <h3 class="crud-card__title">
+                        <i class="fa fa-th-list"></i> Thông tin danh mục
+                    </h3>
+                    <form asp-controller="Admin" asp-action="CategoryCreate" class="crud-form">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="CategoryName" class="control-label">Tên danh mục</label>
+                            <input asp-for="CategoryName" class="form-control" placeholder="Nhập tên danh mục" />
+                            <span asp-validation-for="CategoryName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CategorySlug" class="control-label">Slug (Đường dẫn thân thiện)</label>
+                            <input asp-for="CategorySlug" class="form-control" placeholder="Ví dụ: mo-hinh-xe, lap-rap" />
+                            <span asp-validation-for="CategorySlug" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Image" class="control-label">Đường dẫn hình ảnh (Image URL)</label>
+                            <input asp-for="Image" class="form-control" placeholder="Ví dụ: ~/images/Categories/cat_1.jpg" />
+                            <span asp-validation-for="Image" class="text-danger"></span>
+                        </div>
+                        <div class="crud-btn-group">
+                            <button type="submit" class="crud-btn crud-btn--primary">
+                                <i class="fa fa-check"></i> Thêm mới
+                            </button>
+                            <a asp-controller="Admin" asp-action="Categories" class="crud-btn crud-btn--secondary">
+                                <i class="fa fa-arrow-left"></i> Quay lại danh sách
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

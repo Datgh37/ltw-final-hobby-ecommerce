@@ -34,7 +34,7 @@
                             <h3 class="font-weight-bold text-dark">@Model.FullName</h3>
                             <p class="text-muted">@Model.Email</p>
                             <span class="badge badge-primary p-2" style="background-color: #560bad;">
-                                @(Model.RoleId == 1 ? "Quản trị viên" : "Khách hàng")
+                                @(Model.RoleId == 0 ? "Quản trị viên" : "Khách hàng")
                             </span>
                         </div>
 

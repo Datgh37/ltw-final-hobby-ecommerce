@@ -1,53 +1,53 @@
 @model TuNhanTamTInh_Ecommerce.Models.Category
 
 @{
-    ViewData["Title"] = "Edit Category";
+    ViewData["Title"] = "Chỉnh sửa Danh mục";
 }
 
 <section class="crud-page">
     <div class="container">
         <div class="crud-page__header">
             <div class="crud-page__breadcrumb">
-                <a asp-controller="Home" asp-action="Index">Home</a>
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
                 <span>/</span>
-                <a asp-controller="Categories" asp-action="Index">Categories</a>
+                <a asp-controller="Categories" asp-action="Index">Danh mục</a>
                 <span>/</span>
-                <span>Edit</span>
+                <span>Chỉnh sửa</span>
             </div>
-            <h1><i class="fa fa-pencil-square-o"></i> Edit Category</h1>
-            <p>Update the category information below.</p>
+            <h1><i class="fa fa-pencil-square-o"></i> Chỉnh sửa Danh mục</h1>
+            <p>Cập nhật thông tin chi tiết danh mục bên dưới.</p>
         </div>
 
         <div class="row">
             <div class="col-lg-8 col-md-10">
                 <div class="crud-card">
                     <h3 class="crud-card__title">
-                        <i class="fa fa-th-list"></i> Category Information
+                        <i class="fa fa-th-list"></i> Thông tin danh mục
                     </h3>
-                    <form asp-action="Edit" class="crud-form">
+                    <form asp-controller="Admin" asp-action="CategoryEdit" class="crud-form">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="CategoryId" />
                         <div class="form-group">
-                            <label asp-for="CategoryName" class="control-label"></label>
+                            <label asp-for="CategoryName" class="control-label">Tên danh mục</label>
                             <input asp-for="CategoryName" class="form-control" />
                             <span asp-validation-for="CategoryName" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="CategorySlug" class="control-label"></label>
+                            <label asp-for="CategorySlug" class="control-label">Slug (Đường dẫn thân thiện)</label>
                             <input asp-for="CategorySlug" class="form-control" />
                             <span asp-validation-for="CategorySlug" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Image" class="control-label"></label>
+                            <label asp-for="Image" class="control-label">Đường dẫn hình ảnh (Image URL)</label>
                             <input asp-for="Image" class="form-control" />
                             <span asp-validation-for="Image" class="text-danger"></span>
                         </div>
                         <div class="crud-btn-group">
                             <button type="submit" class="crud-btn crud-btn--primary">
-                                <i class="fa fa-save"></i> Save Changes
+                                <i class="fa fa-save"></i> Lưu thay đổi
                             </button>
-                            <a asp-action="Index" class="crud-btn crud-btn--secondary">
-                                <i class="fa fa-arrow-left"></i> Back to List
+                            <a asp-controller="Admin" asp-action="Categories" class="crud-btn crud-btn--secondary">
+                                <i class="fa fa-arrow-left"></i> Quay lại danh sách
                             </a>
                         </div>
                     </form>

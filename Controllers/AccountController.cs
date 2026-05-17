@@ -78,6 +78,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                             new Claim(ClaimTypes.Email, account.Email),
                             new Claim("AccountId", account.AccountId),
                             new Claim("UserImage", account.Image ?? "/images/user-default.png"),
+                            new Claim("RoleId", account.RoleId.ToString()),
                             new Claim(ClaimTypes.Role, account.Role?.RoleName ?? "Khách hàng")
                         };
 
@@ -198,7 +199,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 FullName = model.FullName,
                 Email = model.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
-                RoleId = 0,
+                RoleId = 1,
                 IsActive = true
             };
 
@@ -216,6 +217,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 new Claim(ClaimTypes.Email, newAccount.Email),
                 new Claim("AccountId", newAccount.AccountId),
                 new Claim("UserImage", newAccount.Image ?? "/images/user-default.png"),
+                new Claim("RoleId", "1"),
                 new Claim(ClaimTypes.Role, "Khách hàng")
             };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -328,6 +330,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     new Claim(ClaimTypes.Email, account.Email),
                     new Claim("AccountId", account.AccountId),
                     new Claim("UserImage", account.Image ?? "~/images/user-default.png"),
+                    new Claim("RoleId", account.RoleId.ToString()),
                     new Claim(ClaimTypes.Role, User.FindFirstValue(ClaimTypes.Role) ?? "Khách hàng")
                 };
                 

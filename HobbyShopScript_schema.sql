@@ -25,7 +25,7 @@ CREATE TABLE [dbo].[Accounts](
     [Gender] [bit] NOT NULL DEFAULT (1),
     [Image] [nvarchar](255) NULL DEFAULT (N'~/images/user-default.png'),
     [IsActive] [bit] NOT NULL DEFAULT (1),
-    [RoleID] [int] NOT NULL DEFAULT (0), -- 0: Customer, 1: Admin
+    [RoleID] [int] NOT NULL DEFAULT (1), -- 0: Admin, 1: Customer
     [CreatedAt] [datetime] NOT NULL DEFAULT (getdate()),  -- Thay datetime thành datetime2
  CONSTRAINT [PK_Accounts] PRIMARY KEY CLUSTERED ([AccountID] ASC)
 )

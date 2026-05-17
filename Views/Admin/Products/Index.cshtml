@@ -1,7 +1,7 @@
 @model IEnumerable<TuNhanTamTInh_Ecommerce.Models.Product>
 
 @{
-    ViewData["Title"] = "Products";
+    ViewData["Title"] = "Quản lý Sản phẩm";
 }
 
 <section class="crud-page">
@@ -9,17 +9,17 @@
         <!-- Page Header -->
         <div class="crud-page__header">
             <div class="crud-page__breadcrumb">
-                <a asp-controller="Home" asp-action="Index">Home</a>
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
                 <span>/</span>
-                <span>Products</span>
+                <span>Sản phẩm</span>
             </div>
-            <h1><i class="fa fa-cube"></i> Product Management</h1>
-            <p>Manage all products in your store.</p>
+            <h1><i class="fa fa-cube"></i> Quản lý Sản phẩm</h1>
+            <p>Quản lý danh sách tất cả sản phẩm trong cửa hàng của bạn.</p>
         </div>
 
         <!-- Create Button -->
-        <a asp-action="Create" class="crud-btn crud-btn--create">
-            <i class="fa fa-plus"></i> Add New Product
+        <a asp-controller="Admin" asp-action="ProductCreate" class="crud-btn crud-btn--create">
+            <i class="fa fa-plus"></i> Thêm Sản phẩm Mới
         </a>
 
         <!-- Table Card -->
@@ -28,15 +28,15 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Product Name</th>
-                        <th>Price</th>
-                        <th>Discount</th>
-                        <th>Stock</th>
-                        <th>Category</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Đơn giá</th>
+                        <th>Giảm giá</th>
+                        <th>Tồn kho</th>
+                        <th>Danh mục</th>
                         <th>Series</th>
-                        <th>Supplier</th>
-                        <th>Views</th>
-                        <th>Actions</th>
+                        <th>Nhà cung cấp</th>
+                        <th>Lượt xem</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,7 +56,7 @@
                             <td>
                                 @if (item.Discount > 0)
                                 {
-                                    <span class="crud-badge crud-badge--green">@(item.Discount)%</span>
+                                    <span class="crud-badge crud-badge--green">@(item.Discount * 100)%</span>
                                 }
                                 else
                                 {
@@ -70,7 +70,7 @@
                                 }
                                 else
                                 {
-                                    <span class="crud-badge crud-badge--red">Out of stock</span>
+                                    <span class="crud-badge crud-badge--red">Hết hàng</span>
                                 }
                             </td>
                             <td>@Html.DisplayFor(modelItem => item.Category.CategoryId)</td>
@@ -78,13 +78,13 @@
                             <td>@Html.DisplayFor(modelItem => item.Supplier.SupplierId)</td>
                             <td>@Html.DisplayFor(modelItem => item.ViewCount)</td>
                             <td class="crud-actions">
-                                <a asp-action="Edit" asp-route-id="@item.ProductId" class="crud-btn--edit" title="Edit">
+                                <a asp-controller="Admin" asp-action="ProductEdit" asp-route-id="@item.ProductId" class="crud-btn--edit" title="Sửa">
                                     <i class="fa fa-pencil"></i>
                                 </a>
-                                <a asp-action="Details" asp-route-id="@item.ProductId" class="crud-btn--detail" title="Details">
+                                <a asp-controller="Admin" asp-action="ProductDetails" asp-route-id="@item.ProductId" class="crud-btn--detail" title="Chi tiết">
                                     <i class="fa fa-eye"></i>
                                 </a>
-                                <a asp-action="Delete" asp-route-id="@item.ProductId" class="crud-btn--delete" title="Delete">
+                                <a asp-controller="Admin" asp-action="ProductDelete" asp-route-id="@item.ProductId" class="crud-btn--delete" title="Xóa">
                                     <i class="fa fa-trash"></i>
                                 </a>
                             </td>

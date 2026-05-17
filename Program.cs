@@ -51,6 +51,11 @@ namespace TuNhanTamTInh_Ecommerce
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 });
 
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireClaim("RoleId", "0"));
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
