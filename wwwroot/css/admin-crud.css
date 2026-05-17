@@ -25,7 +25,7 @@
     font-weight: 700;
     color: #1c1c1c;
     margin: 0 0 8px;
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Saira', sans-serif;
 }
 
 .crud-page__header p {
@@ -71,7 +71,7 @@
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 1px solid #f0f0f0;
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Saira', sans-serif;
 }
 
 .crud-card__title i {
@@ -79,13 +79,49 @@
     margin-right: 10px;
 }
 
+/* ===== TABLE WRAPPER (For vertical and horizontal scroll) ===== */
+.crud-table-wrapper {
+    max-height: 800px; /* Fits approximately 20 items comfortably */
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+}
+
+/* Elegant Thin Modern Scrollbar for both vertical and horizontal scroll */
+.crud-table-wrapper::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.crud-table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+.crud-table-wrapper::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+.crud-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #b5b5b5;
+}
+
+/* Sticky Header lock when scrolling vertically */
+.crud-table-wrapper thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #f8f9fa !important; /* Keep opaque solid background */
+    box-shadow: inset 0 -2px 0 #ebebeb !important; /* Bottom line that moves with sticky */
+}
+
 /* ===== TABLE STYLES ===== */
 .crud-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    border: 1px solid #ebebeb;
-    border-radius: 8px;
+    border: none !important;
     overflow: hidden;
 }
 
@@ -102,7 +138,7 @@
     padding: 14px 16px;
     border-bottom: 2px solid #ebebeb;
     white-space: nowrap;
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Saira', sans-serif;
 }
 
 .crud-table tbody tr {
@@ -288,7 +324,7 @@
     cursor: pointer;
     text-decoration: none;
     transition: all 0.25s ease;
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Saira', sans-serif;
 }
 
 .crud-btn i {
@@ -425,28 +461,126 @@
     color: #c93c44;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE & LAYOUT OPTIMIZATION (PC, TABLET, MOBILE) ===== */
+
+/* 1. PC & Tablet Details Grid (Screens >= 768px) */
+@media only screen and (min-width: 768px) {
+    .crud-detail-list {
+        display: grid !important;
+        grid-template-columns: 200px 1fr !important;
+        gap: 0 !important;
+        border: 1px solid #ebebeb !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+    }
+    .crud-detail-list dt {
+        grid-column: 1 !important;
+        background: #f8f9fa !important;
+        border-right: 1px solid #ebebeb !important;
+        border-bottom: 1px solid #ebebeb !important;
+        padding: 16px 20px !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        font-weight: 700 !important;
+        color: #4a4a4a !important;
+    }
+    .crud-detail-list dd {
+        grid-column: 2 !important;
+        border-bottom: 1px solid #ebebeb !important;
+        padding: 16px 20px !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        color: #1c1c1c !important;
+    }
+    .crud-detail-list dt:last-of-type,
+    .crud-detail-list dd:last-of-type {
+        border-bottom: none !important;
+    }
+}
+
+/* 2. Tablet & Mobile Table Scroll (Screens <= 991px) */
+@media only screen and (max-width: 991px) {
+    .crud-card {
+        padding: 24px 20px !important;
+    }
+    .crud-table {
+        display: table !important;
+        width: 100% !important;
+        min-width: 950px !important;
+    }
+}
+
+/* 3. Mobile View Optimization (Screens <= 767px) */
 @media only screen and (max-width: 767px) {
     .crud-page {
-        padding: 20px 0 40px;
+        padding: 15px 0 30px !important;
     }
 
     .crud-card {
-        padding: 20px 15px;
+        padding: 20px 15px !important;
     }
 
-    .crud-table {
-        display: block;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .crud-btn-group {
-        flex-wrap: wrap;
+    .crud-page__header {
+        margin-bottom: 20px !important;
+        padding-bottom: 15px !important;
     }
 
     .crud-page__header h1 {
-        font-size: 22px;
+        font-size: 22px !important;
+    }
+
+    /* iOS Camera Zoom Prevention on Input Focus */
+    .crud-form .form-group .form-control,
+    .crud-form .nice-select {
+        font-size: 16px !important;
+    }
+
+    /* Details List Stacked Layout on Mobile */
+    .crud-detail-list dt {
+        padding: 12px 0 4px !important;
+        font-size: 11px !important;
+        color: #888 !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .crud-detail-list dd {
+        padding: 0 0 12px !important;
+        font-size: 15px !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        margin-bottom: 8px !important;
+    }
+
+    .crud-detail-list dd:last-of-type {
+        border-bottom: none !important;
+        margin-bottom: 0 !important;
+    }
+}
+
+/* 4. Small Mobile Button Stacking (Screens <= 575px) */
+@media only screen and (max-width: 575px) {
+    .crud-btn-group {
+        flex-direction: column-reverse !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+
+    .crud-btn-group .crud-btn,
+    .crud-btn--create {
+        width: 100% !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    /* Gallery preview sizes */
+    .crud-main-image-wrapper {
+        height: 220px !important;
+    }
+
+    .crud-thumbnail-item {
+        width: 55px !important;
+        height: 55px !important;
     }
 }
 

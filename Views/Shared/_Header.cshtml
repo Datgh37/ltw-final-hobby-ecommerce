@@ -9,12 +9,12 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-3 col-12 h-left d-flex justify-content-lg-start justify-content-center">
+            <div class="col-lg-2 col-md-2 col-12 h-left d-flex justify-content-lg-start justify-content-center">
                 <div class="header__logo">
                     <a asp-controller="Home" asp-action="Index"><img src="~/images/Banner/logotoy.png" alt="Hobby Shop"></a>
                 </div>
             </div>
-            <div class="col-lg-5 d-none d-lg-block">
+            <div class="col-lg-6 col-md-6 d-none d-lg-block">
                 <nav class="header__menu">
                     <ul>
                         <li class="@(currentController == "Home" && currentAction == "Index" ? "active" : "")">
@@ -41,7 +41,7 @@
                     </ul>
                 </nav>
             </div>
-            <div class="col-lg-4 h-right d-none d-lg-flex">
+            <div class="col-lg-4 col-md-4 h-right d-none d-lg-flex">
                 <div class="header__lang">
                     <img src="~/images/vietnam.png" alt="" />
                     <span class="header__lang__text">VI</span>

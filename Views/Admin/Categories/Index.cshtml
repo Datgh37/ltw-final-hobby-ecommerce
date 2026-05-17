@@ -24,49 +24,51 @@
 
         <!-- Table Card -->
         <div class="crud-card">
-            <table class="crud-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Hình ảnh</th>
-                        <th>Tên danh mục</th>
-                        <th>Slug</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{ int stt = 1; }
-                    @foreach (var item in Model)
-                    {
+            <div class="crud-table-wrapper">
+                <table class="crud-table">
+                    <thead>
                         <tr>
-                            <td>@(stt++)</td>
-                            <td>
-                                @if (!string.IsNullOrEmpty(item.Image))
-                                {
-                                    <img src="@Url.Content(item.Image)" alt="@item.CategoryName" class="crud-img-preview" />
-                                }
-                                else
-                                {
-                                    <span style="color:#ccc;"><i class="fa fa-image"></i></span>
-                                }
-                            </td>
-                            <td><strong>@Html.DisplayFor(modelItem => item.CategoryName)</strong></td>
-                            <td><code>@Html.DisplayFor(modelItem => item.CategorySlug)</code></td>
-                            <td class="crud-actions">
-                                <a asp-controller="Admin" asp-action="CategoryEdit" asp-route-id="@item.CategoryId" class="crud-btn--edit" title="Sửa">
-                                    <i class="fa fa-pencil"></i>
-                                </a>
-                                <a asp-controller="Admin" asp-action="CategoryDetails" asp-route-id="@item.CategoryId" class="crud-btn--detail" title="Chi tiết">
-                                    <i class="fa fa-eye"></i>
-                                </a>
-                                <a asp-controller="Admin" asp-action="CategoryDelete" asp-route-id="@item.CategoryId" class="crud-btn--delete" title="Xóa">
-                                    <i class="fa fa-trash"></i>
-                                </a>
-                            </td>
+                            <th>#</th>
+                            <th>Hình ảnh</th>
+                            <th>Tên danh mục</th>
+                            <th>Slug</th>
+                            <th>Thao tác</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @{ int stt = 1; }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(stt++)</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Image))
+                                    {
+                                        <img src="@Url.Content(item.Image)" alt="@item.CategoryName" class="crud-img-preview" />
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#ccc;"><i class="fa fa-image"></i></span>
+                                    }
+                                </td>
+                                <td><strong>@Html.DisplayFor(modelItem => item.CategoryName)</strong></td>
+                                <td><code>@Html.DisplayFor(modelItem => item.CategorySlug)</code></td>
+                                <td class="crud-actions">
+                                    <a asp-controller="Admin" asp-action="CategoryEdit" asp-route-id="@item.CategoryId" class="crud-btn--edit" title="Sửa">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a asp-controller="Admin" asp-action="CategoryDetails" asp-route-id="@item.CategoryId" class="crud-btn--detail" title="Chi tiết">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a asp-controller="Admin" asp-action="CategoryDelete" asp-route-id="@item.CategoryId" class="crud-btn--delete" title="Xóa">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </section>

@@ -1,6 +1,17 @@
-CREATE DATABASE Ecommerce_Hobby_Shop
+USE master;
 GO
-USE Ecommerce_Hobby_Shop
+
+IF EXISTS (SELECT * FROM sys.databases WHERE name = 'Ecommerce_Hobby_Shop')
+BEGIN
+    ALTER DATABASE Ecommerce_Hobby_Shop SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE Ecommerce_Hobby_Shop;
+END
+GO
+
+CREATE DATABASE Ecommerce_Hobby_Shop;
+GO
+
+USE Ecommerce_Hobby_Shop;
 GO
 
 -----------------------------------------------------------
@@ -277,60 +288,62 @@ ALTER TABLE [dbo].[Favorites] ADD CONSTRAINT [FK_Favorites_Products] FOREIGN KEY
 GO
 
 -----------------------------------------------------------
--- NHÓM 6: VIEWS (TƯƠNG ĐƯƠNG DTO ĐỂ QUERY TRỰC TIẾP LÊN VIEW)
+-- NHÓM 6: STORED PROCEDURES (THỦ TỤC LƯU TRỮ TỐI ƯU GIAO DỊCH)
 -----------------------------------------------------------
 
--- 1. View Thẻ Sản Phẩm (Hiển thị trang chủ, danh sách)
-CREATE VIEW [dbo].[v_ProductCard]
+-- 1. Thủ tục gộp Giỏ hàng từ Khách hàng vãng lai (Guest Cart) khi Đăng nhập
+CREATE PROCEDURE [dbo].[sp_SyncCart]
+    @GuestCartID NVARCHAR(50),
+    @AccountID NVARCHAR(20)
 AS
-SELECT 
-    p.ProductID,
-    p.ProductName,
-    p.ProductSlug,
-    p.UnitPrice,
-    p.Discount,
-    c.CategoryName,
-    s.SeriesName,
-    pi.ImageURL AS PrimaryImage,
-    ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM [dbo].[Reviews] r WHERE r.ProductID = p.ProductID), 0) AS AverageRating
-FROM [dbo].[Products] p
-LEFT JOIN [dbo].[Categories] c ON p.CategoryID = c.CategoryID
-LEFT JOIN [dbo].[Series] s ON p.SeriesID = s.SeriesID
-LEFT JOIN [dbo].[ProductImages] pi ON p.ProductID = pi.ProductID AND pi.IsPrimary = 1
-GO
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        -- Tìm hoặc tạo mới Giỏ hàng chính thức của tài khoản thành viên
+        DECLARE @UserCartID NVARCHAR(50) = N'CART_' + @AccountID;
+        
+        IF NOT EXISTS (SELECT 1 FROM [dbo].[Carts] WHERE [CartID] = @UserCartID)
+        BEGIN
+            INSERT INTO [dbo].[Carts] ([CartID], [AccountID], [CreatedAt])
+            VALUES (@UserCartID, @AccountID, GETDATE());
+        END
+        ELSE
+        BEGIN
+            -- Đảm bảo trường AccountID được liên kết chuẩn xác
+            UPDATE [dbo].[Carts]
+            SET [AccountID] = @AccountID
+            WHERE [CartID] = @UserCartID;
+        END
 
--- 2. View Chi tiết Giỏ Hàng (Hiển thị lúc khách xem giỏ)
-CREATE VIEW [dbo].[v_CartDetails]
-AS
-SELECT 
-    ci.CartID,
-    ci.CartItemID,
-    p.ProductID,
-    p.ProductName,
-    pi.ImageURL AS PrimaryImage,
-    p.UnitPrice,
-    p.Discount,
-    ci.Quantity,
-    (p.UnitPrice * (1 - p.Discount)) * ci.Quantity AS TotalItemPrice
-FROM [dbo].[CartItems] ci
-JOIN [dbo].[Products] p ON ci.ProductID = p.ProductID
-LEFT JOIN [dbo].[ProductImages] pi ON p.ProductID = pi.ProductID AND pi.IsPrimary = 1
-GO
+        -- Thực hiện gộp dữ liệu các mặt hàng sử dụng câu lệnh MERGE nguyên tử
+        MERGE [dbo].[CartItems] AS target
+        USING (
+            SELECT [ProductID], [Quantity] 
+            FROM [dbo].[CartItems] 
+            WHERE [CartID] = @GuestCartID
+        ) AS source
+        ON (target.[CartID] = @UserCartID AND target.[ProductID] = source.[ProductID])
+        
+        -- Nếu mặt hàng đã có trong giỏ chính thức -> Cộng dồn số lượng Quantity
+        WHEN MATCHED THEN
+            UPDATE SET target.[Quantity] = target.[Quantity] + source.[Quantity]
+        
+        -- Nếu chưa có -> Thêm mới dòng sản phẩm
+        WHEN NOT MATCHED THEN
+            INSERT ([CartID], [ProductID], [Quantity])
+            VALUES (@UserCartID, source.[ProductID], source.[Quantity]);
 
--- 3. View Chi tiết Đơn Hàng (Dành cho Trang User xem lại lịch sử mua hoặc Admin xem chi tiết)
-CREATE VIEW [dbo].[v_OrderDetailsWithProduct]
-AS
-SELECT 
-    od.OrderID,
-    od.OrderDetailID,
-    p.ProductID,
-    p.ProductName,
-    pi.ImageURL AS PrimaryImage,
-    od.UnitPrice,
-    od.Quantity,
-    od.Discount,
-    (od.UnitPrice * (1 - od.Discount)) * od.Quantity AS TotalPrice
-FROM [dbo].[OrderDetails] od
-JOIN [dbo].[Products] p ON od.ProductID = p.ProductID
-LEFT JOIN [dbo].[ProductImages] pi ON p.ProductID = pi.ProductID AND pi.IsPrimary = 1
+        -- Xóa sạch giỏ hàng vãng lai tạm thời
+        DELETE FROM [dbo].[CartItems] WHERE [CartID] = @GuestCartID;
+        DELETE FROM [dbo].[Carts] WHERE [CartID] = @GuestCartID;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END
 GO

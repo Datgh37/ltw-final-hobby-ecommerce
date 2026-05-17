@@ -43,16 +43,37 @@ $(document).ready(function () {
         
         $(container).css('opacity', '0.5');
         
+        // LOG debug dau vao truoc khi goi API
+        AppDebugger.info("Bat dau goi AJAX tai/loc danh sach san pham", { 
+            originalUrl: url, 
+            ajaxUrl: ajaxUrl 
+        });
+        
         $.ajax({
             url: ajaxUrl,
             type: 'GET',
             success: function (result) {
+                // LOG debug thanh cong khi nhan phan hoi
+                AppDebugger.api(ajaxUrl, 'GET', { originalUrl: url }, { 
+                    status: "Thanh cong", 
+                    bytesReceived: result.length,
+                    message: "HTML partial loaded successfully"
+                }, 200);
+
                 $(container).html(result);
                 $(container).css('opacity', '1');
                 applyCurrentViewMode();
                 initializePlugins();
             },
-            error: function () {
+            error: function (xhr, status, error) {
+                // LOG debug that bai va bat exception
+                AppDebugger.error("AJAX loadProductList gap loi", { 
+                    status: status, 
+                    error: error, 
+                    statusCode: xhr.status,
+                    responseText: xhr.responseText
+                });
+
                 $(container).css('opacity', '1');
                 alert('Có lỗi xảy ra khi tải danh sách sản phẩm.');
             }

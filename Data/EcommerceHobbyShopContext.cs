@@ -50,11 +50,7 @@ public partial class EcommerceHobbyShopContext : DbContext
 
     public virtual DbSet<Topic> Topics { get; set; }
 
-    public virtual DbSet<VCartDetail> VCartDetails { get; set; }
 
-    public virtual DbSet<VOrderDetailsWithProduct> VOrderDetailsWithProducts { get; set; }
-
-    public virtual DbSet<VProductCard> VProductCards { get; set; }
 
     public virtual DbSet<Voucher> Vouchers { get; set; }
 
@@ -365,50 +361,7 @@ public partial class EcommerceHobbyShopContext : DbContext
             entity.Property(e => e.TopicName).HasMaxLength(100);
         });
 
-        modelBuilder.Entity<VCartDetail>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("v_CartDetails");
 
-            entity.Property(e => e.CartId)
-                .HasMaxLength(50)
-                .HasColumnName("CartID");
-            entity.Property(e => e.CartItemId).HasColumnName("CartItemID");
-            entity.Property(e => e.PrimaryImage).HasMaxLength(255);
-            entity.Property(e => e.ProductId).HasColumnName("ProductID");
-            entity.Property(e => e.ProductName).HasMaxLength(200);
-            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
-        });
-
-        modelBuilder.Entity<VOrderDetailsWithProduct>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("v_OrderDetailsWithProduct");
-
-            entity.Property(e => e.OrderDetailId).HasColumnName("OrderDetailID");
-            entity.Property(e => e.OrderId).HasColumnName("OrderID");
-            entity.Property(e => e.PrimaryImage).HasMaxLength(255);
-            entity.Property(e => e.ProductId).HasColumnName("ProductID");
-            entity.Property(e => e.ProductName).HasMaxLength(200);
-            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
-        });
-
-        modelBuilder.Entity<VProductCard>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("v_ProductCard");
-
-            entity.Property(e => e.CategoryName).HasMaxLength(50);
-            entity.Property(e => e.PrimaryImage).HasMaxLength(255);
-            entity.Property(e => e.ProductId).HasColumnName("ProductID");
-            entity.Property(e => e.ProductName).HasMaxLength(200);
-            entity.Property(e => e.ProductSlug).HasMaxLength(200);
-            entity.Property(e => e.SeriesName).HasMaxLength(100);
-            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
-        });
 
         modelBuilder.Entity<Voucher>(entity =>
         {

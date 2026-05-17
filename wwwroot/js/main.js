@@ -97,6 +97,7 @@
 
 
     $('.hero__categories__all').on('click', function(){
+        $(this).closest('.hero__categories').toggleClass('dropdown-open');
         $('.hero__categories ul').slideToggle(400);
     });
 

@@ -311,6 +311,22 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             var product = await _context.Products.FindAsync(id);
             if (product != null)
             {
+                // Triệt để xóa thư mục chứa hình ảnh của sản phẩm đó trong wwwroot
+                var folderName = $"product_{id}";
+                var productFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Products", folderName);
+                
+                if (Directory.Exists(productFolder))
+                {
+                    try
+                    {
+                        Directory.Delete(productFolder, true);
+                    }
+                    catch (Exception)
+                    {
+                        // Bắt exception để tránh crash luồng chính nếu file đang bị lock tạm thời bởi IIS/Process khác
+                    }
+                }
+
                 _context.Products.Remove(product);
             }
 

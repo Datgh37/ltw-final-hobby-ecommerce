@@ -24,74 +24,69 @@
 
         <!-- Table Card -->
         <div class="crud-card">
-            <table class="crud-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Đơn giá</th>
-                        <th>Giảm giá</th>
-                        <th>Tồn kho</th>
-                        <th>Danh mục</th>
-                        <th>Series</th>
-                        <th>Nhà cung cấp</th>
-                        <th>Lượt xem</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{ int stt = 1; }
-                    @foreach (var item in Model)
-                    {
+            <div class="crud-table-wrapper">
+                <table class="crud-table">
+                    <thead>
                         <tr>
-                            <td>@(stt++)</td>
-                            <td>
-                                <strong>@Html.DisplayFor(modelItem => item.ProductName)</strong>
-                                @if (!string.IsNullOrEmpty(item.ProductSlug))
-                                {
-                                    <br /><small style="color:#999;">@item.ProductSlug</small>
-                                }
-                            </td>
-                            <td>@Html.DisplayFor(modelItem => item.UnitPrice)</td>
-                            <td>
-                                @if (item.Discount > 0)
-                                {
-                                    <span class="crud-badge crud-badge--green">@(item.Discount * 100)%</span>
-                                }
-                                else
-                                {
-                                    <span style="color:#ccc;">—</span>
-                                }
-                            </td>
-                            <td>
-                                @if (item.StockQuantity > 0)
-                                {
-                                    <span class="crud-badge crud-badge--green">@item.StockQuantity</span>
-                                }
-                                else
-                                {
-                                    <span class="crud-badge crud-badge--red">Hết hàng</span>
-                                }
-                            </td>
-                            <td>@Html.DisplayFor(modelItem => item.Category.CategoryId)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Series.SeriesId)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Supplier.SupplierId)</td>
-                            <td>@Html.DisplayFor(modelItem => item.ViewCount)</td>
-                            <td class="crud-actions">
-                                <a asp-controller="Admin" asp-action="ProductEdit" asp-route-id="@item.ProductId" class="crud-btn--edit" title="Sửa">
-                                    <i class="fa fa-pencil"></i>
-                                </a>
-                                <a asp-controller="Admin" asp-action="ProductDetails" asp-route-id="@item.ProductId" class="crud-btn--detail" title="Chi tiết">
-                                    <i class="fa fa-eye"></i>
-                                </a>
-                                <a asp-controller="Admin" asp-action="ProductDelete" asp-route-id="@item.ProductId" class="crud-btn--delete" title="Xóa">
-                                    <i class="fa fa-trash"></i>
-                                </a>
-                            </td>
+                            <th>#</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Đơn giá</th>
+                            <th>Giảm giá</th>
+                            <th>Tồn kho</th>
+                            <th>Danh mục</th>
+                            <th>Series</th>
+                            <th>Nhà cung cấp</th>
+                            <th>Lượt xem</th>
+                            <th>Thao tác</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @{ int stt = 1; }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(stt++)</td>
+                                <td>
+                                    <strong>@Html.DisplayFor(modelItem => item.ProductName)</strong>
+                                    @if (!string.IsNullOrEmpty(item.ProductSlug))
+                                    {
+                                        <br /><small style="color:#999;">@item.ProductSlug</small>
+                                    }
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.UnitPrice)</td>
+                                <td>
+                                    @if (item.Discount > 0)
+                                    {
+                                        <span class="crud-badge crud-badge--green">@(item.Discount * 100)%</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#ccc;">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="crud-badge @(item.StockQuantity > 0 ? "crud-badge--green" : "crud-badge--red")">@item.StockQuantity</span>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.Category.CategoryId)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Series.SeriesId)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Supplier.SupplierId)</td>
+                                <td>@Html.DisplayFor(modelItem => item.ViewCount)</td>
+                                <td class="crud-actions">
+                                    <a asp-controller="Admin" asp-action="ProductEdit" asp-route-id="@item.ProductId" class="crud-btn--edit" title="Sửa">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a asp-controller="Admin" asp-action="ProductDetails" asp-route-id="@item.ProductId" class="crud-btn--detail" title="Chi tiết">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a asp-controller="Admin" asp-action="ProductDelete" asp-route-id="@item.ProductId" class="crud-btn--delete" title="Xóa">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </section>

@@ -73,21 +73,21 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label asp-for="UnitPrice" class="control-label">Đơn giá</label>
-                                    <input asp-for="UnitPrice" class="form-control" />
+                                    <input asp-for="UnitPrice" type="number" min="0" step="0.01" class="form-control" />
                                     <span asp-validation-for="UnitPrice" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label asp-for="Discount" class="control-label">Giảm giá (%)</label>
-                                    <input asp-for="Discount" class="form-control" />
+                                    <input asp-for="Discount" type="number" min="0" max="100" class="form-control" />
                                     <span asp-validation-for="Discount" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label asp-for="StockQuantity" class="control-label">Số lượng tồn kho</label>
-                                    <input asp-for="StockQuantity" class="form-control" />
+                                    <input asp-for="StockQuantity" type="number" min="0" class="form-control" />
                                     <span asp-validation-for="StockQuantity" class="text-danger"></span>
                                 </div>
                             </div>

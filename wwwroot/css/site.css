@@ -1,3 +1,20 @@
+@font-face {
+  font-family: 'Saira';
+  src: url('../fonts/Saira-VariableFont.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Saira';
+  src: url('../fonts/Saira-Italic-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+}
+
+html, body, h1, h2, h3, h4, h5, h6, input, select, button, textarea, .hero__categories ul li a, .crud-btn, .crud-form-control {
+  font-family: 'Saira', sans-serif !important;
+}
+
 html {
   font-size: 14px;
 }
@@ -996,7 +1013,7 @@ html, body {
 
 /* Fix EditProfile inputs */
 .checkout__input input { color: #1c1c1c !important; font-weight: 500; }
-.checkout__input select { appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right%2015px%20top%2050%25; background-size:%2012px%20auto; padding-right: 40px !important; }
+.checkout__input select { appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto; padding-right: 40px !important; }
 
 /* ChangePassword Input Fix */
 .auth-input-small { padding: 10px 15px !important; height: auto !important; font-size: 15px !important; }
@@ -1937,7 +1954,6 @@ html, body {
     /* Restore font size to original but keep letter-spacing tight */
     .header__menu ul li a {
         font-size: 14px !important;
-        letter-spacing: -0.2px !important;
     }
     
     /* Optimize right-side spacing */
@@ -2021,7 +2037,7 @@ textarea, select, .nice-select, .form-control, .checkout__input input, .checkout
 }
 
 .hero__search__form .nice-select {
-    z-index: 1001 !important; /* Ensure series dropdown is on top */
+    z-index: 95 !important; /* Ensure series dropdown is on top of page content, but below mobile sidebar overlay */
 }
 
 .hero__search__form form button {
@@ -2071,13 +2087,24 @@ textarea, select, .nice-select, .form-control, .checkout__input input, .checkout
 
 .hero__categories ul {
     border-radius: 0 0 6px 6px !important;
-    z-index: 999 !important; /* Fix: Ensure dropdown is above all content */
+    z-index: 90 !important; /* Fix: Ensure dropdown is above page content, but below mobile sidebar overlay */
     background: #ffffff !important;
 }
 
 /* Fix for Hero Categories on non-home pages being "pushed" or "hidden" */
 .hero.hero-normal .hero__categories {
     overflow: visible !important;
+}
+
+/* Premium border-radius micro-interaction for Categories Menu Header */
+.hero__categories__all {
+    border-radius: 6px !important; /* Mặc định khi đóng: bo tròn đều cả 4 góc */
+    transition: border-radius 0.2s ease-in-out !important;
+}
+
+/* Khi danh sách đang được mở (có class .dropdown-open trên cha): phẳng 2 góc dưới */
+.hero__categories.dropdown-open .hero__categories__all {
+    border-radius: 6px 6px 0 0 !important;
 }
 
 /* ============================================
@@ -2138,6 +2165,10 @@ html, body {
     .hero__search__phone {
         float: none !important;
         margin-top: 20px;
+    }
+    
+    .hero__search__form .nice-select {
+        z-index: 5 !important; /* Low z-index on mobile/tablet to never overlap with mobile hamburger overlay or sidebar contents */
     }
 
     /* Tablet: Align banner with layout by reducing left padding */
@@ -2423,5 +2454,192 @@ html, body {
         padding: 6px 15px !important;
         line-height: 1.5 !important;
         font-size: 14px !important;
+    }
+}
+
+/* ==========================================================================
+   Premium Desktop Dropdown Navigation Styling
+   ========================================================================== */
+@media (min-width: 992px) {
+    /* Main Dropdown Container */
+    .header__menu ul li .header__menu__dropdown {
+        position: absolute;
+        left: -15px !important;
+        top: 50px !important;
+        background: #ffffff !important;
+        width: 200px !important;
+        z-index: 999 !important;
+        padding: 8px 0 !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(0, 0, 0, 0.07) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transform: translateY(10px) !important;
+        transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                    visibility 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Hover Activation with Slide-up Animation */
+    .header__menu ul li:hover .header__menu__dropdown {
+        top: 40px !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) !important;
+    }
+
+    /* Popover Arrow Indicator */
+    .header__menu ul li .header__menu__dropdown::before {
+        content: '' !important;
+        position: absolute !important;
+        top: -6px !important;
+        left: 30px !important;
+        width: 10px !important;
+        height: 10px !important;
+        background: #ffffff !important;
+        transform: rotate(45deg) !important;
+        border-left: 1px solid rgba(0, 0, 0, 0.07) !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.07) !important;
+        z-index: 1 !important;
+    }
+
+    /* Dropdown List Item Wrapper */
+    .header__menu ul li .header__menu__dropdown li {
+        margin-right: 0 !important;
+        display: block !important;
+        padding: 0 6px !important;
+    }
+
+    /* Dropdown Item Link */
+    .header__menu ul li .header__menu__dropdown li a {
+        text-transform: capitalize !important;
+        color: #4a4a4a !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        transition: all 0.2s ease !important;
+        letter-spacing: normal !important;
+    }
+
+    /* Dropdown Item Link Hover */
+    .header__menu ul li .header__menu__dropdown li a:hover {
+        background: rgba(86, 11, 173, 0.05) !important;
+        color: #560bad !important;
+    }
+}
+
+/* ============================================
+   STYLING FOR PRODUCT SIDEBAR TOGGLE BUTTON (MOBILE/TABLET)
+   ============================================ */
+.shop-filter-toggle-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #ffffff !important;
+    color: #560bad !important;
+    border: 2px solid #560bad !important;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px 24px;
+    border-radius: 8px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 10px rgba(86, 11, 173, 0.08) !important;
+    cursor: pointer;
+    font-family: 'Saira', sans-serif !important;
+    width: 100%;
+}
+
+.shop-filter-toggle-btn i {
+    font-size: 16px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Hover & Active States */
+.shop-filter-toggle-btn:hover {
+    background: #560bad !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 15px rgba(86, 11, 173, 0.2) !important;
+}
+
+.shop-filter-toggle-btn:hover i {
+    transform: rotate(15deg) scale(1.1);
+}
+
+.shop-filter-toggle-btn:active {
+    transform: scale(0.98);
+}
+
+/* When the collapse is open (aria-expanded="true"), style it dynamically! */
+.shop-filter-toggle-btn[aria-expanded="true"] {
+    background: #560bad !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(86, 11, 173, 0.15) !important;
+}
+
+.shop-filter-toggle-btn[aria-expanded="true"] i {
+    transform: rotate(90deg);
+}
+
+/* ============================================
+   MOBILE RESPONSIVENESS: ENHANCED PAGE CONTAINER PADDING
+   ============================================ */
+@media screen and (max-width: 767px) {
+    /* Tăng khoảng cách 2 bên mép màn hình trên thiết bị di động */
+    .container {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+    
+    /* Đảm bảo các hàng (row) không bị lồi ra ngoài mép màn hình */
+    .row {
+        margin-left: -10px !important;
+        margin-right: -10px !important;
+    }
+    
+    /* Tinh chỉnh cột để có khoảng hở 2 bên đẹp mắt */
+    .row > [class*="col-"] {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    /* Tinh chỉnh tiêu đề và các phần khác trên mobile */
+    .section-title h2 {
+        font-size: 22px !important;
+    }
+
+    /* Giãn cách các phần section để thoáng đãng hơn */
+    section.spad {
+        padding-top: 40px !important;
+        padding-bottom: 40px !important;
+    }
+}
+
+/* Prevent hero search form and phone widget from wrapping on desktop/laptops under 1200px */
+@media screen and (min-width: 992px) {
+    .hero__search {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 20px !important;
+    }
+
+    .hero__search__form {
+        flex: 1 !important;
+        max-width: 610px !important;
+        width: auto !important;
+        float: none !important;
+    }
+
+    .hero__search__phone {
+        flex-shrink: 0 !important;
+        float: none !important;
+        margin-top: 0 !important;
     }
 }
