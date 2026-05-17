@@ -1,6 +1,11 @@
+@using Microsoft.AspNetCore.Localization
 @{
     var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+    
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var currentCulture = requestCulture?.RequestCulture.Culture.Name ?? "vi-VN";
+    var isEnglish = currentCulture == "en-US";
 }
 
 <partial name="_HeaderHamburger.cshtml" />
@@ -18,37 +23,55 @@
                 <nav class="header__menu">
                     <ul>
                         <li class="@(currentController == "Home" && currentAction == "Index" ? "active" : "")">
-                            <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                            <a asp-controller="Home" asp-action="Index">@Loc.T("Trang chủ", "Home")</a>
                         </li>
                         <li class="@(currentController == "Products" ? "active" : "")">
-                            <a asp-controller="Products" asp-action="Index">Cửa hàng</a>
+                            <a asp-controller="Products" asp-action="Index">@Loc.T("Cửa hàng", "Shop")</a>
                         </li>
                         <li>
-                            <a>Trang</a>
+                            <a>@Loc.T("Trang", "Pages")</a>
                             <ul class="header__menu__dropdown">
                                 @if (User.Identity!.IsAuthenticated)
                                 {
                                     @if (User.FindFirst("RoleId")?.Value == "0")
                                     {
-                                        <li><a asp-controller="Admin" asp-action="Products">Quản lý sản phẩm</a></li>
-                                        <li><a asp-controller="Admin" asp-action="Categories">Quản lý danh mục</a></li>
+                                        <li><a asp-controller="Admin" asp-action="Products">@Loc.T("Quản lý sản phẩm", "Products Admin")</a></li>
+                                        <li><a asp-controller="Admin" asp-action="Categories">@Loc.T("Quản lý danh mục", "Categories Admin")</a></li>
                                     }
-                                    <li><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+                                    <li><a asp-controller="Cart" asp-action="Index">@Loc.T("Giỏ hàng", "Cart")</a></li>
                                 }
                             </ul>
                         </li>
-                        <li><a href="#">Liên hệ</a></li>
+                        <li><a href="#">@Loc.T("Liên hệ", "Contact")</a></li>
                     </ul>
                 </nav>
             </div>
             <div class="col-lg-4 col-md-4 h-right d-none d-lg-flex">
                 <div class="header__lang">
-                    <img src="~/images/vietnam.png" alt="" />
-                    <span class="header__lang__text">VI</span>
+                    @if (isEnglish)
+                    {
+                        <img src="~/images/america.png" alt="English" class="lang-flag-img" />
+                        <span class="header__lang__text">EN</span>
+                    }
+                    else
+                    {
+                        <img src="~/images/vietnam.png" alt="Vietnam" class="lang-flag-img" />
+                        <span class="header__lang__text">VI</span>
+                    }
                     <span class="arrow_carrot-down"></span>
                     <ul>
-                        <li><a href="#">Tiếng Việt</a></li>
-                        <li><a href="#">English</a></li>
+                        <li>
+                            <a asp-controller="Language" asp-action="Change" asp-route-culture="vi-VN" asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+                               class="@(!isEnglish ? "disabled-lang active-lang" : "")">
+                                <img src="~/images/vietnam.png" alt="Vietnam" class="lang-flag-img-dropdown" /> Tiếng Việt
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="Language" asp-action="Change" asp-route-culture="en-US" asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+                               class="@(isEnglish ? "disabled-lang active-lang" : "")">
+                                <img src="~/images/america.png" alt="English" class="lang-flag-img-dropdown" /> English
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="header__tabs">
@@ -70,12 +93,12 @@
                                 <span class="header__user-name">@User.Identity.Name</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item py-2" asp-controller="Account" asp-action="Profile"><i class="fa fa-user me-2"></i> Hồ sơ</a></li>
-                                <li><a class="dropdown-item py-2" asp-controller="Cart" asp-action="Index"><i class="fa fa-shopping-bag me-2"></i> Đơn hàng</a></li>
+                                <li><a class="dropdown-item py-2" asp-controller="Account" asp-action="Profile"><i class="fa fa-user me-2"></i> @Loc.T("Hồ sơ", "Profile")</a></li>
+                                <li><a class="dropdown-item py-2" asp-controller="Cart" asp-action="Index"><i class="fa fa-shopping-bag me-2"></i> @Loc.T("Đơn hàng", "Orders")</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form asp-controller="Account" asp-action="Logout" method="post">
-                                        <button type="submit" class="dropdown-item text-danger py-2"><i class="fa fa-sign-out me-2"></i> Đăng xuất</button>
+                                        <button type="submit" class="dropdown-item text-danger py-2"><i class="fa fa-sign-out me-2"></i> @Loc.T("Đăng xuất", "Logout")</button>
                                     </form>
                                 </li>
                             </ul>
@@ -83,7 +106,7 @@
                     }
                     else
                     {
-                        <a asp-controller="Account" asp-action="Login"><i class="fa fa-user"></i> Đăng nhập</a>
+                        <a asp-controller="Account" asp-action="Login"><i class="fa fa-user"></i> @Loc.T("Đăng nhập", "Login")</a>
                     }
                 </div>
             </div>

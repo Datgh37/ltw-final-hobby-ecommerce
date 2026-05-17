@@ -4,7 +4,22 @@ namespace TuNhanTamTInh_Ecommerce.Models.ViewModels
     {
         public int ProductId { get; set; }
 
-        public string ProductName { get; set; } = null!;
+        private string _productName = null!;
+        public string ProductName 
+        { 
+            get 
+            {
+                var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
+                if (culture == "en-US" && !string.IsNullOrEmpty(ProductNameEn))
+                {
+                    return ProductNameEn;
+                }
+                return _productName;
+            }
+            set { _productName = value; }
+        }
+
+        public string? ProductNameEn { get; set; }
 
         public string? ProductSlug { get; set; }
 
@@ -16,7 +31,22 @@ namespace TuNhanTamTInh_Ecommerce.Models.ViewModels
 
         public int CategoryId { get; set; }
 
-        public string? CategoryName { get; set; }
+        private string? _categoryName;
+        public string? CategoryName
+        {
+            get
+            {
+                var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
+                if (culture == "en-US" && !string.IsNullOrEmpty(CategoryNameEn))
+                {
+                    return CategoryNameEn;
+                }
+                return _categoryName;
+            }
+            set { _categoryName = value; }
+        }
+
+        public string? CategoryNameEn { get; set; }
 
         public int? SeriesId { get; set; }
 

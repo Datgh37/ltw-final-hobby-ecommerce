@@ -1,16 +1,16 @@
 @using TuNhanTamTInh_Ecommerce.Models.ViewModels
 @model List<CartItem>
 @{
-    ViewData["Title"] = "Giỏ hàng";
+    ViewData["Title"] = Loc.T("Giỏ hàng", "Shopping Cart");
     decimal grandTotal = Model.Sum(x => x.Quantity * x.Product.UnitPrice);
 
     var breadcrumb = new BreadcrumbViewModel
     {
-        Title = "Giỏ hàng",
+        Title = Loc.T("Giỏ hàng", "Shopping Cart"),
         Items = new List<BreadcrumbItem>
         {
-            new BreadcrumbItem("Trang chủ", Url.Action("Index", "Home")),
-            new BreadcrumbItem("Chi tiết giỏ hàng")
+            new BreadcrumbItem(Loc.T("Trang chủ", "Home"), Url.Action("Index", "Home")),
+            new BreadcrumbItem(Loc.T("Chi tiết giỏ hàng", "Cart Details"))
         }
     };
 }
@@ -29,10 +29,10 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th class="cart-product-header">Sản phẩm</th>
-                                    <th>Giá</th>
-                                    <th>Số lượng</th>
-                                    <th>Tổng cộng</th>
+                                    <th class="cart-product-header">@Loc.T("Sản phẩm", "Products")</th>
+                                    <th>@Loc.T("Giá", "Price")</th>
+                                    <th>@Loc.T("Số lượng", "Quantity")</th>
+                                    <th>@Loc.T("Tổng cộng", "Total")</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -75,28 +75,28 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="shoping__cart__btns">
-                        <a asp-controller="Products" asp-action="Index" class="site-btn rounded-pill">TIẾP TỤC MUA SẮM</a>
+                        <a asp-controller="Products" asp-action="Index" class="site-btn rounded-pill">@Loc.T("TIẾP TỤC MUA SẮM", "CONTINUE SHOPPING")</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="shoping__continue">
                         <div class="shoping__discount">
-                            <h5>Mã giảm giá</h5>
+                            <h5>@Loc.T("Mã giảm giá", "Discount Codes")</h5>
                             <form action="#">
-                                <input type="text" placeholder="Nhập mã giảm giá...">
-                                <button type="submit" class="site-btn rounded-pill">ÁP DỤNG</button>
+                                <input type="text" placeholder="@Loc.T("Nhập mã giảm giá...", "Enter coupon code...")">
+                                <button type="submit" class="site-btn rounded-pill">@Loc.T("ÁP DỤNG", "APPLY")</button>
                             </form>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="shoping__checkout">
-                        <h5>Tổng đơn hàng</h5>
+                        <h5>@Loc.T("Tổng đơn hàng", "Cart Total")</h5>
                         <ul>
-                            <li>Tạm tính <span>@grandTotal.ToString("N0") ₫</span></li>
-                            <li>Tổng cộng <span id="grand-total">@grandTotal.ToString("N0") ₫</span></li>
+                            <li>@Loc.T("Tạm tính", "Subtotal") <span>@grandTotal.ToString("N0") ₫</span></li>
+                            <li>@Loc.T("Tổng cộng", "Total") <span id="grand-total">@grandTotal.ToString("N0") ₫</span></li>
                         </ul>
-                        <a asp-controller="Checkout" asp-action="Index" class="primary-btn rounded-pill w-100 text-center">TIẾN HÀNH THANH TOÁN</a>
+                        <a asp-controller="Checkout" asp-action="Index" class="primary-btn rounded-pill w-100 text-center">@Loc.T("TIẾN HÀNH THANH TOÁN", "PROCEED TO CHECKOUT")</a>
                     </div>
                 </div>
             </div>
@@ -109,10 +109,10 @@
                         <div class="cart-empty__icon mb-4">
                             <i class="fa fa-shopping-basket"></i>
                         </div>
-                        <h5 class="mb-2">Giỏ hàng của bạn đang trống</h5>
-                        <p class="text-muted mb-4">Hãy khám phá cửa hàng và chọn những mô hình Gundam ưng ý nhất nhé!</p>
+                        <h5 class="mb-2">@Loc.T("Giỏ hàng của bạn đang trống", "Your shopping cart is empty")</h5>
+                        <p class="text-muted mb-4">@Loc.T("Hãy khám phá cửa hàng và chọn những mô hình Gundam ưng ý nhất nhé!", "Explore the shop and pick the best Gundam models for yourself!")</p>
                         <a asp-controller="Products" asp-action="Index" class="primary-btn rounded-pill">
-                            <i class="fa fa-shopping-bag me-2"></i> MUA SẮM NGAY
+                            <i class="fa fa-shopping-bag me-2"></i> @Loc.T("MUA SẮM NGAY", "SHOP NOW")
                         </a>
                     </div>
                 </div>

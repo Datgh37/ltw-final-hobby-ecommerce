@@ -8,40 +8,40 @@
                         <a asp-controller="Home" asp-action="Index"><img src="~/images//Banner/logotoy.png" alt=""></a>
                     </div>
                     <ul>
-                        <li>Địa chỉ: 206 Nguyễn Khuyến, Khu 5, Phường Trảng Dài, TP. Biên Hòa, Đồng Nai</li>
-                        <li>Điện thoại: +84 912 202 605</li>
+                        <li>@Loc.T("Địa chỉ: 206 Nguyễn Khuyến, Khu 5, Phường Trảng Dài, TP. Biên Hòa, Đồng Nai", "Address: 206 Nguyen Khuyen, Ward 5, Trang Dai Ward, Bien Hoa City, Dong Nai")</li>
+                        <li>@Loc.T("Điện thoại: +84 912 202 605", "Phone: +84 912 202 605")</li>
                         <li>Email: hello@nhom4.com</li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
                 <div class="footer__widget">
-                    <h6>Liên kết hữu ích</h6>
+                    <h6>@Loc.T("Liên kết hữu ích", "Useful Links")</h6>
                     <ul>
-                        <li><a href="#">Về chúng tôi</a></li>
-                        <li><a href="#">Giới thiệu cửa hàng</a></li>
-                        <li><a href="#">Mua sắm an toàn</a></li>
-                        <li><a href="#">Thông tin giao hàng</a></li>
-                        <li><a href="#">Chính sách bảo mật</a></li>
-                        <li><a href="#">Sơ đồ trang web</a></li>
+                        <li><a href="#">@Loc.T("Về chúng tôi", "About Us")</a></li>
+                        <li><a href="#">@Loc.T("Giới thiệu cửa hàng", "About Our Shop")</a></li>
+                        <li><a href="#">@Loc.T("Mua sắm an toàn", "Secure Shopping")</a></li>
+                        <li><a href="#">@Loc.T("Thông tin giao hàng", "Delivery Info")</a></li>
+                        <li><a href="#">@Loc.T("Chính sách bảo mật", "Privacy Policy")</a></li>
+                        <li><a href="#">@Loc.T("Sơ đồ trang web", "Sitemap")</a></li>
                     </ul>
                     <ul>
-                        <li><a href="#">Chúng tôi là ai</a></li>
-                        <li><a href="#">Dịch vụ của chúng tôi</a></li>
-                        <li><a href="#">Dự án</a></li>
-                        <li><a href="#">Liên hệ</a></li>
-                        <li><a href="#">Sáng tạo</a></li>
-                        <li><a href="#">Phản hồi khách hàng</a></li>
+                        <li><a href="#">@Loc.T("Chúng tôi là ai", "Who We Are")</a></li>
+                        <li><a href="#">@Loc.T("Dịch vụ của chúng tôi", "Our Services")</a></li>
+                        <li><a href="#">@Loc.T("Dự án", "Projects")</a></li>
+                        <li><a href="#">@Loc.T("Liên hệ", "Contact")</a></li>
+                        <li><a href="#">@Loc.T("Sáng tạo", "Innovation")</a></li>
+                        <li><a href="#">@Loc.T("Phản hồi khách hàng", "Customer Feedback")</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-4 col-md-12">
                 <div class="footer__widget">
-                    <h6>Đăng ký nhận tin</h6>
-                    <p>Nhận thông tin về sản phẩm mới và ưu đãi đặc biệt qua email.</p>
+                    <h6>@Loc.T("Đăng ký nhận tin", "Subscribe to Newsletter")</h6>
+                    <p>@Loc.T("Nhận thông tin về sản phẩm mới và ưu đãi đặc biệt qua email.", "Get updates on our latest products and special offers via email.")</p>
                     <form action="#">
-                        <input type="text" placeholder="Nhập email của bạn">
-                        <button type="submit" class="site-btn">Đăng ký</button>
+                        <input type="text" placeholder="@Loc.T("Nhập email của bạn", "Enter your email")">
+                        <button type="submit" class="site-btn">@Loc.T("Đăng ký", "Subscribe")</button>
                     </form>
                     <div class="footer__widget__social">
                         <a href="#"><i class="fa fa-facebook"></i></a>
@@ -58,11 +58,11 @@
                     <div class="footer__copyright__text">
                         <p>
                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                            Project của nhóm Tứ Nhãn Tam Tinh. Thiết kế UI bởi <i class="fa fa-heart" aria-hidden="true"></i> <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                            @Loc.T("Project của nhóm Tứ Nhãn Tam Tinh. Thiết kế UI bởi", "Project by Tu Nhan Tam Tinh Group. UI design by") <i class="fa fa-heart" aria-hidden="true"></i> <a href="https://colorlib.com" target="_blank">Colorlib</a>
                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                         </p>
                         <p class="mt-2 text-danger font-weight-bold" style="font-size: 13px;">
-                            * Đây là dự án học tập, chúng tôi cam kết không sử dụng cho mục đích thương mại.
+                            @Loc.T("* Đây là dự án học tập, chúng tôi cam kết không sử dụng cho mục đích thương mại.", "* This is an academic project, we promise not to use it for commercial purposes.")
                         </p>
                     </div>
                     <div class="footer__copyright__payment"><img src="~/images/payment-item.png" alt=""></div>

@@ -152,6 +152,14 @@ function reloadCartPreview() {
         $(".cart-vc-content").html(html);
         const newCount = $(".cart-dropdown").data("total-count");
         if (newCount !== undefined) $(".cart-count").text(newCount);
+        
+        // Update hamburger total price text dynamically
+        const newTotal = $(".cart-dropdown__total strong").first().text();
+        if (newTotal) {
+            $(".header__cart__price span").text(newTotal);
+        } else {
+            $(".header__cart__price span").text("0 ₫");
+        }
     });
 }
 
@@ -168,10 +176,19 @@ function updateGlobalTotals(grandTotal, totalItems) {
     
     // Update cart icon badge
     $(".cart-count").text(totalItems);
+    
+    // Update hamburger total price text dynamically
+    $(".header__cart__price span").text(grandTotal + " ₫");
 }
 
     // 8. Event Listeners
     $(document).ready(function() {
+        // Sync hamburger total price text on initial load
+        const initialTotal = $(".cart-dropdown__total strong").first().text();
+        if (initialTotal) {
+            $(".header__cart__price span").text(initialTotal);
+        }
+
         // Add to Cart
         $(document).on("click", ".add-to-cart-btn, .add-to-cart", function(e) {
             e.preventDefault();

@@ -1,16 +1,16 @@
 @using TuNhanTamTInh_Ecommerce.Models.ViewModels
 @model TuNhanTamTInh_Ecommerce.Models.ViewModels.EditProfileViewModel
 @{
-    ViewData["Title"] = "Chỉnh sửa hồ sơ";
+    ViewData["Title"] = Loc.T("Chỉnh sửa hồ sơ", "Edit Profile");
 
     var breadcrumb = new BreadcrumbViewModel
     {
-        Title = "Chỉnh sửa hồ sơ",
+        Title = Loc.T("Chỉnh sửa hồ sơ", "Edit Profile"),
         Items = new List<BreadcrumbItem>
         {
-            new BreadcrumbItem("Home", Url.Action("Index", "Home")),
-            new BreadcrumbItem("Hồ sơ cá nhân", Url.Action("Profile", "Account")),
-            new BreadcrumbItem("Chỉnh sửa")
+            new BreadcrumbItem(Loc.T("Trang chủ", "Home"), Url.Action("Index", "Home")),
+            new BreadcrumbItem(Loc.T("Hồ sơ cá nhân", "My Profile"), Url.Action("Profile", "Account")),
+            new BreadcrumbItem(Loc.T("Chỉnh sửa", "Edit"))
         }
     };
 }
@@ -20,7 +20,7 @@
 <section class="checkout spad">
     <div class="container">
         <div class="checkout-premium">
-            <h4 class="text-center">Chỉnh sửa hồ sơ cá nhân</h4>
+            <h4 class="text-center">@Loc.T("Chỉnh sửa hồ sơ cá nhân", "Edit Personal Profile")</h4>
             <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                 <input type="hidden" asp-for="AccountId" />
@@ -38,15 +38,15 @@
                                 </label>
                                 <input type="file" id="avatarUpload" asp-for="AvatarFile" class="d-none" accept="image/*" onchange="previewImage(this)">
                             </div>
-                            <p class="text-muted small mt-2">Nhấp vào biểu tượng camera để thay đổi ảnh</p>
+                            <p class="text-muted small mt-2">@Loc.T("Nhấp vào biểu tượng camera để thay đổi ảnh", "Click on camera icon to change avatar")</p>
                             <span asp-validation-for="AvatarFile" class="text-danger small"></span>
                         </div>
 
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="checkout__input">
-                                    <p>Họ và Tên<span>*</span></p>
-                                    <input asp-for="FullName" placeholder="Nhập họ và tên...">
+                                    <p>@Loc.T("Họ và Tên", "Full Name")<span>*</span></p>
+                                    <input asp-for="FullName" placeholder="@Loc.T("Nhập họ và tên...", "Enter full name...")">
                                     <span asp-validation-for="FullName" class="text-danger"></span>
                                 </div>
                             </div>
@@ -62,7 +62,7 @@
                             </div>
                             <div class="col-lg-6">
                                 <div class="checkout__input">
-                                    <p>Số điện thoại</p>
+                                    <p>@Loc.T("Số điện thoại", "Phone Number")</p>
                                     <input asp-for="PhoneNumber" placeholder="0123 456 789">
                                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                                 </div>
@@ -70,25 +70,25 @@
                         </div>
 
                         <div class="checkout__input">
-                            <p>Địa chỉ</p>
-                            <input asp-for="Address" placeholder="Nhập địa chỉ của bạn...">
+                            <p>@Loc.T("Địa chỉ", "Address")</p>
+                            <input asp-for="Address" placeholder="@Loc.T("Nhập địa chỉ của bạn...", "Enter your address...")">
                             <span asp-validation-for="Address" class="text-danger"></span>
                         </div>
 
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="checkout__input">
-                                    <p>Ngày sinh</p>
+                                    <p>@Loc.T("Ngày sinh", "Birthdate")</p>
                                     <input asp-for="BirthDate" type="date">
                                     <span asp-validation-for="BirthDate" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="checkout__input">
-                                    <p>Giới tính</p>
+                                    <p>@Loc.T("Giới tính", "Gender")</p>
                                     <select asp-for="Gender" class="w-100 no-nice-select form-control custom-gender-select">
-                                        <option value="True">Nam</option>
-                                        <option value="False">Nữ</option>
+                                        <option value="True">@Loc.T("Nam", "Male")</option>
+                                        <option value="False">@Loc.T("Nữ", "Female")</option>
                                     </select>
                                 </div>
                             </div>
@@ -96,9 +96,9 @@
 
                         <div class="mt-5 text-center d-flex flex-column align-items-center">
                             <button type="submit" class="site-btn rounded-pill px-5 text-uppercase mb-3">
-                                <i class="fa fa-save mr-2"></i> Lưu thay đổi
+                                <i class="fa fa-save mr-2"></i> @Loc.T("Lưu thay đổi", "Save Changes")
                             </button>
-                            <a asp-action="Profile" class="text-muted no-decoration"><i class="fa fa-arrow-left mr-2"></i> Quay lại hồ sơ</a>
+                            <a asp-action="Profile" class="text-muted no-decoration"><i class="fa fa-arrow-left mr-2"></i> @Loc.T("Quay lại hồ sơ", "Back to Profile")</a>
                         </div>
                     </div>
                 </div>
@@ -137,7 +137,7 @@
                         }
                     },
                     error: function() {
-                        showToast("Đã có lỗi xảy ra khi cập nhật hồ sơ.", "error");
+                        showToast("@Loc.T("Đã có lỗi xảy ra khi cập nhật hồ sơ.", "An error occurred while updating profile.")", "error");
                     }
                 });
             });

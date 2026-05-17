@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuNhanTamTInh_Ecommerce.Data;
+using TuNhanTamTInh_Ecommerce.Helpers;
 using TuNhanTamTInh_Ecommerce.Models;
 using TuNhanTamTInh_Ecommerce.Models.ViewModels;
 
@@ -34,11 +35,11 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             var breadcrumb = new BreadcrumbViewModel
             {
-                Title = "Sản phẩm yêu thích",
+                Title = Loc.T("Sản phẩm yêu thích", "My Wishlist"),
                 Items = new List<BreadcrumbItem>
                 {
-                    new BreadcrumbItem("Trang chủ", Url.Action("Index", "Home")),
-                    new BreadcrumbItem("Yêu thích")
+                    new BreadcrumbItem(Loc.T("Trang chủ", "Home"), Url.Action("Index", "Home")),
+                    new BreadcrumbItem(Loc.T("Yêu thích", "Wishlist"))
                 }
             };
             ViewBag.Breadcrumb = breadcrumb;
@@ -57,7 +58,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 .FirstOrDefaultAsync(f => f.AccountId == accountId && f.ProductId == productId);
 
             if (favorite == null)
-                return Json(new { success = false, message = "Không tìm thấy sản phẩm trong danh sách yêu thích." });
+                return Json(new { success = false, message = Loc.T("Không tìm thấy sản phẩm trong danh sách yêu thích.", "Product not found in your wishlist.") });
 
             _context.Favorites.Remove(favorite);
             await _context.SaveChangesAsync();
@@ -68,7 +69,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             {
                 success = true,
                 totalCount = totalCount,
-                message = "Đã xóa khỏi danh sách yêu thích."
+                message = Loc.T("Đã xóa khỏi danh sách yêu thích.", "Removed from wishlist successfully.")
             });
         }
     }

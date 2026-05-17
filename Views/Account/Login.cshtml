@@ -1,6 +1,6 @@
 @model TuNhanTamTInh_Ecommerce.Models.ViewModels.LoginViewModel
 @{
-    ViewData["Title"] = "Đăng nhập";
+    ViewData["Title"] = Loc.T("Đăng nhập", "Login");
     Layout = "_LayoutAuth";
 }
 
@@ -9,18 +9,18 @@
         <!-- Left Banner -->
         <div class="col-lg-6 d-none d-lg-block p-0">
             <div class="auth-banner">
-                <h2>Chào mừng trở lại!</h2>
-                <p>Khám phá thế giới mô hình thu nhỏ vô tận. Đăng nhập để tiếp tục hành trình đam mê của bạn tại TuNhanTamTInh Hobby Shop.</p>
+                <h2>@Loc.T("Chào mừng trở lại!", "Welcome Back!")</h2>
+                <p>@Loc.T("Khám phá thế giới mô hình thu nhỏ vô tận. Đăng nhập để tiếp tục hành trình đam mê của bạn tại TuNhanTamTInh Hobby Shop.", "Discover the endless world of miniature scale models. Sign in to continue your passion at TuNhanTamTInh Hobby Shop.")</p>
             </div>
         </div>
         <!-- Right Form -->
         <div class="col-lg-6 p-0 position-relative">
-            <a asp-controller="Home" asp-action="Index" class="back-home"><i class="fa fa-home"></i> Trang chủ</a>
+            <a asp-controller="Home" asp-action="Index" class="back-home"><i class="fa fa-home"></i> @Loc.T("Trang chủ", "Home")</a>
             <div class="auth-form-wrapper">
                 <div class="auth-form-container">
                     <div class="text-center mb-5">
-                        <h3 class="font-weight-bold auth-title">Đăng Nhập</h3>
-                        <p class="text-muted">Vui lòng nhập thông tin của bạn</p>
+                        <h3 class="font-weight-bold auth-title">@Loc.T("Đăng Nhập", "Login")</h3>
+                        <p class="text-muted">@Loc.T("Vui lòng nhập thông tin của bạn", "Please enter your credentials")</p>
                     </div>
                     
                     <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
@@ -28,15 +28,15 @@
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger @(ViewData.ModelState.IsValid ? "step-hidden" : "")"></div>
                         
                         <div class="form-group mb-4">
-                            <label asp-for="UsernameOrEmail" class="font-weight-bold mb-2">Tên đăng nhập / Email <span class="text-danger">*</span></label>
-                            <input asp-for="UsernameOrEmail" class="form-control auth-input" placeholder="Nhập username hoặc email..." />
+                            <label asp-for="UsernameOrEmail" class="font-weight-bold mb-2">@Loc.T("Tên đăng nhập / Email", "Username or Email") <span class="text-danger">*</span></label>
+                            <input asp-for="UsernameOrEmail" class="form-control auth-input" placeholder="@Loc.T("Nhập username hoặc email...", "Enter username or email...")" />
                             <span asp-validation-for="UsernameOrEmail" class="text-danger small mt-1 d-block"></span>
                         </div>
                         
                         <div class="form-group mb-4">
-                            <label asp-for="Password" class="font-weight-bold mb-2">Mật khẩu <span class="text-danger">*</span></label>
+                            <label asp-for="Password" class="font-weight-bold mb-2">@Loc.T("Mật khẩu", "Password") <span class="text-danger">*</span></label>
                             <div class="password-wrapper">
-                                <input asp-for="Password" class="form-control auth-input" placeholder="Nhập mật khẩu..." type="password" />
+                                <input asp-for="Password" class="form-control auth-input" placeholder="@Loc.T("Nhập mật khẩu...", "Enter password...")" type="password" />
                                 <i class="fa fa-eye password-toggle"></i>
                             </div>
                             <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
@@ -46,18 +46,18 @@
                             <div class="form-check">
                                 <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMe">
                                 <label class="form-check-label text-muted auth-helper-text" for="rememberMe">
-                                    Ghi nhớ tôi
+                                    @Loc.T("Ghi nhớ tôi", "Remember me")
                                 </label>
                             </div>
                             <a asp-controller="Account" asp-action="ForgotPassword" class="auth-link auth-helper-text">
-                                Quên mật khẩu?
+                                @Loc.T("Quên mật khẩu?", "Forgot password?")
                             </a>
                         </div>
 
-                        <button type="submit" class="btn auth-btn w-100">ĐĂNG NHẬP</button>
+                        <button type="submit" class="btn auth-btn w-100">@Loc.T("ĐĂNG NHẬP", "LOGIN")</button>
                         
                         <div class="text-center mt-4">
-                            <p class="text-muted auth-footer-text">Chưa có tài khoản? <a asp-controller="Account" asp-action="Register" class="auth-link">Đăng ký ngay</a></p>
+                            <p class="text-muted auth-footer-text">@Loc.T("Chưa có tài khoản?", "Don't have an account?") <a asp-controller="Account" asp-action="Register" class="auth-link">@Loc.T("Đăng ký ngay", "Register now")</a></p>
                         </div>
                     </form>
                 </div>
@@ -75,8 +75,8 @@
                 const form = $(this);
                 const btn = form.find('button[type="submit"]');
                 
-                btn.prop('disabled', true).text('ĐANG XỬ LÝ...');
-
+                btn.prop('disabled', true).text('@Html.Raw(Loc.T("ĐANG XỬ LÝ...", "PROCESSING..."))');
+ 
                 $.ajax({
                     url: form.attr('action'),
                     type: 'POST',
@@ -89,12 +89,12 @@
                             }, 1000);
                         } else {
                             showToast(response.message, 'error');
-                            btn.prop('disabled', false).text('ĐĂNG NHẬP');
+                            btn.prop('disabled', false).text('@Html.Raw(Loc.T("ĐĂNG NHẬP", "LOGIN"))');
                         }
                     },
                     error: function() {
-                        showToast("Có lỗi xảy ra khi đăng nhập.", 'error');
-                        btn.prop('disabled', false).text('ĐĂNG NHẬP');
+                        showToast("@Html.Raw(Loc.T("Có lỗi xảy ra khi đăng nhập.", "An error occurred during login."))", 'error');
+                        btn.prop('disabled', false).text('@Html.Raw(Loc.T("ĐĂNG NHẬP", "LOGIN"))');
                     }
                 });
             });

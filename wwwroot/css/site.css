@@ -1067,8 +1067,8 @@ html, body {
 
 /* Mobile & Card Enhancement */
 .header-mobile-avatar { 
-    width: 55px !important; 
-    height: 55px !important; 
+    width: 75px !important; 
+    height: 75px !important; 
     object-fit: cover; 
     border: 2px solid #560bad !important; 
     box-shadow: 0 4px 10px rgba(86, 11, 173, 0.2); 
@@ -2363,6 +2363,12 @@ html, body {
     margin-top: 2px; /* Slight nudge for optical alignment */
 }
 
+/* Specific optical alignment nudge for heart icon to be 100% aligned with the shopping bag */
+.header__tabs ul li a i.fa-heart, 
+.humberger__menu__cart ul li a i.fa-heart {
+    margin-top: 5px !important; /* Shift down slightly by 2 more pixels */
+}
+
 /* Ensure the cart view component content also aligns */
 .cart-vc-content {
     display: flex;
@@ -2395,10 +2401,23 @@ html, body {
     background: #560bad !important;
 }
 
-/* Specific nudge for heart icon badge as it is wider */
-.header__tabs ul li a span, 
-.humberger__menu__cart ul li a span {
-    right: -13px !important;
+/* Specific styling for the heart (favorite) count badge */
+.header__tabs ul li a span:not(.cart-count), 
+.humberger__menu__cart ul li a span:not(.cart-count) {
+    top: -2px !important; /* Kept high at its default baseline */
+    right: -13px !important; /* Specifically wider right margin */
+}
+
+.header__tabs ul li a span.cart-count, 
+.humberger__menu__cart ul li a span.cart-count,
+.cart-count {
+    top: -4px !important; /* PC default horizontal symmetry */
+    right: -10px !important; /* Kept at default horizontal margin */
+}
+
+/* Specific lower shift for mobile hamburger cart badge to align perfectly with mobile heart badge */
+.humberger__menu__cart ul li a span.cart-count {
+    top: -3.5px !important; /* Lowered by 2px to align perfectly on mobile, winning the specificity battle! */
 }
 
 /* Reset relative positioning for the icon containers to anchor the badges */
@@ -3231,4 +3250,173 @@ html, body {
         height: 26px !important;
         font-size: 11px !important;
     }
+}
+
+/* Custom Language Flag and Emoji Styles (Non-inline CSS) */
+.lang-flag-emoji {
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+.lang-flag-emoji-dropdown {
+    font-size: 16px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.lang-flag-img {
+    width: 18px;
+    height: auto;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.lang-flag-img-dropdown {
+    width: 16px;
+    height: auto;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.disabled-lang {
+    cursor: default !important;
+    opacity: 0.5 !important;
+    pointer-events: none !important; /* Disable all interactions naturally */
+}
+
+.active-lang {
+    font-weight: bold !important; /* Emphasize active language selection */
+}
+
+/* Align mobile cart price horizontally with heart and cart icons */
+.humberger__menu__cart {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+}
+
+.humberger__menu__cart ul {
+    display: inline-flex !important;
+    align-items: center !important;
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+    padding-left: 0 !important;
+}
+
+.humberger__menu__cart ul li {
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.humberger__menu__cart .header__cart__price {
+    display: inline-flex !important;
+    align-items: center !important;
+    margin-bottom: 0 !important;
+    margin-top: 2px !important;
+}
+
+/* -------------------------------------------------------------
+   PREMIUM COLLAPSIBLE ACCORDION LANGUAGE DROPDOWNS FOR HAMBURGER
+------------------------------------------------------------- */
+.humberger__menu__widget {
+    margin-bottom: 0px !important; /* Minimized bottom margin for an ultra-compact vertical space! */
+}
+
+.humberger__menu__widget .header__top__right__language {
+    position: relative !important;
+    display: block !important; /* Make it full block width on mobile */
+    cursor: pointer !important;
+    padding: 8px 0 !important;
+    width: 100% !important;
+}
+
+/* Force iOS touch bubbling by setting cursor pointer on mobile descendants */
+.humberger__menu__widget .header__top__right__language * {
+    cursor: pointer !important;
+}
+
+/* Render the mobile list inline inside the document layout flow */
+.humberger__menu__widget .header__top__right__language ul {
+    display: none !important;
+    position: relative !important; /* Forces normal document flow, absolutely immune to clipping/covering! */
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background-color: #f7f7f7 !important; /* Premium light gray background for clear separation */
+    padding: 0 !important;
+    margin-top: 10px !important;
+    border-radius: 6px !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    z-index: 1 !important;
+    overflow: hidden !important;
+}
+
+.humberger__menu__widget .header__top__right__language ul.show-lang-dropdown {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.humberger__menu__widget .header__top__right__language ul li {
+    display: block !important;
+    width: 100% !important;
+    border-bottom: 1px solid #e9e9e9 !important;
+}
+
+.humberger__menu__widget .header__top__right__language ul li:last-child {
+    border-bottom: none !important;
+}
+
+.humberger__menu__widget .header__top__right__language ul li a {
+    display: flex !important;
+    align-items: center !important;
+    padding: 12px 16px !important;
+    color: #2b2b2b !important; /* Clean dark text for superb contrast on light gray bg */
+    font-size: 14px !important;
+    text-decoration: none !important;
+    transition: background-color 0.2s ease !important;
+    width: 100% !important;
+}
+
+.humberger__menu__widget .header__top__right__language ul li a:hover {
+    background-color: #ededed !important;
+    color: #2b2b2b !important;
+}
+
+/* -------------------------------------------------------------
+   GLOBAL DROPDOWN ALIGNMENT POLISH (ICONS & TEXT PERFECT ALIGN)
+------------------------------------------------------------- */
+.dropdown-menu .dropdown-item {
+    display: flex !important;
+    align-items: center !important;
+    text-align: left !important;
+    border: none !important;
+    background: transparent !important;
+    width: 100% !important;
+}
+
+.dropdown-menu .dropdown-item i {
+    width: 18px !important; /* Fixed width forces perfect vertical alignment of text! */
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-right: 10px !important; /* Premium spacing between icon and text */
+}
+
+.dropdown-menu .dropdown-item.text-danger {
+    color: #dc3545 !important; /* Premium bootstrap red by default */
+}
+
+.dropdown-menu .dropdown-item.text-danger i {
+    color: #dc3545 !important;
+}
+
+.dropdown-menu .dropdown-item.text-danger:hover {
+    background-color: #fff5f5 !important; /* Soft, premium red hover background */
+    color: #bd2130 !important; /* Slightly darker red on hover */
+}
+
+.dropdown-menu .dropdown-item.text-danger:hover i {
+    color: #bd2130 !important;
 }

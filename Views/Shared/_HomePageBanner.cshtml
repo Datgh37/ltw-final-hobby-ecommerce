@@ -1,8 +1,8 @@
 <div class="hero__item set-bg" data-setbg="@Url.Content("~/images/Banner/banner.png")">
     <div class="hero__text">
         <span>TRINITY HOBBY SHOP</span>
-        <h2>Thỏa Sức <br />Đam Mê Sưu Tầm</h2>
-        <p>Mô hình chính hãng, giao hàng tận nơi</p>
-        <a asp-controller="Products" asp-action="Index" class="primary-btn">MUA NGAY</a>
+        <h2>@Html.Raw(Loc.T("Thỏa Sức <br />Đam Mê Sưu Tầm", "Build Your <br />Dream Collection"))</h2>
+        <p>@Loc.T("Mô hình chính hãng, giao hàng tận nơi", "Official collectibles, home delivery")</p>
+        <a asp-controller="Products" asp-action="Index" class="primary-btn">@Loc.T("MUA NGAY", "SHOP NOW")</a>
     </div>
 </div>

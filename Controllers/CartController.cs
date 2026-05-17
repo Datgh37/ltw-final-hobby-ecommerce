@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TuNhanTamTInh_Ecommerce.Data;
 using TuNhanTamTInh_Ecommerce.Models;
+using TuNhanTamTInh_Ecommerce.Helpers;
 
 namespace TuNhanTamTInh_Ecommerce.Controllers
 {
@@ -45,17 +46,17 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
-            if (quantity <= 0) return Json(new { success = false, message = "Số lượng không hợp lệ" });
+            if (quantity <= 0) return Json(new { success = false, message = Loc.T("Số lượng không hợp lệ", "Invalid quantity") });
             if (!User.Identity.IsAuthenticated)
             {
-                return Json(new { success = false, message = "Vui lòng đăng nhập để mua hàng" });
+                return Json(new { success = false, message = Loc.T("Vui lòng đăng nhập để mua hàng", "Please login to purchase items") });
             }
 
             // Lấy AccountId từ Identity (xác thực người dùng hiện tại)
             var accountId = User.FindFirst("AccountId")?.Value;
             if (string.IsNullOrEmpty(accountId))
             {
-                return Json(new { success = false, message = "Không tìm thấy tài khoản" });
+                return Json(new { success = false, message = Loc.T("Không tìm thấy tài khoản", "Account not found") });
             }
 
             var cart = await _context.Carts
@@ -79,13 +80,13 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 .FirstOrDefaultAsync(x => x.CartId == cart.CartId && x.ProductId == productId);
 
             var product = await _context.Products.FindAsync(productId);
-            if (product == null) return Json(new { success = false, message = "Sản phẩm không tồn tại" });
+            if (product == null) return Json(new { success = false, message = Loc.T("Sản phẩm không tồn tại", "Product does not exist") });
 
             if (cartItem != null)
             {
                 if (cartItem.Quantity + quantity > product.StockQuantity)
                 {
-                    return Json(new { success = false, message = $"Chỉ còn {product.StockQuantity} sản phẩm trong kho" });
+                    return Json(new { success = false, message = Loc.T($"Chỉ còn {product.StockQuantity} sản phẩm trong kho", $"Only {product.StockQuantity} items left in stock") });
                 }
                 cartItem.Quantity += quantity;
             }
@@ -93,7 +94,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             {
                 if (quantity > product.StockQuantity)
                 {
-                    return Json(new { success = false, message = $"Chỉ còn {product.StockQuantity} sản phẩm trong kho" });
+                    return Json(new { success = false, message = Loc.T($"Chỉ còn {product.StockQuantity} sản phẩm trong kho", $"Only {product.StockQuantity} items left in stock") });
                 }
                 cartItem = new CartItem
                 {
@@ -110,7 +111,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             return Json(new { 
                 success = true, 
                 totalItems = summary.TotalItems, 
-                message = "Đã thêm vào giỏ hàng" 
+                message = Loc.T("Đã thêm vào giỏ hàng", "Added to cart") 
             });
         }
 
@@ -119,11 +120,11 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateQuantity(int cartItemId, int quantity)
         {
-            if (quantity < 1) return Json(new { success = false, message = "Số lượng không hợp lệ" });
+            if (quantity < 1) return Json(new { success = false, message = Loc.T("Số lượng không hợp lệ", "Invalid quantity") });
 
             // Lấy danh tính người dùng hiện tại để đảm bảo quyền sở hữu (Chống lỗi IDOR)
             var accountId = User.FindFirst("AccountId")?.Value;
-            if (string.IsNullOrEmpty(accountId)) return Json(new { success = false, message = "Vui lòng đăng nhập" });
+            if (string.IsNullOrEmpty(accountId)) return Json(new { success = false, message = Loc.T("Vui lòng đăng nhập", "Please login") });
 
             var cartItem = await _context.CartItems
                 .Include(x => x.Product)
@@ -135,7 +136,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             if (quantity > cartItem.Product.StockQuantity)
             {
-                return Json(new { success = false, message = $"Số lượng vượt quá tồn kho ({cartItem.Product.StockQuantity})" });
+                return Json(new { success = false, message = Loc.T($"Số lượng vượt quá tồn kho ({cartItem.Product.StockQuantity})", $"Quantity exceeds stock limit ({cartItem.Product.StockQuantity})") });
             }
 
             cartItem.Quantity = quantity;
@@ -159,7 +160,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         {
             // Bảo mật: Xác thực danh tính từ Cookie/Token thay vì tin tưởng ID từ client
             var accountId = User.FindFirst("AccountId")?.Value;
-            if (string.IsNullOrEmpty(accountId)) return Json(new { success = false, message = "Vui lòng đăng nhập" });
+            if (string.IsNullOrEmpty(accountId)) return Json(new { success = false, message = Loc.T("Vui lòng đăng nhập", "Please login") });
 
             var cartItem = await _context.CartItems
                 .Include(x => x.Cart)

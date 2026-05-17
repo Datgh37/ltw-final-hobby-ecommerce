@@ -11,7 +11,7 @@
                 <div class="hero__categories @(isHome ? "dropdown-open" : "")">
                     <div class="hero__categories__all">
                         <i class="fa fa-bars"></i>
-                        <span>Tất cả danh mục</span>
+                        <span>@Loc.T("Tất cả danh mục", "All Categories")</span>
                     </div>
                     <ul>
                         @foreach (var catItem in Model.Categories)
@@ -53,17 +53,17 @@
                     <div class="hero__search__form">
                         <form asp-controller="Products" asp-action="Index" method="get" class="hero-search-container">
                             <select name="seriesId" class="hero-series-select">
-                                <option value="">Tất cả Series</option>
+                                <option value="">@Loc.T("Tất cả Series", "All Series")</option>
                                 @foreach (var seriesItem in Model.Series)
                                 {
                                     <option value="@seriesItem.SeriesId">@seriesItem.SeriesName</option>
                                 }
                             </select>
                             <div class="search-input-wrapper">
-                                <input type="text" name="keyword" id="heroSearchInput" placeholder="Bạn đang tìm gì?" autocomplete="off">
+                                <input type="text" name="keyword" id="heroSearchInput" placeholder="@Loc.T("Bạn đang tìm gì?", "What are you looking for?")" autocomplete="off">
                                 <div id="liveSearchResults" class="live-search-dropdown"></div>
                             </div>
-                            <button type="submit" class="site-btn">TÌM KIẾM</button>
+                            <button type="submit" class="site-btn">@Loc.T("TÌM KIẾM", "SEARCH")</button>
                         </form>
                     </div>
                     <div class="hero__search__phone">
@@ -72,7 +72,7 @@
                         </div>
                         <div class="hero__search__phone__text">
                             <h5>+84 912 202 605</h5>
-                            <span>hỗ trợ 24/7</span>
+                            <span>@Loc.T("hỗ trợ 24/7", "support 24/7")</span>
                         </div>
                     </div>
                 </div>

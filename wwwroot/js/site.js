@@ -175,4 +175,32 @@ $(document).ready(function () {
             window.location.href = '/Products?seriesId=' + seriesId;
         }
     });
+
+    // 7. Toggle Hamburger Language Dropdown on Click (Mobile Accordion style)
+    $(document).on('click', '.humberger__menu__widget .header__top__right__language', function (e) {
+        // If clicking a link inside the dropdown list, let it navigate
+        if ($(e.target).closest('ul').length > 0) {
+            return;
+        }
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const $ul = $(this).find('ul');
+        const isOpen = $ul.hasClass('show-lang-dropdown');
+        
+        if (isOpen) {
+            $ul.removeClass('show-lang-dropdown');
+        } else {
+            $ul.addClass('show-lang-dropdown');
+        }
+    });
+
+    // Close when clicking outside
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.humberger__menu__widget .header__top__right__language').length) {
+            $('.humberger__menu__widget .header__top__right__language ul').removeClass('show-lang-dropdown');
+        }
+    });
+
 });

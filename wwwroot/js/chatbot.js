@@ -86,6 +86,8 @@ $(document).ready(function () {
 
     // 4. Send Message via AJAX
     function sendMessage(text) {
+        const isEn = $('html').attr('lang') === 'en';
+        
         // Render User Message
         appendMessage(text, 'user');
         $inputField.val('');
@@ -111,7 +113,7 @@ $(document).ready(function () {
                 }
                 
                 if (response.error) {
-                    appendMessage("Có lỗi xảy ra: " + response.error, 'bot');
+                    appendMessage((isEn ? "An error occurred: " : "Có lỗi xảy ra: ") + response.error, 'bot');
                     return;
                 }
 
@@ -132,7 +134,7 @@ $(document).ready(function () {
                     window.AppDebugger.chatbot(text, null, duration, { status, error, responseText: xhr.responseText });
                 }
                 
-                appendMessage("Hiện tại tôi đang bận một chút, bạn hãy thử hỏi lại sau vài giây nhé! 🤖", 'bot');
+                appendMessage(isEn ? "I'm currently a bit busy, please try asking again in a few seconds! 🤖" : "Hiện tại tôi đang bận một chút, bạn hãy thử hỏi lại sau vài giây nhé! 🤖", 'bot');
             }
         });
     }
@@ -155,6 +157,7 @@ $(document).ready(function () {
 
     // 6. Append Product Cards
     function appendProducts(products) {
+        const isEn = $('html').attr('lang') === 'en';
         let productsHtml = '<div class="chatbot-product-carousel">';
         
         products.forEach(p => {
@@ -179,7 +182,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                     <div class="chatbot-product-action">
-                        <a href="/Products/Details/${p.productId}" class="chatbot-view-btn">Xem chi tiết</a>
+                        <a href="/Products/Details/${p.productId}" class="chatbot-view-btn">${isEn ? "View Details" : "Xem chi tiết"}</a>
                     </div>
                 </div>
             `;

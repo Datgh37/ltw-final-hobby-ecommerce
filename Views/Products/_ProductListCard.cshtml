@@ -10,7 +10,7 @@
         @if (isOutOfStock)
         {
             <div class="sold-out-overlay">
-                <span class="sold-out-text">Hết hàng</span>
+                <span class="sold-out-text">@Loc.T("Hết hàng", "Out of stock")</span>
             </div>
         }
 
@@ -52,11 +52,11 @@
             <div class="product__item__stock d-inline-block">
                 @if (!isOutOfStock)
                 {
-                    <span class="badge badge-stock badge-stock-in">Còn hàng (@Model.StockQuantity)</span>
+                    <span class="badge badge-stock badge-stock-in">@Loc.T("Còn hàng", "In stock") (@Model.StockQuantity)</span>
                 }
                 else
                 {
-                    <span class="badge badge-stock badge-stock-out">Hết hàng</span>
+                    <span class="badge badge-stock badge-stock-out">@Loc.T("Hết hàng", "Out of stock")</span>
                 }
             </div>
         </div>
@@ -79,7 +79,7 @@
         <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.ProductId" 
            class="primary-btn @(isOutOfStock ? "btn-disabled" : "")"
            onclick="@(isOutOfStock ? "return false;" : null)">
-            @(isOutOfStock ? "Hết hàng" : "Chi tiết")
+            @(isOutOfStock ? Loc.T("Hết hàng", "Out of Stock") : Loc.T("Chi tiết", "Details"))
         </a>
     </div>
 </div>

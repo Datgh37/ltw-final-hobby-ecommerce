@@ -148,6 +148,9 @@ public partial class EcommerceHobbyShopContext : DbContext
         {
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
             entity.Property(e => e.CategoryName).HasMaxLength(50);
+            entity.Property(e => e.CategoryNameEn)
+                .HasMaxLength(50)
+                .HasColumnName("CategoryName_EN");
             entity.Property(e => e.CategorySlug).HasMaxLength(50);
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
@@ -239,12 +242,17 @@ public partial class EcommerceHobbyShopContext : DbContext
                 .HasColumnType("datetime")
                 .ValueGeneratedOnAdd();
             entity.Property(e => e.ProductName).HasMaxLength(200);
+            entity.Property(e => e.ProductNameEn)
+                .HasMaxLength(200)
+                .HasColumnName("ProductName_EN");
             entity.Property(e => e.ProductSlug).HasMaxLength(200);
             entity.Property(e => e.SeriesId).HasColumnName("SeriesID");
             entity.Property(e => e.SupplierId)
                 .HasMaxLength(50)
                 .HasColumnName("SupplierID");
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.DescriptionEn)
+                .HasColumnName("Description_EN");
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
@@ -326,6 +334,9 @@ public partial class EcommerceHobbyShopContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("RoleID");
             entity.Property(e => e.RoleName).HasMaxLength(50);
+            entity.Property(e => e.RoleNameEn)
+                .HasMaxLength(50)
+                .HasColumnName("RoleName_EN");
         });
 
         modelBuilder.Entity<Series>(entity =>

@@ -18,7 +18,7 @@
        asp-route-minPrice="@currentMinPrice"
        asp-route-maxPrice="@currentMaxPrice"
        class="@(string.IsNullOrEmpty(currentCategoryId) ? "sidebar__category--active" : "")">
-        Tất cả
+        @Loc.T("Tất cả", "All")
     </a>
 </li>
 

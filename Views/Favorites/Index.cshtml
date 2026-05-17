@@ -3,7 +3,7 @@
 @model List<Favorite>
 
 @{
-    ViewData["Title"] = "Sản phẩm yêu thích";
+    ViewData["Title"] = Loc.T("Sản phẩm yêu thích", "My Wishlist");
     var breadcrumb = ViewBag.Breadcrumb as BreadcrumbViewModel;
 }
 
@@ -21,10 +21,10 @@
                         <div class="favorites-empty__icon mb-4">
                             <i class="fa fa-heart-o"></i>
                         </div>
-                        <h5 class="mb-2">Danh sách yêu thích trống</h5>
-                        <p class="text-muted mb-4">Hãy khám phá cửa hàng và thêm sản phẩm yêu thích của bạn!</p>
+                        <h5 class="mb-2">@Loc.T("Danh sách yêu thích trống", "Wishlist is empty")</h5>
+                        <p class="text-muted mb-4">@Loc.T("Hãy khám phá cửa hàng và thêm sản phẩm yêu thích của bạn!", "Explore the shop and add your favorite products!")</p>
                         <a asp-controller="Products" asp-action="Index" class="primary-btn">
-                            <i class="fa fa-shopping-bag me-2"></i> Khám phá sản phẩm
+                            <i class="fa fa-shopping-bag me-2"></i> @Loc.T("Khám phá sản phẩm", "Explore Products")
                         </a>
                     </div>
                 </div>
@@ -35,12 +35,12 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="shoping__cart__table">
-                        <table id="favorites-table">
+                        <table>
                             <thead>
                                 <tr>
-                                    <th class="fav-product-header">Sản phẩm</th>
-                                    <th class="fav-price-cell">Giá</th>
-                                    <th class="fav-status-cell">Trạng thái</th>
+                                    <th class="fav-product-header">@Loc.T("Sản phẩm", "Products")</th>
+                                    <th class="fav-price-cell">@Loc.T("Giá", "Price")</th>
+                                    <th class="fav-status-cell">@Loc.T("Trạng thái", "Status")</th>
                                     <th class="shoping__cart__item__close"></th>
                                 </tr>
                             </thead>
@@ -87,7 +87,7 @@
                                                     </div>
                                                     <span class="fav-meta-sep">|</span>
                                                     <div class="fav-views text-muted small d-inline-block">
-                                                        <i class="fa fa-eye"></i> <span>@product.ViewCount.ToString("N0") lượt xem</span>
+                                                        <i class="fa fa-eye"></i> <span>@product.ViewCount.ToString("N0") @Loc.T("lượt xem", "views")</span>
                                                     </div>
                                                 </div>
                                             </h5>
@@ -108,13 +108,13 @@
                                             @if (isInStock)
                                             {
                                                 <span class="fav-stock-badge fav-stock-in">
-                                                    <i class="fa fa-check-circle me-1"></i>Còn hàng (@product.StockQuantity)
+                                                    <i class="fa fa-check-circle me-1"></i>@Loc.T("Còn hàng", "In Stock") (@product.StockQuantity)
                                                 </span>
                                             }
                                             else
                                             {
                                                 <span class="fav-stock-badge fav-stock-out">
-                                                    <i class="fa fa-times-circle me-1"></i>Hết hàng
+                                                    <i class="fa fa-times-circle me-1"></i>@Loc.T("Hết hàng", "Out of Stock")
                                                 </span>
                                             }
                                         </td>
@@ -124,13 +124,13 @@
                                                         class="btn-add-to-cart-fav primary-btn primary-btn--sm @(isInStock ? "" : "disabled")"
                                                         data-product-id="@product.ProductId"
                                                     @(isInStock ? "" : "disabled")
-                                                        title="Thêm vào giỏ hàng">
+                                                         title="@Loc.T("Thêm vào giỏ hàng", "Add to Cart")">
                                                     <i class="fa fa-shopping-cart"></i>
                                                 </button>
                                                 <button type="button"
                                                         class="btn-remove-fav fav-remove-btn"
                                                         data-product-id="@product.ProductId"
-                                                        title="Xóa khỏi yêu thích">
+                                                        title="@Loc.T("Xóa khỏi yêu thích", "Remove from Wishlist")">
                                                     <span class="icon_close"></span>
                                                 </button>
                                             </div>
@@ -186,7 +186,7 @@
                         }
                     },
                     error: function () {
-                        showToast('Có lỗi xảy ra. Vui lòng thử lại.', 'error');
+                        showToast('@Loc.T("Có lỗi xảy ra. Vui lòng thử lại.", "An error occurred. Please try again.")', 'error');
                         $btn.prop('disabled', false).html('<span class="icon_close"></span>');
                     }
                 });
@@ -202,7 +202,7 @@
                     headers: { 'RequestVerificationToken': token },
                     success: function (res) {
                         if (res.success) {
-                            showToast('Đã thêm vào giỏ hàng!', 'success');
+                            showToast('@Loc.T("Đã thêm vào giỏ hàng!", "Added to cart!")', 'success');
                             // Cập nhật badge giỏ hàng nếu có
                             if (res.cartCount !== undefined) {
                                 $('#cartCount, #cartCountMobile').text(res.cartCount);
@@ -212,11 +212,11 @@
                                 reloadCartPreview();
                             }
                         } else {
-                            showToast(res.message || 'Không thể thêm vào giỏ hàng.', 'error');
+                            showToast(res.message || '@Loc.T("Không thể thêm vào giỏ hàng.", "Could not add to cart.")', 'error');
                         }
                     },
                     error: function () {
-                        showToast('Vui lòng đăng nhập để thêm vào giỏ hàng.', 'error');
+                        showToast('@Loc.T("Vui lòng đăng nhập để thêm vào giỏ hàng.", "Please login to add to cart.")', 'error');
                     }
                 });
             });

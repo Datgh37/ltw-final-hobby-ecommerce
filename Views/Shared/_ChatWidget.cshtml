@@ -1,8 +1,8 @@
 <!-- Chatbot Floating Bubble -->
-<div id="chatbot-bubble" class="chatbot-bubble" title="Hỏi đáp cùng AI Trợ lý">
+<div id="chatbot-bubble" class="chatbot-bubble" title="@Loc.T("Hỏi đáp cùng AI Trợ lý", "Q&A with AI Assistant")">
     <div class="chatbot-bubble-pulse"></div>
     <i class="fa fa-comments"></i>
-    <span class="chatbot-bubble-badge">AI Trợ Lý</span>
+    <span class="chatbot-bubble-badge">@Loc.T("AI Trợ Lý", "AI Assistant")</span>
 </div>
 
 <!-- Chatbot Chat Window -->
@@ -16,11 +16,11 @@
             </div>
             <div class="chatbot-title-container">
                 <h6 class="chatbot-title">Hobby Assistant</h6>
-                <span class="chatbot-subtitle">AI Trợ lý trực tuyến</span>
+                <span class="chatbot-subtitle">@Loc.T("AI Trợ lý trực tuyến", "Online AI Assistant")</span>
             </div>
         </div>
         <div class="chatbot-header-actions">
-            <button id="chatbot-resize" class="chatbot-resize-btn" title="Phóng to / Thu nhỏ"><i class="fa fa-expand"></i></button>
+            <button id="chatbot-resize" class="chatbot-resize-btn" title="@Loc.T("Phóng to / Thu nhỏ", "Minimize / Maximize")"><i class="fa fa-expand"></i></button>
             <button id="chatbot-close" class="chatbot-close-btn">&times;</button>
         </div>
     </div>
@@ -33,26 +33,26 @@
                 <img src="/images/Others/bot-avatar.png" alt="AI Avatar">
             </div>
             <div class="message-bubble">
-                Chào bạn! Tôi là **Hobby Assistant** 🤖, trợ lý AI siêu cấp của shop. Bạn cần tìm kiếm Gundam, Figure, hay muốn hỏi về hàng giảm giá hot cứ bảo tôi nhé!
+                @Loc.T("Chào bạn! Tôi là **Hobby Assistant** 🤖, trợ lý AI siêu cấp của shop. Bạn cần tìm kiếm Gundam, Figure, hay muốn hỏi về hàng giảm giá hot cứ bảo tôi nhé!", "Hello! I am **Hobby Assistant** 🤖, the shop's super AI assistant. Let me know if you need to search for Gundam, Figures, or ask about hot discounts!")
             </div>
         </div>
 
         <!-- Quick Suggestions -->
         <div class="chatbot-suggestions">
-            <button class="suggestion-btn" data-query="Shop đang bày bán tổng cộng bao nhiêu mặt hàng?">📊 Số lượng sản phẩm</button>
-            <button class="suggestion-btn" data-query="Hiện tại shop có mã giảm giá hoặc voucher nào không?">🎟️ Mã giảm giá / Voucher</button>
-            <button class="suggestion-btn" data-query="Shop bán những danh mục và dòng series mô hình nào?">📂 Danh mục & Series</button>
-            <button class="suggestion-btn" data-query="Có những sản phẩm nào mới về hoặc đang giảm giá sâu không?">🔥 Hàng Mới & Khuyến Mãi</button>
-            <button class="suggestion-btn" data-query="Cho xem những mô hình đang hot nhất của shop">🏆 Sản phẩm Hot nhất</button>
-            <button class="suggestion-btn" data-query="Địa chỉ, hotline liên hệ và email của shop là gì?">📞 Địa chỉ & Hotline</button>
-            <button class="suggestion-btn" data-query="Quy trình đặt hàng, thanh toán và phí ship thế nào?">📦 Đặt hàng & Ship</button>
+            <button class="suggestion-btn" data-query="@Loc.T("Shop đang bày bán tổng cộng bao nhiêu mặt hàng?", "How many products does the shop currently offer?")">📊 @Loc.T("Số lượng sản phẩm", "Product Quantity")</button>
+            <button class="suggestion-btn" data-query="@Loc.T("Hiện tại shop có mã giảm giá hoặc voucher nào không?", "Are there any active discount codes or vouchers?")">🎟️ @Loc.T("Mã giảm giá / Voucher", "Discounts / Vouchers")</button>
+            <button class="suggestion-btn" data-query="@Loc.T("Shop bán những danh mục và dòng series mô hình nào?", "What categories and model series does the shop sell?")">📂 @Loc.T("Danh mục & Series", "Categories & Series")</button>
+            <button class="suggestion-btn" data-query="@Loc.T("Có những sản phẩm nào mới về hoặc đang giảm giá sâu không?", "Are there any new arrivals or deeply discounted items?")">🔥 @Loc.T("Hàng Mới & Khuyến Mãi", "New Arrivals & Promos")</button>
+            <button class="suggestion-btn" data-query="@Loc.T("Cho xem những mô hình đang hot nhất của shop", "Show me the hottest models in the shop")">🏆 @Loc.T("Sản phẩm Hot nhất", "Hottest Products")</button>
+            <button class="suggestion-btn" data-query="@Loc.T("Địa chỉ, hotline liên hệ và email của shop là gì?", "What is the shop's address, hotline, and email?")">📞 @Loc.T("Địa chỉ & Hotline", "Address & Hotline")</button>
+            <button class="suggestion-btn" data-query="@Loc.T("Quy trình đặt hàng, thanh toán và phí ship thế nào?", "What is the order, payment, and shipping fee process?")">📦 @Loc.T("Đặt hàng & Ship", "Order & Shipping")</button>
         </div>
     </div>
 
     <!-- Chat Input -->
     <div class="chatbot-input-container">
-        <input type="text" id="chatbot-input" class="chatbot-input-field" placeholder="Nhập câu hỏi của bạn..." autocomplete="off">
-        <button id="chatbot-send" class="chatbot-send-btn" title="Gửi câu hỏi">
+        <input type="text" id="chatbot-input" class="chatbot-input-field" placeholder="@Loc.T("Nhập câu hỏi của bạn...", "Type your question here...")" autocomplete="off">
+        <button id="chatbot-send" class="chatbot-send-btn" title="@Loc.T("Gửi câu hỏi", "Send Question")">
             <i class="fa fa-paper-plane"></i>
         </button>
     </div>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace TuNhanTamTInh_Ecommerce.Models;
@@ -7,7 +7,22 @@ public partial class Product
 {
     public int ProductId { get; set; }
 
-    public string ProductName { get; set; } = null!;
+    private string _productName = null!;
+    public string ProductName 
+    { 
+        get 
+        {
+            var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
+            if (culture == "en-US" && !string.IsNullOrEmpty(ProductNameEn))
+            {
+                return ProductNameEn;
+            }
+            return _productName;
+        }
+        set { _productName = value; }
+    }
+
+    public string? ProductNameEn { get; set; }
 
     public string? ProductSlug { get; set; }
 
@@ -19,7 +34,22 @@ public partial class Product
 
     public decimal UnitPrice { get; set; }
 
-    public string? Description { get; set; }
+    private string? _description;
+    public string? Description 
+    { 
+        get 
+        {
+            var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
+            if (culture == "en-US" && !string.IsNullOrEmpty(DescriptionEn))
+            {
+                return DescriptionEn;
+            }
+            return _description;
+        }
+        set { _description = value; }
+    }
+
+    public string? DescriptionEn { get; set; }
 
     public double Discount { get; set; }
 

@@ -1,15 +1,15 @@
 @using TuNhanTamTInh_Ecommerce.Models.ViewModels
 @model TuNhanTamTInh_Ecommerce.Models.Account
 @{
-    ViewData["Title"] = "Hồ sơ cá nhân";
+    ViewData["Title"] = Loc.T("Hồ sơ cá nhân", "My Profile");
 
     var breadcrumb = new BreadcrumbViewModel
     {
-        Title = "Hồ sơ cá nhân",
+        Title = Loc.T("Hồ sơ cá nhân", "My Profile"),
         Items = new List<BreadcrumbItem>
         {
-            new BreadcrumbItem("Home", Url.Action("Index", "Home")),
-            new BreadcrumbItem("Hồ sơ cá nhân")
+            new BreadcrumbItem(Loc.T("Trang chủ", "Home"), Url.Action("Index", "Home")),
+            new BreadcrumbItem(Loc.T("Hồ sơ cá nhân", "My Profile"))
         }
     };
 }
@@ -34,7 +34,7 @@
                             <h3 class="font-weight-bold text-dark">@Model.FullName</h3>
                             <p class="text-muted">@Model.Email</p>
                             <span class="badge badge-primary p-2" style="background-color: #560bad;">
-                                @(Model.RoleId == 0 ? "Quản trị viên" : "Khách hàng")
+                                @(Model.RoleId == 0 ? Loc.T("Quản trị viên", "Administrator") : Loc.T("Khách hàng", "Customer"))
                             </span>
                         </div>
 
@@ -42,34 +42,34 @@
 
                         <div class="row mt-4">
                             <div class="col-md-6 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-user mr-2"></i>Tên đăng nhập</p>
+                                <p class="text-muted mb-1"><i class="fa fa-user mr-2"></i>@Loc.T("Tên đăng nhập", "Username")</p>
                                 <h5 class="font-weight-bold">@Model.AccountId</h5>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-phone mr-2"></i>Số điện thoại</p>
-                                <h5 class="font-weight-bold">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Chưa cập nhật" : Model.PhoneNumber)</h5>
+                                <p class="text-muted mb-1"><i class="fa fa-phone mr-2"></i>@Loc.T("Số điện thoại", "Phone Number")</p>
+                                <h5 class="font-weight-bold">@(string.IsNullOrEmpty(Model.PhoneNumber) ? Loc.T("Chưa cập nhật", "Not Updated") : Model.PhoneNumber)</h5>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-calendar mr-2"></i>Ngày sinh</p>
-                                <h5 class="font-weight-bold">@(Model.BirthDate?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</h5>
+                                <p class="text-muted mb-1"><i class="fa fa-calendar mr-2"></i>@Loc.T("Ngày sinh", "Birthdate")</p>
+                                <h5 class="font-weight-bold">@(Model.BirthDate?.ToString("dd/MM/yyyy") ?? Loc.T("Chưa cập nhật", "Not Updated"))</h5>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-venus-mars mr-2"></i>Giới tính</p>
-                                <h5 class="font-weight-bold">@(Model.Gender ? "Nam" : "Nữ")</h5>
+                                <p class="text-muted mb-1"><i class="fa fa-venus-mars mr-2"></i>@Loc.T("Giới tính", "Gender")</p>
+                                <h5 class="font-weight-bold">@(Model.Gender ? Loc.T("Nam", "Male") : Loc.T("Nữ", "Female"))</h5>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-map-marker mr-2"></i>Địa chỉ</p>
-                                <h5 class="font-weight-bold">@(string.IsNullOrEmpty(Model.Address) ? "Chưa cập nhật" : Model.Address)</h5>
+                                <p class="text-muted mb-1"><i class="fa fa-map-marker mr-2"></i>@Loc.T("Địa chỉ", "Address")</p>
+                                <h5 class="font-weight-bold">@(string.IsNullOrEmpty(Model.Address) ? Loc.T("Chưa cập nhật", "Not Updated") : Model.Address)</h5>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-clock-o mr-2"></i>Ngày tham gia</p>
+                                <p class="text-muted mb-1"><i class="fa fa-clock-o mr-2"></i>@Loc.T("Ngày tham gia", "Joined Date")</p>
                                 <h5 class="font-weight-bold">@(Model.CreatedAt.ToString("dd/MM/yyyy"))</h5>
                             </div>
                         </div>
 
                         <div class="text-center mt-5 d-flex flex-column align-items-center">
-                            <a asp-action="EditProfile" class="site-btn rounded-pill px-5 text-uppercase mb-3"><i class="fa fa-edit mr-2"></i> Chỉnh sửa thông tin</a>
-                            <a asp-action="ChangePassword" class="text-muted"><i class="fa fa-lock mr-2"></i> Đổi mật khẩu bảo mật</a>
+                            <a asp-action="EditProfile" class="site-btn rounded-pill px-5 text-uppercase mb-3"><i class="fa fa-edit mr-2"></i> @Loc.T("Chỉnh sửa thông tin", "Edit Profile")</a>
+                            <a asp-action="ChangePassword" class="text-muted"><i class="fa fa-lock mr-2"></i> @Loc.T("Đổi mật khẩu bảo mật", "Change Password")</a>
                         </div>
                     </div>
                 </div>

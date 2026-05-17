@@ -1,5 +1,5 @@
-﻿@{
-    ViewData["Title"] = "Liên hệ";
+@{
+    ViewData["Title"] = Loc.T("Liên hệ", "Contact Us");
 }
 
 <!-- Contact Section Begin -->
@@ -10,7 +10,7 @@
             <div class="col-lg-4 col-md-6 col-sm-6">
                 <div class="contact__widget text-center">
                     <span class="icon_phone"></span>
-                    <h4>Điện thoại</h4>
+                    <h4>@Loc.T("Điện thoại", "Phone")</h4>
                     <p>+84 912 202 605</p>
                 </div>
             </div>
@@ -18,8 +18,8 @@
             <div class="col-lg-4 col-md-6 col-sm-6">
                 <div class="contact__widget text-center">
                     <span class="icon_pin_alt"></span>
-                    <h4>Địa chỉ</h4>
-                    <p>Nguyễn Khuyến, KP5, P. Trảng Dài, Đồng Nai</p>
+                    <h4>@Loc.T("Địa chỉ", "Address")</h4>
+                    <p>@Loc.T("Nguyễn Khuyến, KP5, P. Trảng Dài, Đồng Nai", "Nguyen Khuyen, Ward 5, Trang Dai, Dong Nai")</p>
                 </div>
             </div>
 
@@ -36,13 +36,13 @@
             <div class="col-lg-6 col-md-6">
                 <div class="contact__form">
                     <div class="section-title">
-                        <h2>Gửi liên hệ</h2>
+                        <h2>@Loc.T("Gửi liên hệ", "Send Message")</h2>
                     </div>
 
                     <form>
                         <div class="row">
                             <div class="col-lg-6 col-md-6">
-                                <input type="text" placeholder="Họ và tên">
+                                <input type="text" placeholder="@Loc.T("Họ và tên", "Your Name")">
                             </div>
 
                             <div class="col-lg-6 col-md-6">
@@ -50,9 +50,9 @@
                             </div>
 
                             <div class="col-lg-12 text-message">
-                                <textarea placeholder="Nội dung liên hệ"></textarea>
+                                <textarea placeholder="@Loc.T("Nội dung liên hệ", "Your Message")"></textarea>
                                 <button type="submit" class="site-btn">
-                                    Gửi liên hệ
+                                    @Loc.T("Gửi liên hệ", "Send Message")
                                 </button>
                             </div>
                         </div>

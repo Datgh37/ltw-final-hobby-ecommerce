@@ -21,6 +21,7 @@ GO
 CREATE TABLE [dbo].[Roles](
     [RoleID] [int] NOT NULL,
     [RoleName] [nvarchar](50) NOT NULL,
+    [RoleName_EN] [nvarchar](50) NULL,
  CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED ([RoleID] ASC)
 )
 GO
@@ -49,6 +50,7 @@ GO
 CREATE TABLE [dbo].[Categories](
     [CategoryID] [int] IDENTITY(1,1) NOT NULL,
     [CategoryName] [nvarchar](50) NOT NULL,
+    [CategoryName_EN] [nvarchar](50) NULL,
     [CategorySlug] [nvarchar](50) NULL,
     [Image] [nvarchar](255) NULL,
     [CreatedAt] [datetime] NOT NULL DEFAULT (getdate()),
@@ -76,12 +78,14 @@ GO
 CREATE TABLE [dbo].[Products](
     [ProductID] [int] IDENTITY(1,1) NOT NULL,
     [ProductName] [nvarchar](200) NOT NULL,
+    [ProductName_EN] [nvarchar](200) NULL,
     [ProductSlug] [nvarchar](200) NULL, 
     [CategoryID] [int] NOT NULL,
     [SeriesID] [int] NULL, 
     [SupplierID] [nvarchar](50) NOT NULL,
     [UnitPrice] [decimal](18, 2) NOT NULL DEFAULT (0),
     [Description] [nvarchar](max) NULL,
+    [Description_EN] [nvarchar](max) NULL,
     [Discount] [float] NOT NULL DEFAULT (0),
     [ViewCount] [int] NOT NULL DEFAULT (0),
     [StockQuantity] [int] NOT NULL DEFAULT (0),

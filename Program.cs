@@ -27,7 +27,11 @@ namespace TuNhanTamTInh_Ecommerce
             var myConnectionString = builder.Configuration.GetConnectionString("MyConnectString");
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+            builder.Services.AddControllersWithViews()
+                .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+                .AddDataAnnotationsLocalization();
             builder.Services.AddDbContext<EcommerceHobbyShopContext>(option => option.UseSqlServer(myConnectionString));
             builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(AutoMapperProfile).Assembly));
             
@@ -67,6 +71,15 @@ namespace TuNhanTamTInh_Ecommerce
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            // Cấu hình ngôn ngữ hỗ trợ (Tiếng Việt mặc định & Tiếng Anh)
+            var supportedCultures = new[] { "vi-VN", "en-US" };
+            var localizationOptions = new RequestLocalizationOptions()
+                .SetDefaultCulture(supportedCultures[0])
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
+            
+            app.UseRequestLocalization(localizationOptions);
 
             app.UseRouting();
 

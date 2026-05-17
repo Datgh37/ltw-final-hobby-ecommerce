@@ -1,6 +1,11 @@
+@using Microsoft.AspNetCore.Localization
 @{
     var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+    
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var currentCulture = requestCulture?.RequestCulture.Culture.Name ?? "vi-VN";
+    var isEnglish = currentCulture == "en-US";
 }
 
 <!-- Humberger Begin -->
@@ -19,7 +24,12 @@
                      alt="Avatar" class="rounded-circle header-mobile-avatar mr-3">
                 <div class="user-info">
                     <span class="d-block text-dark fw-bold h6 mb-1">@User.Identity.Name</span>
-                    <a asp-controller="Account" asp-action="Profile" class="small text-purple text-decoration-none font-weight-bold">Hồ sơ cá nhân <i class="fa fa-angle-right"></i></a>
+                    <a asp-controller="Account" asp-action="Profile" class="d-block small text-purple text-decoration-none font-weight-bold mb-1">@Loc.T("Hồ sơ cá nhân", "My Profile") <i class="fa fa-angle-right"></i></a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-block">
+                        <button type="submit" class="btn btn-link text-danger p-0 small text-decoration-none font-weight-bold" style="font-size: 85%; vertical-align: middle;">
+                            <i class="fa fa-sign-out"></i> @Loc.T("Đăng xuất", "Logout")
+                        </button>
+                    </form>
                 </div>
             </div>
         }
@@ -27,7 +37,7 @@
         {
             <div class="px-3">
                 <a asp-controller="Account" asp-action="Login" class="btn auth-btn w-100 text-white rounded-pill py-2">
-                    <i class="fa fa-user mr-2"></i> Đăng nhập
+                    <i class="fa fa-user mr-2"></i> @Loc.T("Đăng nhập", "Login")
                 </a>
             </div>
         }
@@ -42,50 +52,60 @@
                 </div>
             </li>
         </ul>
-        <div class="header__cart__price">Giỏ hàng: <span>0 ₫</span></div>
+        <div class="header__cart__price">@Loc.T("Giỏ hàng: ", "Cart: ") <span>0 ₫</span></div>
     </div>
     <div class="humberger__menu__widget">
         <div class="header__top__right__language">
-            <img src="~/images/vietnam.png" alt="" />
-            <div>Tiếng Việt</div>
+            @if (isEnglish)
+            {
+                <img src="~/images/america.png" alt="English" class="lang-flag-img" />
+                <div>English</div>
+            }
+            else
+            {
+                <img src="~/images/vietnam.png" alt="Vietnam" class="lang-flag-img" />
+                <div>Tiếng Việt</div>
+            }
             <span class="arrow_carrot-down"></span>
             <ul>
-                <li><a href="#">Tiếng Việt</a></li>
-                <li><a href="#">English</a></li>
+                <li>
+                    <a asp-controller="Language" asp-action="Change" asp-route-culture="vi-VN" asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+                       class="@(!isEnglish ? "disabled-lang active-lang" : "")">
+                        <img src="~/images/vietnam.png" alt="Vietnam" class="lang-flag-img-dropdown" /> Tiếng Việt
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Language" asp-action="Change" asp-route-culture="en-US" asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+                       class="@(isEnglish ? "disabled-lang active-lang" : "")">
+                        <img src="~/images/america.png" alt="English" class="lang-flag-img-dropdown" /> English
+                    </a>
+                </li>
             </ul>
         </div>
-        @if (User.Identity.IsAuthenticated)
-        {
-            <div class="header__top__right__auth d-inline-block ml-3">
-                <form asp-controller="Account" asp-action="Logout" method="post">
-                    <button type="submit" class="btn btn-link text-danger p-0 small text-decoration-none"><i class="fa fa-sign-out"></i> Đăng xuất</button>
-                </form>
-            </div>
-        }
     </div>
     <nav class="humberger__menu__nav mobile-menu">
         <ul>
             <li class="@(currentController == "Home" && currentAction == "Index" ? "active" : "")">
-                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                <a asp-controller="Home" asp-action="Index">@Loc.T("Trang chủ", "Home")</a>
             </li>
             <li class="@(currentController == "Products" ? "active" : "")">
-                <a asp-controller="Products" asp-action="Index">Cửa hàng</a>
+                <a asp-controller="Products" asp-action="Index">@Loc.T("Cửa hàng", "Shop")</a>
             </li>
             <li>
-                <a href="#">Trang</a>
+                <a href="#">@Loc.T("Trang", "Pages")</a>
                 <ul class="header__menu__dropdown">
                     @if (User.Identity!.IsAuthenticated)
                     {
                         @if (User.FindFirst("RoleId")?.Value == "0")
                         {
-                            <li><a asp-controller="Admin" asp-action="Products">Quản lý sản phẩm</a></li>
-                            <li><a asp-controller="Admin" asp-action="Categories">Quản lý danh mục</a></li>
+                            <li><a asp-controller="Admin" asp-action="Products">@Loc.T("Quản lý sản phẩm", "Products Admin")</a></li>
+                            <li><a asp-controller="Admin" asp-action="Categories">@Loc.T("Quản lý danh mục", "Categories Admin")</a></li>
                         }
-                        <li><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+                        <li><a asp-controller="Cart" asp-action="Index">@Loc.T("Giỏ hàng", "Cart")</a></li>
                     }
                 </ul>
             </li>
-            <li><a href="#">Liên hệ</a></li>
+            <li><a href="#">@Loc.T("Liên hệ", "Contact")</a></li>
         </ul>
     </nav>
     <div id="mobile-menu-wrap"></div>
@@ -98,7 +118,7 @@
     <div class="humberger__menu__contact">
         <ul>
             <li><i class="fa fa-envelope"></i> hello@nhom4.com</li>
-            <li>Miễn phí vận chuyển cho đơn hàng từ 99.000 ₫</li>
+            <li>@Loc.T("Miễn phí vận chuyển cho đơn hàng từ 99.000 ₫", "Free shipping for orders over 99,000 ₫")</li>
         </ul>
     </div>
 </div>

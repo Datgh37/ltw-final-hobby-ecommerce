@@ -5,12 +5,11 @@
     ViewData["Title"] = Model.ProductName;
     var breadcrumb = new BreadcrumbViewModel
     {
-        Title = "Chi tiết sản phẩm",
+        Title = Loc.T("Chi tiết sản phẩm", "Product Details"),
         Items = new List<BreadcrumbItem>
         {
-            new BreadcrumbItem("Trang chủ", Url.Action("Index", "Home")),
-            // new BreadcrumbItem(Model.Category?.CategoryName ?? "Product", Url.Action("Index", "Products", new { categoryId = Model.CategoryId })),
-            new BreadcrumbItem("Sản phẩm", Url.Action("Index", "Products", new { categoryId = Model.CategoryId })),
+            new BreadcrumbItem(Loc.T("Trang chủ", "Home"), Url.Action("Index", "Home")),
+            new BreadcrumbItem(Loc.T("Sản phẩm", "Products"), Url.Action("Index", "Products", new { categoryId = Model.CategoryId })),
             new BreadcrumbItem(Model.ProductName)
         }
     };
@@ -41,7 +40,7 @@
                         @if (Model.StockQuantity <= 0)
                         {
                             <div class="sold-out-overlay">
-                                <span class="sold-out-text">Hết hàng</span>
+                                <span class="sold-out-text">@Loc.T("Hết hàng", "Out of stock")</span>
                             </div>
                         }
                         <img class="product__details__pic__item--large product__details__main-img"
@@ -72,7 +71,7 @@
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star-half-o"></i>
-                        <span>(@Model.Reviews?.Count ?? 0 đánh giá)</span>
+                        <span>(@(Model.Reviews?.Count ?? 0) @Loc.T("đánh giá", "reviews"))</span>
                     </div>
                     
                     @if (Model.Discount > 0)
@@ -89,7 +88,7 @@
                     }
                     
                     <p>
-                        @(string.IsNullOrWhiteSpace(Model.Description) ? "Chưa có mô tả cho sản phẩm này." : Model.Description)
+                        @(string.IsNullOrWhiteSpace(Model.Description) ? Loc.T("Chưa có mô tả cho sản phẩm này.", "No description available for this product.") : Model.Description)
                     </p>
                     <div class="product__details__quantity">
                         <div class="quantity">
@@ -100,24 +99,24 @@
                     </div>
                     @if (Model.StockQuantity > 0)
                     {
-                        <a href="#" class="primary-btn add-to-cart" data-product-id="@Model.ProductId">THÊM VÀO GIỎ</a>
+                        <a href="#" class="primary-btn add-to-cart" data-product-id="@Model.ProductId">@Loc.T("THÊM VÀO GIỎ", "ADD TO CART")</a>
                     }
                     else
                     {
-                        <a href="javascript:void(0)" class="primary-btn btn-disabled" style="cursor: not-allowed;">HẾT HÀNG</a>
+                        <a href="javascript:void(0)" class="primary-btn btn-disabled" style="cursor: not-allowed;">@Loc.T("HẾT HÀNG", "OUT OF STOCK")</a>
                     }
                     <a href="javascript:void(0)" class="heart-icon toggle-favorite" data-product-id="@Model.ProductId" id="fav-btn-@Model.ProductId">
                         <span class="@((bool)ViewBag.IsFavorite ? "icon_heart" : "icon_heart_alt")"></span>
                     </a>
                     <ul>
-                        <li><b>Tình trạng</b> <span class="@(Model.StockQuantity > 0 ? "text-success" : "text-danger")">@(Model.StockQuantity > 0 ? $"Còn hàng ({Model.StockQuantity})" : "Hết hàng")</span></li>
-                        <li><b>Danh mục</b> <span>@Model.Category?.CategoryName</span></li>
+                        <li><b>@Loc.T("Tình trạng", "Availability")</b> <span class="@(Model.StockQuantity > 0 ? "text-success" : "text-danger")">@(Model.StockQuantity > 0 ? $"{Loc.T("Còn hàng", "In Stock")} ({Model.StockQuantity})" : Loc.T("Hết hàng", "Out of Stock"))</span></li>
+                        <li><b>@Loc.T("Danh mục", "Category")</b> <span>@Model.Category?.CategoryName</span></li>
                         @if (Model.Supplier != null)
                         {
-                            <li><b>Hãng sản xuất</b> <span>@Model.Supplier.CompanyName</span></li>
+                            <li><b>@Loc.T("Hãng sản xuất", "Manufacturer")</b> <span>@Model.Supplier.CompanyName</span></li>
                         }
                         <li>
-                            <b>Chia sẻ</b>
+                            <b>@Loc.T("Chia sẻ", "Share")</b>
                             <div class="share">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter"></i></a>
@@ -231,7 +230,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-title related__product__title">
-                        <h2>Sản phẩm liên quan</h2>
+                        <h2>@Loc.T("Sản phẩm liên quan", "Related Products")</h2>
                     </div>
                 </div>
             </div>

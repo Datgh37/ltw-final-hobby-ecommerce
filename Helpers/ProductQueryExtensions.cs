@@ -15,6 +15,7 @@ namespace TuNhanTamTInh_Ecommerce.Helpers
             {
                 ProductId = x.ProductId,
                 ProductName = x.ProductName,
+                ProductNameEn = x.ProductNameEn,
                 ProductSlug = x.ProductSlug,
                 UnitPrice = x.UnitPrice,
                 Discount = x.Discount,
@@ -23,6 +24,7 @@ namespace TuNhanTamTInh_Ecommerce.Helpers
                     : x.UnitPrice,
                 CategoryId = x.CategoryId,
                 CategoryName = x.Category.CategoryName,
+                CategoryNameEn = x.Category.CategoryNameEn,
                 SeriesId = x.SeriesId,
                 SeriesName = x.Series != null ? x.Series.SeriesName : null,
                 PrimaryImage = x.ProductImages
