@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TuNhanTamTInh_Ecommerce</title>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Favicon / Web Logo Tab Icon -->
+    <link rel="shortcut icon" href="~/images/Banner/logo-web-rmbg.png" type="image/png" asp-append-version="true" />
+    <link rel="icon" href="~/images/Banner/logo-web-rmbg.png" type="image/png" asp-append-version="true" />
     <!-- Google Font -->
     <!-- <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet"> -->
 
@@ -19,6 +22,7 @@
     <link rel="stylesheet" href="~/css/style.css" type="text/css">
     <link rel="stylesheet" href="~/css/site.css" type="text/css">
     <link rel="stylesheet" href="~/css/admin-crud.css" type="text/css">
+    <link rel="stylesheet" href="~/css/chatbot.css" type="text/css">
 </head>
 <body>
     @Html.AntiForgeryToken()
@@ -40,19 +44,22 @@
         @await Html.PartialAsync("_Footer")
     </div>
 
+    @await Html.PartialAsync("_ChatWidget")
+
     <!-- Js Plugins -->
     <script src="~/js/jquery-3.3.1.min.js"></script>
-    <script src="~/js/app-debugger.js"></script>
+    <script src="~/js/app-debugger.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/jquery.nice-select.min.js"></script>
     <script src="~/js/jquery-ui.min.js"></script>
     <script src="~/js/jquery.slicknav.js"></script>
     <script src="~/js/mixitup.min.js"></script>
     <script src="~/js/owl.carousel.min.js"></script>
-    <script src="~/js/main.js"></script>
-    <script src="~/js/site.js"></script>
-    <script src="~/js/cart.js"></script>
-    <script src="~/js/product-ajax.js"></script>
+    <script src="~/js/main.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/cart.js" asp-append-version="true"></script>
+    <script src="~/js/product-ajax.js" asp-append-version="true"></script>
+    <script src="~/js/chatbot.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

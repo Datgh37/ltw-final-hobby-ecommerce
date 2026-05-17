@@ -13,7 +13,7 @@
                     {
                         <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId" class="latest-product__item">
                             <div class="latest-product__item__pic">
-                                <img src="@Url.Content(item.PrimaryImage ?? "~/img/latest-product/lp-1.jpg")" alt="@item.ProductName" />
+                                <img src="@Url.Content(item.PrimaryImage ?? "~/images/Others/lp-1.jpg")" alt="@item.ProductName" />
                             </div>
                             <div class="latest-product__item__text">
                                 <h6>@item.ProductName</h6>

@@ -13,22 +13,6 @@
 
 <section class="shoping-cart spad">
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-12 d-flex align-items-center justify-content-between">
-                <h4 class="mb-0">
-                    <i class="fa fa-heart text-danger me-2"></i>
-                    Sản phẩm yêu thích
-                    <span class="badge badge-pill favorites-count-badge ms-2">@Model.Count</span>
-                </h4>
-                @if (Model.Any())
-                {
-                    <a asp-controller="Products" asp-action="Index" class="primary-btn primary-btn--sm">
-                        <i class="fa fa-shopping-bag me-1"></i> Tiếp tục mua sắm
-                    </a>
-                }
-            </div>
-        </div>
-
         @if (!Model.Any())
         {
             <div class="row">
@@ -54,12 +38,10 @@
                         <table id="favorites-table">
                             <thead>
                                 <tr>
-                                    <th class="shoping__product">Sản phẩm</th>
-                                    <th>Danh mục</th>
-                                    <th>Giá</th>
-                                    <th>Trạng thái</th>
-                                    <th>Ngày thêm</th>
-                                    <th></th>
+                                    <th class="fav-product-header">Sản phẩm</th>
+                                    <th class="fav-price-cell">Giá</th>
+                                    <th class="fav-status-cell">Trạng thái</th>
+                                    <th class="shoping__cart__item__close"></th>
                                 </tr>
                             </thead>
                             <tbody id="favorites-tbody">
@@ -74,25 +56,43 @@
                                         : product.UnitPrice;
                                     var isInStock = product.StockQuantity > 0;
 
+                                    var reviewsList = product.Reviews;
+                                    double avgRating = reviewsList != null && reviewsList.Any() ? reviewsList.Average(r => r.Rating) : 0.0;
+
                                     <tr class="fav-row" data-product-id="@product.ProductId">
-                                        <td class="shoping__cart__item">
+                                        <td class="fav-product-cell">
                                             <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductId">
                                                 <img src="@Url.Content(imageUrl)"
                                                      class="cart-item-img fav-item-img"
                                                      alt="@product.ProductName"
                                                      onerror="this.src='/images/product-default.png'" />
                                             </a>
-                                            <h5>
+                                            <h5 class="fav-product-title-wrapper">
+                                                @if (product.Category != null)
+                                                {
+                                                    <span class="product-category-label d-block text-muted small mb-1" style="font-size: 12px; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">@product.Category.CategoryName</span>
+                                                }
                                                 <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductId"
-                                                   class="text-dark text-decoration-none">
+                                                   class="text-dark text-decoration-none fav-product-title"
+                                                   title="@product.ProductName">
                                                     @product.ProductName
                                                 </a>
+                                                <div class="fav-product-meta">
+                                                    <div class="fav-rating text-warning small d-inline-block">
+                                                        @for (int i = 1; i <= 5; i++)
+                                                        {
+                                                            <i class="fa @(i <= Math.Round(avgRating) ? "fa-star" : "fa-star-o")"></i>
+                                                        }
+                                                        <span class="text-muted ml-1">(@avgRating.ToString("0.0"))</span>
+                                                    </div>
+                                                    <span class="fav-meta-sep">|</span>
+                                                    <div class="fav-views text-muted small d-inline-block">
+                                                        <i class="fa fa-eye"></i> <span>@product.ViewCount.ToString("N0") lượt xem</span>
+                                                    </div>
+                                                </div>
                                             </h5>
                                         </td>
-                                        <td class="shoping__cart__price">
-                                            <span class="badge fav-category-badge">@(product.Category?.CategoryName ?? "—")</span>
-                                        </td>
-                                        <td class="shoping__cart__price">
+                                        <td class="fav-price-cell">
                                             @if (product.Discount > 0)
                                             {
                                                 <span class="fav-final-price">@finalPrice.ToString("N0")₫</span>
@@ -104,11 +104,11 @@
                                                 <span class="fav-final-price">@product.UnitPrice.ToString("N0")₫</span>
                                             }
                                         </td>
-                                        <td class="shoping__cart__price">
+                                        <td class="fav-status-cell">
                                             @if (isInStock)
                                             {
                                                 <span class="fav-stock-badge fav-stock-in">
-                                                    <i class="fa fa-check-circle me-1"></i>Còn hàng
+                                                    <i class="fa fa-check-circle me-1"></i>Còn hàng (@product.StockQuantity)
                                                 </span>
                                             }
                                             else
@@ -117,9 +117,6 @@
                                                     <i class="fa fa-times-circle me-1"></i>Hết hàng
                                                 </span>
                                             }
-                                        </td>
-                                        <td class="shoping__cart__price fav-date">
-                                            @item.CreatedAt.ToString("dd/MM/yyyy")
                                         </td>
                                         <td class="shoping__cart__item__close">
                                             <div class="fav-actions">
@@ -209,6 +206,10 @@
                             // Cập nhật badge giỏ hàng nếu có
                             if (res.cartCount !== undefined) {
                                 $('#cartCount, #cartCountMobile').text(res.cartCount);
+                            }
+                            // Đồng bộ hóa danh sách Preview giỏ hàng khi Hover!
+                            if (typeof reloadCartPreview === 'function') {
+                                reloadCartPreview();
                             }
                         } else {
                             showToast(res.message || 'Không thể thêm vào giỏ hàng.', 'error');

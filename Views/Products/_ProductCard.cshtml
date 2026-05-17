@@ -15,7 +15,7 @@
 
 <div class="@colClass @extraClasses">
     <div class="@baseClass @(isOutOfStock ? "is-sold-out" : "")">
-        <div class="@picClass set-bg" data-setbg="@Url.Content(Model.PrimaryImage ?? "~/img/product/product-1.jpg")">
+        <div class="@picClass set-bg" data-setbg="@Url.Content(Model.PrimaryImage ?? "~/images/Others/product-1.jpg")">
             @if (isOutOfStock)
             {
                 <div class="sold-out-overlay">

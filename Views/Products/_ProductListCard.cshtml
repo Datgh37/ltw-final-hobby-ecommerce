@@ -6,7 +6,7 @@
 
 <div class="product__item @(isOutOfStock ? "is-sold-out" : "")">
     <!-- 1. Picture Pillar -->
-    <div class="product__item__pic set-bg" data-setbg="@Url.Content(Model.PrimaryImage ?? "~/img/product/product-1.jpg")">
+    <div class="product__item__pic set-bg" data-setbg="@Url.Content(Model.PrimaryImage ?? "~/images/Others/product-1.jpg")">
         @if (isOutOfStock)
         {
             <div class="sold-out-overlay">

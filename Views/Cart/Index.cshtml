@@ -21,30 +21,30 @@
 
 <section class="shoping-cart spad">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="shoping__cart__table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="shoping__product">Sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Số lượng</th>
-                                <th>Tổng cộng</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.Any())
-                            {
+        @if (Model.Any())
+        {
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="cart-product-header">Sản phẩm</th>
+                                    <th>Giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Tổng cộng</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 @foreach (var item in Model)
                                 {
                                     var primaryImage = item.Product.ProductImages.FirstOrDefault(x => x.IsPrimary);
                                     decimal subtotal = item.Product.UnitPrice * item.Quantity;
                                     <tr class="cart-row" data-cart-item-id="@item.CartItemId">
-                                        <td class="shoping__cart__item">
+                                        <td class="cart-product-cell">
                                             <img src="@Url.Content(primaryImage?.ImageUrl ?? "~/images/product-default.png")" class="cart-item-img" alt="@item.Product.ProductName">
-                                            <h5>@item.Product.ProductName</h5>
+                                            <h5 class="cart-product-title">@item.Product.ProductName</h5>
                                         </td>
                                         <td class="shoping__cart__price">
                                             @item.Product.UnitPrice.ToString("N0") ₫
@@ -66,27 +66,12 @@
                                         </td>
                                     </tr>
                                 }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="5" class="text-center py-5">
-                                        <div class="empty-cart-content">
-                                            <i class="fa fa-shopping-basket mb-3" style="font-size: 48px; color: #ddd;"></i>
-                                            <p class="mb-4">Giỏ hàng của bạn đang trống</p>
-                                            <a asp-controller="Products" asp-action="Index" class="site-btn rounded-pill">MUA SẮM NGAY</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        @if (Model.Any())
-        {
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="shoping__cart__btns">
@@ -112,6 +97,23 @@
                             <li>Tổng cộng <span id="grand-total">@grandTotal.ToString("N0") ₫</span></li>
                         </ul>
                         <a asp-controller="Checkout" asp-action="Index" class="primary-btn rounded-pill w-100 text-center">TIẾN HÀNH THANH TOÁN</a>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="cart-empty text-center py-5">
+                        <div class="cart-empty__icon mb-4">
+                            <i class="fa fa-shopping-basket"></i>
+                        </div>
+                        <h5 class="mb-2">Giỏ hàng của bạn đang trống</h5>
+                        <p class="text-muted mb-4">Hãy khám phá cửa hàng và chọn những mô hình Gundam ưng ý nhất nhé!</p>
+                        <a asp-controller="Products" asp-action="Index" class="primary-btn rounded-pill">
+                            <i class="fa fa-shopping-bag me-2"></i> MUA SẮM NGAY
+                        </a>
                     </div>
                 </div>
             </div>

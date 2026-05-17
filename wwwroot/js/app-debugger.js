@@ -15,7 +15,8 @@ window.AppDebugger = (function () {
         warn: "background: #f77f00; color: #fff; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-family: monospace; font-size: 11px;",
         error: "background: #d62828; color: #fff; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-family: monospace; font-size: 11px;",
         apiReq: "background: #0077b6; color: #fff; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-family: monospace; font-size: 11px;",
-        apiRes: "background: #0096c7; color: #fff; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-family: monospace; font-size: 11px;"
+        apiRes: "background: #0096c7; color: #fff; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-family: monospace; font-size: 11px;",
+        chatbot: "background: #7209b7; color: #fff; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-family: monospace; font-size: 11px;"
     };
 
     function getTimestamp() {
@@ -112,6 +113,51 @@ window.AppDebugger = (function () {
             console.log(`%cKet qua phan hoi (Response Data) [Status ${status}]:`, `color: ${isSuccess ? '#2b9348' : '#d62828'}; font-weight: bold;`);
             if (responseData) console.dir(responseData);
             else console.log("(Khong co du lieu phan hoi)");
+
+            console.groupEnd();
+        },
+
+        /**
+         * 6. Debug cuoc goi Chatbot (AJAX to Gemini RAG) cuc ky chi tiet va dep mat
+         * @param {string} text Tin nhan cua nguoi dung gui di
+         * @param {any} response Phieu tra ve tu ChatbotController (chua Reply va Products)
+         * @param {number} duration Thoi gian phan hoi bang giay
+         * @param {any} errorObj Doi tuong loi neu xay ra loi mang
+         */
+        chatbot: function (text, response, duration, errorObj = null) {
+            if (!isDebugMode) return;
+
+            if (errorObj) {
+                console.groupCollapsed(`%c[🤖 CHATBOT ERROR] [${getTimestamp()}] Request: "${text}"`, STYLES.error);
+                console.log("%c[1/3] Payload gui di:", "color: #0077b6; font-weight: bold;", { message: text });
+                console.error(`%c[ERR] Chi tiet loi mang sau ${duration}s:`, "color: #d62828; font-weight: bold;", errorObj);
+                console.groupEnd();
+                return;
+            }
+
+            const hasError = response && response.error;
+            const style = hasError ? STYLES.warn : STYLES.chatbot;
+
+            console.groupCollapsed(
+                `%c[🤖 CHATBOT] [${getTimestamp()}] Request: "${text}"%c (${duration}s)`, 
+                style, 
+                "color: #7209b7; font-weight: bold; font-family: sans-serif;"
+            );
+
+            console.log("%c[1/3] Payload gui di (Request Body):", "color: #0077b6; font-weight: bold;", { message: text });
+
+            if (hasError) {
+                console.warn("%c[2/3] Trinity AI tra ve loi nghiep vu:", "color: #f77f00; font-weight: bold;", response);
+                console.log("%c[3/3] RAG Products Match:", "color: #6c757d; font-weight: bold;", "None (Do loi)");
+            } else {
+                console.log(`%c[2/3] Phieu tra ve (AI Reply):`, "color: #2b9348; font-weight: bold;", response.reply);
+                
+                if (response.products && response.products.length > 0) {
+                    console.log("%c[3/3] RAG Products Match:", "color: #e63946; font-weight: bold;", response.products);
+                } else {
+                    console.log("%c[3/3] RAG Products Match:", "color: #6c757d; font-weight: bold;", "None (Khong trung tu khoa SP)");
+                }
+            }
 
             console.groupEnd();
         }

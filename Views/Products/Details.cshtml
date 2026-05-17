@@ -18,7 +18,7 @@
     // Lấy ảnh chính hoặc ảnh đầu tiên
     var primaryImage = Model.ProductImages?.FirstOrDefault(pi => pi.IsPrimary)?.ImageUrl 
                     ?? Model.ProductImages?.FirstOrDefault()?.ImageUrl 
-                    ?? "~/img/product/product-1.jpg";
+                    ?? "~/images/Others/product-1.jpg";
                     
     var finalPrice = Model.UnitPrice;
     if (Model.Discount > 0)
