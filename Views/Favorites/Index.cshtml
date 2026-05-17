@@ -1,0 +1,224 @@
+@using TuNhanTamTInh_Ecommerce.Models
+@using TuNhanTamTInh_Ecommerce.Models.ViewModels
+@model List<Favorite>
+
+@{
+    ViewData["Title"] = "Sản phẩm yêu thích";
+    var breadcrumb = ViewBag.Breadcrumb as BreadcrumbViewModel;
+}
+
+@await Component.InvokeAsync("HeroSection", new { isHome = false })
+
+<partial name="_Breadcrumb" model="breadcrumb" />
+
+<section class="shoping-cart spad">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 d-flex align-items-center justify-content-between">
+                <h4 class="mb-0">
+                    <i class="fa fa-heart text-danger me-2"></i>
+                    Sản phẩm yêu thích
+                    <span class="badge badge-pill favorites-count-badge ms-2">@Model.Count</span>
+                </h4>
+                @if (Model.Any())
+                {
+                    <a asp-controller="Products" asp-action="Index" class="primary-btn primary-btn--sm">
+                        <i class="fa fa-shopping-bag me-1"></i> Tiếp tục mua sắm
+                    </a>
+                }
+            </div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="favorites-empty text-center py-5">
+                        <div class="favorites-empty__icon mb-4">
+                            <i class="fa fa-heart-o"></i>
+                        </div>
+                        <h5 class="mb-2">Danh sách yêu thích trống</h5>
+                        <p class="text-muted mb-4">Hãy khám phá cửa hàng và thêm sản phẩm yêu thích của bạn!</p>
+                        <a asp-controller="Products" asp-action="Index" class="primary-btn">
+                            <i class="fa fa-shopping-bag me-2"></i> Khám phá sản phẩm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__table">
+                        <table id="favorites-table">
+                            <thead>
+                                <tr>
+                                    <th class="shoping__product">Sản phẩm</th>
+                                    <th>Danh mục</th>
+                                    <th>Giá</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày thêm</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="favorites-tbody">
+                                @foreach (var item in Model)
+                                {
+                                    var product = item.Product;
+                                    var primaryImage = product.ProductImages?.FirstOrDefault(x => x.IsPrimary)
+                                                    ?? product.ProductImages?.FirstOrDefault();
+                                    var imageUrl = primaryImage?.ImageUrl ?? "~/images/product-default.png";
+                                    var finalPrice = product.Discount > 0
+                                        ? product.UnitPrice * (1 - (decimal)product.Discount)
+                                        : product.UnitPrice;
+                                    var isInStock = product.StockQuantity > 0;
+
+                                    <tr class="fav-row" data-product-id="@product.ProductId">
+                                        <td class="shoping__cart__item">
+                                            <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductId">
+                                                <img src="@Url.Content(imageUrl)"
+                                                     class="cart-item-img fav-item-img"
+                                                     alt="@product.ProductName"
+                                                     onerror="this.src='/images/product-default.png'" />
+                                            </a>
+                                            <h5>
+                                                <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductId"
+                                                   class="text-dark text-decoration-none">
+                                                    @product.ProductName
+                                                </a>
+                                            </h5>
+                                        </td>
+                                        <td class="shoping__cart__price">
+                                            <span class="badge fav-category-badge">@(product.Category?.CategoryName ?? "—")</span>
+                                        </td>
+                                        <td class="shoping__cart__price">
+                                            @if (product.Discount > 0)
+                                            {
+                                                <span class="fav-final-price">@finalPrice.ToString("N0")₫</span>
+                                                <br />
+                                                <span class="old-price old-price-sm">@product.UnitPrice.ToString("N0")₫</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fav-final-price">@product.UnitPrice.ToString("N0")₫</span>
+                                            }
+                                        </td>
+                                        <td class="shoping__cart__price">
+                                            @if (isInStock)
+                                            {
+                                                <span class="fav-stock-badge fav-stock-in">
+                                                    <i class="fa fa-check-circle me-1"></i>Còn hàng
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fav-stock-badge fav-stock-out">
+                                                    <i class="fa fa-times-circle me-1"></i>Hết hàng
+                                                </span>
+                                            }
+                                        </td>
+                                        <td class="shoping__cart__price fav-date">
+                                            @item.CreatedAt.ToString("dd/MM/yyyy")
+                                        </td>
+                                        <td class="shoping__cart__item__close">
+                                            <div class="fav-actions">
+                                                <button type="button"
+                                                        class="btn-add-to-cart-fav primary-btn primary-btn--sm @(isInStock ? "" : "disabled")"
+                                                        data-product-id="@product.ProductId"
+                                                    @(isInStock ? "" : "disabled")
+                                                        title="Thêm vào giỏ hàng">
+                                                    <i class="fa fa-shopping-cart"></i>
+                                                </button>
+                                                <button type="button"
+                                                        class="btn-remove-fav fav-remove-btn"
+                                                        data-product-id="@product.ProductId"
+                                                        title="Xóa khỏi yêu thích">
+                                                    <span class="icon_close"></span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            // Xóa khỏi yêu thích
+            $(document).on('click', '.btn-remove-fav', function () {
+                var $btn = $(this);
+                var productId = $btn.data('product-id');
+                var $row = $btn.closest('.fav-row');
+
+                $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i>');
+
+                $.ajax({
+                    url: '/Favorites/Remove',
+                    type: 'POST',
+                    data: { productId: productId },
+                    headers: { 'RequestVerificationToken': token },
+                    success: function (res) {
+                        if (res.success) {
+                            $row.fadeOut(300, function () {
+                                $row.remove();
+                                var remaining = $('#favorites-tbody .fav-row').length;
+                                $('#fav-total-count').text(remaining);
+                                $('.favorites-count-badge').text(remaining);
+                                $('#favoriteCount, #favoriteCountMobile').text(res.totalCount);
+
+                                if (remaining === 0) {
+                                    location.reload();
+                                }
+                            });
+                            showToast(res.message, 'success');
+                        } else {
+                            showToast(res.message, 'error');
+                            $btn.prop('disabled', false).html('<span class="icon_close"></span>');
+                        }
+                    },
+                    error: function () {
+                        showToast('Có lỗi xảy ra. Vui lòng thử lại.', 'error');
+                        $btn.prop('disabled', false).html('<span class="icon_close"></span>');
+                    }
+                });
+            });
+
+            // Thêm vào giỏ hàng từ trang yêu thích
+            $(document).on('click', '.btn-add-to-cart-fav:not(.disabled)', function () {
+                var productId = $(this).data('product-id');
+                $.ajax({
+                    url: '/Cart/AddToCart',
+                    type: 'POST',
+                    data: { productId: productId, quantity: 1 },
+                    headers: { 'RequestVerificationToken': token },
+                    success: function (res) {
+                        if (res.success) {
+                            showToast('Đã thêm vào giỏ hàng!', 'success');
+                            // Cập nhật badge giỏ hàng nếu có
+                            if (res.cartCount !== undefined) {
+                                $('#cartCount, #cartCountMobile').text(res.cartCount);
+                            }
+                        } else {
+                            showToast(res.message || 'Không thể thêm vào giỏ hàng.', 'error');
+                        }
+                    },
+                    error: function () {
+                        showToast('Vui lòng đăng nhập để thêm vào giỏ hàng.', 'error');
+                    }
+                });
+            });
+        });
+    </script>
+}
