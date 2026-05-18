@@ -15,7 +15,11 @@
         </div>
         <!-- Right Form -->
         <div class="col-lg-6 p-0 position-relative">
-            <a asp-controller="Home" asp-action="Index" class="back-home"><i class="fa fa-home"></i> @Loc.T("Trang chủ", "Home")</a>
+            <div class="auth-header-actions">
+                <partial name="_LanguageSelector" view-data='@(new ViewDataDictionary(ViewData) { { "IsAuth", true } })' />
+                <span class="auth-divider">|</span>
+                <a asp-controller="Home" asp-action="Index" class="back-home-link"><i class="fa fa-home"></i> @Loc.T("Trang chủ", "Home")</a>
+            </div>
             <div class="auth-form-wrapper">
                 <div class="auth-form-container">
                     <div class="text-center mb-4">

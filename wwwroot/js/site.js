@@ -44,7 +44,8 @@ $(document).ready(function () {
                     data: { keyword: keyword },
                     success: function(data) {
                         if (data && data.length > 0) {
-                            let html = '<div class="live-search-header">Kết quả tìm kiếm</div>';
+                            const isEn = $('html').attr('lang') === 'en';
+                            let html = `<div class="live-search-header">${isEn ? 'Search Results' : 'Kết quả tìm kiếm'}</div>`;
                             html += '<div class="live-search-results">';
                             data.forEach(item => {
                                 const finalPrice = item.discount > 0 
@@ -66,7 +67,7 @@ $(document).ready(function () {
                             html += '</div>';
                             html += `
                                 <div class="live-search-footer">
-                                    <a href="/Products?keyword=${encodeURIComponent(keyword)}" class="live-search-view-all">Xem tất cả kết quả</a>
+                                    <a href="/Products?keyword=${encodeURIComponent(keyword)}" class="live-search-view-all">${isEn ? 'View all results' : 'Xem tất cả kết quả'}</a>
                                 </div>`;
                             $resultsDropdown.html(html).fadeIn(200);
                         } else {
@@ -95,12 +96,13 @@ $(document).ready(function () {
     $('.footer__widget form').on('submit', function(e) {
         e.preventDefault();
         const email = $(this).find('input').val().trim();
+        const isEn = $('html').attr('lang') === 'en';
         if (!email) {
-            showToast("Vui lòng nhập email.", "error");
+            showToast(isEn ? "Please enter your email." : "Vui lòng nhập email.", "error");
             return;
         }
         // Giả lập gửi newsletter thành công vì chưa có Controller/Action cụ thể
-        showToast("Cảm ơn bạn đã đăng ký nhận tin!", "success");
+        showToast(isEn ? "Thank you for subscribing!" : "Cảm ơn bạn đã đăng ký nhận tin!", "success");
         $(this).find('input').val('');
     });
 
@@ -145,7 +147,8 @@ $(document).ready(function () {
                 }
             },
             error: function() {
-                showToast("Vui lòng đăng nhập để thực hiện chức năng này.", "error");
+                const isEn = $('html').attr('lang') === 'en';
+                showToast(isEn ? "Please login to perform this action." : "Vui lòng đăng nhập để thực hiện chức năng này.", "error");
             }
         });
     });

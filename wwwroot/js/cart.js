@@ -27,14 +27,14 @@ function showConfirm(message, onConfirm, onCancel) {
                     <div class="custom-modal-icon">
                         <i class="fa fa-exclamation-triangle"></i>
                     </div>
-                    <h3 class="custom-modal-title">Xác nhận</h3>
+                    <h3 class="custom-modal-title">${$('html').attr('lang') === 'en' ? 'Confirm' : 'Xác nhận'}</h3>
                     <p class="custom-modal-message"></p>
                     <div class="modal-btns">
                         <button class="modal-btn btn-cancel">
-                            <i class="fa fa-times mr-1"></i> Hủy bỏ
+                            <i class="fa fa-times mr-1"></i> ${$('html').attr('lang') === 'en' ? 'Cancel' : 'Hủy bỏ'}
                         </button>
                         <button class="modal-btn btn-confirm">
-                            <i class="fa fa-check mr-1"></i> Đồng ý
+                            <i class="fa fa-check mr-1"></i> ${$('html').attr('lang') === 'en' ? 'OK' : 'Đồng ý'}
                         </button>
                     </div>
                 </div>
@@ -79,7 +79,8 @@ function addToCart(productId, quantity = 1) {
             }
         },
         error: function() {
-            showToast("Lỗi kết nối máy chủ", "error");
+            const isEn = $('html').attr('lang') === 'en';
+            showToast(isEn ? "Server connection error" : "Lỗi kết nối máy chủ", "error");
         }
     });
 }
@@ -111,7 +112,8 @@ function updateCartQuantity(cartItemId, quantity, row) {
             }
         },
         error: function() {
-            showToast("Không thể cập nhật số lượng", "error");
+            const isEn = $('html').attr('lang') === 'en';
+            showToast(isEn ? "Cannot update quantity" : "Không thể cập nhật số lượng", "error");
         }
     });
 }
@@ -133,7 +135,10 @@ function deleteCartItem(cartItemId, row, silent = false, onCancel) {
                     }
                     updateGlobalTotals(response.grandTotal, response.totalItems);
                     reloadCartPreview();
-                    if (!silent) showToast("Đã xóa sản phẩm khỏi giỏ hàng", "success");
+                    if (!silent) {
+                        const isEn = $('html').attr('lang') === 'en';
+                        showToast(isEn ? "Product removed from cart" : "Đã xóa sản phẩm khỏi giỏ hàng", "success");
+                    }
                 }
             }
         });
@@ -142,7 +147,8 @@ function deleteCartItem(cartItemId, row, silent = false, onCancel) {
     if (silent) {
         performDelete();
     } else {
-        showConfirm("Bạn có chắc chắn muốn xóa sản phẩm này?", performDelete, onCancel);
+        const isEn = $('html').attr('lang') === 'en';
+        showConfirm(isEn ? "Are you sure you want to delete this product?" : "Bạn có chắc chắn muốn xóa sản phẩm này?", performDelete, onCancel);
     }
 }
 
@@ -195,8 +201,9 @@ function updateGlobalTotals(grandTotal, totalItems) {
             const $btn = $(this);
             
             // Prevent adding to cart if out of stock
+            const isEn = $('html').attr('lang') === 'en';
             if ($btn.hasClass('btn-disabled') || $btn.is(':disabled')) {
-                showToast("Sản phẩm hiện đã hết hàng", "error");
+                showToast(isEn ? "Product is currently out of stock" : "Sản phẩm hiện đã hết hàng", "error");
                 return false;
             }
 
@@ -204,7 +211,7 @@ function updateGlobalTotals(grandTotal, totalItems) {
             const quantity = parseInt($("#productQuantity").val()) || 1;
             
             if (quantity <= 0) {
-                showToast("Số lượng không hợp lệ", "error");
+                showToast(isEn ? "Invalid quantity" : "Số lượng không hợp lệ", "error");
                 return false;
             }
             
@@ -233,7 +240,8 @@ function updateGlobalTotals(grandTotal, totalItems) {
 
             // Validation
             if (newVal > maxStock) {
-                showToast(`Chỉ còn ${maxStock} sản phẩm trong kho`, "error");
+                const isEn = $('html').attr('lang') === 'en';
+                showToast(isEn ? `Only ${maxStock} items left in stock` : `Chỉ còn ${maxStock} sản phẩm trong kho`, "error");
                 $input.val(maxStock);
                 updateCartQuantity(cartItemId, maxStock, $row);
                 return;
@@ -283,7 +291,8 @@ function updateGlobalTotals(grandTotal, totalItems) {
         let qty = parseInt(countSpan.text()) + 1;
 
         if (qty > maxStock) {
-            showToast(`Vượt quá số lượng tồn kho (${maxStock})`, "error");
+            const isEn = $('html').attr('lang') === 'en';
+            showToast(isEn ? `Exceeds stock limit (${maxStock})` : `Vượt quá số lượng tồn kho (${maxStock})`, "error");
             return;
         }
 

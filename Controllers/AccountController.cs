@@ -100,7 +100,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
                         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                         {
-                            return Json(new { success = true, message = "Đăng nhập thành công! Đang chuyển hướng...", returnUrl = returnUrl });
+                            return Json(new { success = true, message = Loc.T("Đăng nhập thành công! Đang chuyển hướng...", "Login successful! Redirecting..."), returnUrl = returnUrl });
                         }
 
                         return LocalRedirect(returnUrl);
@@ -109,10 +109,10 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { success = false, message = "Tên đăng nhập, email hoặc mật khẩu không đúng." });
+                    return Json(new { success = false, message = Loc.T("Tên đăng nhập, email hoặc mật khẩu không đúng.", "Incorrect username, email or password.") });
                 }
 
-                ModelState.AddModelError(string.Empty, "Tên đăng nhập, email hoặc mật khẩu không đúng.");
+                ModelState.AddModelError(string.Empty, Loc.T("Tên đăng nhập, email hoặc mật khẩu không đúng.", "Incorrect username, email or password."));
             }
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -137,16 +137,16 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         [HttpPost]
         public async Task<IActionResult> SendRegisterOTP(string username, string email)
         {
-            if (string.IsNullOrEmpty(email)) return Json(new { success = false, message = "Vui lòng nhập email." });
-            if (string.IsNullOrEmpty(username)) return Json(new { success = false, message = "Vui lòng nhập tên đăng nhập." });
+            if (string.IsNullOrEmpty(email)) return Json(new { success = false, message = Loc.T("Vui lòng nhập email.", "Please enter email.") });
+            if (string.IsNullOrEmpty(username)) return Json(new { success = false, message = Loc.T("Vui lòng nhập tên đăng nhập.", "Please enter username.") });
 
             // 1. Kiểm tra Username tồn tại chưa
             var usernameExists = await _context.Accounts.AnyAsync(a => a.AccountId == username);
-            if (usernameExists) return Json(new { success = false, message = "Tên đăng nhập này đã tồn tại." });
+            if (usernameExists) return Json(new { success = false, message = Loc.T("Tên đăng nhập này đã tồn tại.", "This username already exists.") });
 
             // 2. Kiểm tra Email tồn tại chưa
             var emailExists = await _context.Accounts.AnyAsync(a => a.Email == email);
-            if (emailExists) return Json(new { success = false, message = "Email này đã được sử dụng." });
+            if (emailExists) return Json(new { success = false, message = Loc.T("Email này đã được sử dụng.", "This email is already in use.") });
 
             var otpCode = new Random().Next(100000, 999999).ToString();
             HttpContext.Session.SetString("RegisterOTP", otpCode);
@@ -154,16 +154,17 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             try
             {
-                string subject = "Mã xác thực đăng ký tài khoản - Hobby Shop";
-                string body = $"<h3>Chào mừng bạn! Mã xác thực đăng ký của bạn là: <b style='color:#560bad;'>{otpCode}</b></h3><p>Vui lòng nhập mã này để hoàn tất đăng ký.</p>";
+                string subject = Loc.T("Mã xác thực đăng ký tài khoản - Hobby Shop", "Account Registration OTP Code - Hobby Shop");
+                string body = Loc.T($"<h3>Chào mừng bạn! Mã xác thực đăng ký của bạn là: <b style='color:#560bad;'>{otpCode}</b></h3><p>Vui lòng nhập mã này để hoàn tất đăng ký.</p>",
+                                     $"<h3>Welcome! Your registration verification code is: <b style='color:#560bad;'>{otpCode}</b></h3><p>Please enter this code to complete registration.</p>");
                 
                 await EmailHelper.SendEmailAsync(_configuration, email, subject, body);
                 
-                return Json(new { success = true, message = "Mã OTP đã được gửi." });
+                return Json(new { success = true, message = Loc.T("Mã OTP đã được gửi.", "OTP code has been sent.") });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Lỗi gửi mail: " + ex.Message });
+                return Json(new { success = false, message = Loc.T("Lỗi gửi mail: ", "Email transmission error: ") + ex.Message });
             }
         }
 
@@ -184,14 +185,14 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             if (model.VerificationCode != sessionOTP || model.Email != sessionEmail)
             {
-                return Json(new { success = false, message = "Mã xác thực không chính xác hoặc đã hết hạn." });
+                return Json(new { success = false, message = Loc.T("Mã xác thực không chính xác hoặc đã hết hạn.", "Verification code is incorrect or expired.") });
             }
 
             var emailExists = await _context.Accounts.AnyAsync(a => a.Email == model.Email);
-            if (emailExists) return Json(new { success = false, message = "Email này đã được sử dụng." });
+            if (emailExists) return Json(new { success = false, message = Loc.T("Email này đã được sử dụng.", "This email is already in use.") });
 
             var usernameExists = await _context.Accounts.AnyAsync(a => a.AccountId == model.Username);
-            if (usernameExists) return Json(new { success = false, message = "Tên đăng nhập này đã tồn tại." });
+            if (usernameExists) return Json(new { success = false, message = Loc.T("Tên đăng nhập này đã tồn tại.", "This username already exists.") });
 
             var newAccount = new Account
             {
@@ -223,7 +224,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-            return Json(new { success = true, message = "Đăng ký thành công! Đang chuyển hướng..." });
+            return Json(new { success = true, message = Loc.T("Đăng ký thành công! Đang chuyển hướng...", "Registration successful! Redirecting...") });
         }
 
         // GET /Account/Profile
@@ -270,6 +271,19 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         {
             var accountId = User.FindFirst("AccountId")?.Value;
             if (accountId != model.AccountId) return Unauthorized();
+
+            // Kiểm tra đủ 18 tuổi ở backend
+            if (model.BirthDate.HasValue)
+            {
+                var today = DateTime.Today;
+                var age = today.Year - model.BirthDate.Value.Year;
+                if (model.BirthDate.Value.Date > today.AddYears(-age)) age--;
+
+                if (age < 18)
+                {
+                    ModelState.AddModelError("BirthDate", Loc.T("Bạn phải đủ 18 tuổi để cập nhật thông tin.", "You must be at least 18 years old to update your profile."));
+                }
+            }
 
             if (ModelState.IsValid)
             {
@@ -348,10 +362,10 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { success = true, message = "Cập nhật hồ sơ thành công!" });
+                    return Json(new { success = true, message = Loc.T("Cập nhật hồ sơ thành công!", "Profile updated successfully!") });
                 }
 
-                TempData["SuccessMessage"] = "Cập nhật hồ sơ thành công!";
+                TempData["SuccessMessage"] = Loc.T("Cập nhật hồ sơ thành công!", "Profile updated successfully!");
                 return RedirectToAction(nameof(Profile));
             }
 
@@ -383,10 +397,10 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         [HttpPost]
         public async Task<IActionResult> SendOTP(string email)
         {
-            if (string.IsNullOrEmpty(email)) return Json(new { success = false, message = "Vui lòng nhập email." });
+            if (string.IsNullOrEmpty(email)) return Json(new { success = false, message = Loc.T("Vui lòng nhập email.", "Please enter email.") });
 
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
-            if (account == null) return Json(new { success = false, message = "Email này không tồn tại trong hệ thống." });
+            if (account == null) return Json(new { success = false, message = Loc.T("Email này không tồn tại trong hệ thống.", "This email does not exist in the system.") });
 
             var otpCode = new Random().Next(100000, 999999).ToString();
             HttpContext.Session.SetString("ResetOTP", otpCode);
@@ -394,14 +408,15 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             try
             {
-                string subject = "Mã xác thực khôi phục mật khẩu - Hobby Shop";
-                string body = $"<h3>Mã xác thực của bạn là: <b style='color:#560bad;'>{otpCode}</b></h3><p>Mã này sẽ hết hạn sau 10 phút. Nếu bạn không yêu cầu hành động này, vui lòng bỏ qua email.</p>";
+                string subject = Loc.T("Mã xác thực khôi phục mật khẩu - Hobby Shop", "Password Recovery OTP Code - Hobby Shop");
+                string body = Loc.T($"<h3>Mã xác thực của bạn là: <b style='color:#560bad;'>{otpCode}</b></h3><p>Mã này sẽ hết hạn sau 10 phút. Nếu bạn không yêu cầu hành động này, vui lòng bỏ qua email.</p>",
+                                     $"<h3>Your verification code is: <b style='color:#560bad;'>{otpCode}</b></h3><p>This code will expire in 10 minutes. If you did not request this action, please ignore this email.</p>");
                 await EmailHelper.SendEmailAsync(_configuration, email, subject, body);
-                return Json(new { success = true, message = "Mã OTP đã được gửi vào email của bạn." });
+                return Json(new { success = true, message = Loc.T("Mã OTP đã được gửi vào email của bạn.", "OTP code has been sent to your email.") });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Lỗi khi gửi email: " + ex.Message });
+                return Json(new { success = false, message = Loc.T("Lỗi khi gửi email: ", "Error sending email: ") + ex.Message });
             }
         }
 
@@ -414,9 +429,9 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             if (code == sessionOTP && email == sessionEmail)
             {
-                return Json(new { success = true, message = "Xác thực thành công." });
+                return Json(new { success = true, message = Loc.T("Xác thực thành công.", "Verification successful.") });
             }
-            return Json(new { success = false, message = "Mã xác thực không chính xác hoặc đã hết hạn." });
+            return Json(new { success = false, message = Loc.T("Mã xác thực không chính xác hoặc đã hết hạn.", "Verification code is incorrect or expired.") });
         }
 
         // POST: /Account/ForgotPassword
@@ -429,7 +444,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             if (model.VerificationCode != sessionOTP || model.Email != sessionEmail)
             {
-                ModelState.AddModelError("VerificationCode", "Mã xác thực không chính xác hoặc đã hết hạn.");
+                ModelState.AddModelError("VerificationCode", Loc.T("Mã xác thực không chính xác hoặc đã hết hạn.", "Verification code is incorrect or expired."));
                 return View(model);
             }
 
@@ -441,7 +456,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 // Kiểm tra mật khẩu mới trùng mật khẩu cũ
                 if (BCrypt.Net.BCrypt.Verify(model.NewPassword, account.Password))
                 {
-                    ModelState.AddModelError("NewPassword", "Mật khẩu mới không được trùng với mật khẩu cũ.");
+                    ModelState.AddModelError("NewPassword", Loc.T("Mật khẩu mới không được trùng với mật khẩu cũ.", "New password cannot be the same as the old password."));
                     return View(model);
                 }
 
@@ -452,7 +467,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 HttpContext.Session.Remove("ResetOTP");
                 HttpContext.Session.Remove("ResetEmail");
 
-                TempData["SuccessMessage"] = "Đặt lại mật khẩu thành công! Vui lòng đăng nhập lại.";
+                TempData["SuccessMessage"] = Loc.T("Đặt lại mật khẩu thành công! Vui lòng đăng nhập lại.", "Password reset successful! Please login again.");
                 return RedirectToAction("Login");
             }
             return View(model);
@@ -473,24 +488,24 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             var accountId = User.FindFirst("AccountId")?.Value;
             var account = await _context.Accounts.FindAsync(accountId);
 
-            if (account == null) return Json(new { success = false, message = "Không tìm thấy tài khoản." });
+            if (account == null) return Json(new { success = false, message = Loc.T("Không tìm thấy tài khoản.", "Account not found.") });
 
             if (!BCrypt.Net.BCrypt.Verify(model.OldPassword, account.Password))
             {
-                return Json(new { success = false, message = "Mật khẩu hiện tại không chính xác." });
+                return Json(new { success = false, message = Loc.T("Mật khẩu hiện tại không chính xác.", "Current password is incorrect.") });
             }
 
             // Kiểm tra mật khẩu mới trùng mật khẩu cũ
             if (BCrypt.Net.BCrypt.Verify(model.NewPassword, account.Password))
             {
-                return Json(new { success = false, message = "Mật khẩu mới không được trùng với mật khẩu cũ." });
+                return Json(new { success = false, message = Loc.T("Mật khẩu mới không được trùng với mật khẩu cũ.", "New password cannot be the same as the old password.") });
             }
 
             account.Password = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
             _context.Update(account);
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true, message = "Đổi mật khẩu thành công!" });
+            return Json(new { success = true, message = Loc.T("Đổi mật khẩu thành công!", "Password changed successfully!") });
         }
 
         [HttpPost]

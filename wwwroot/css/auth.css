@@ -139,3 +139,73 @@
     box-shadow: 0 0 0 0.25rem rgba(86, 11, 173, 0.25) !important;
 }
 
+/* Auth Header Actions (Top Right Actions Container) */
+.auth-header-actions {
+    position: absolute;
+    top: 25px;
+    right: 35px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 10;
+    font-family: 'Saira', sans-serif !important;
+}
+
+.back-home-link {
+    color: #560bad;
+    font-weight: 600;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    transition: color 0.2s ease;
+}
+
+.back-home-link:hover {
+    color: #3a0ca3;
+}
+
+.back-home-link i {
+    font-size: 14px;
+}
+
+.auth-divider {
+    color: #dee2e6;
+    font-weight: 300;
+    user-select: none;
+}
+
+/* Custom Auth Language Dropdown adjustments */
+.auth-lang-picker {
+    padding: 2px 0;
+    transition: transform 0.2s ease;
+}
+
+.auth-lang-picker:hover {
+    transform: translateY(-1px);
+}
+
+.auth-lang-picker .header__lang__text {
+    color: #560bad !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+}
+
+.auth-lang-picker .arrow_carrot-down {
+    color: #560bad !important;
+    font-size: 14px !important;
+}
+
+/* Align dropdown and popover arrow to the left edge of the selector */
+.auth-lang-picker ul {
+    left: -15px !important;
+    right: auto !important;
+}
+
+.auth-lang-picker ul::before {
+    left: 20px !important;
+    right: auto !important;
+}
+
+

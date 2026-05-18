@@ -136,7 +136,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return Json(new { success = false, message = "Vui lòng đăng nhập để lưu sản phẩm yêu thích." });
+                return Json(new { success = false, message = Loc.T("Vui lòng đăng nhập để lưu sản phẩm yêu thích.", "Please login to save favorite products.") });
             }
 
             var accountId = User.FindFirst("AccountId")?.Value;
@@ -167,7 +167,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 success = true, 
                 isAdded = isAdded, 
                 totalCount = totalCount,
-                message = isAdded ? "Đã thêm vào yêu thích" : "Đã xóa khỏi yêu thích" 
+                message = isAdded ? Loc.T("Đã thêm vào yêu thích", "Added to favorites") : Loc.T("Đã xóa khỏi yêu thích", "Removed from favorites") 
             });
         }
 

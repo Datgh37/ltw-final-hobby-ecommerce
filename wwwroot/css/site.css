@@ -11,8 +11,43 @@
   font-style: italic;
 }
 
-html, body, h1, h2, h3, h4, h5, h6, input, select, button, textarea, .hero__categories ul li a, .crud-btn, .crud-form-control {
+*, html, body, h1, h2, h3, h4, h5, h6, input, select, button, textarea, .hero__categories ul li a, .crud-btn, .crud-form-control {
   font-family: 'Saira', sans-serif !important;
+}
+
+/* Restore icon fonts overridden by universal font selector */
+.fa, 
+[class^="fa-"], 
+[class*=" fa-"], 
+.fa::before, 
+.fa::after, 
+[class^="fa-"]::before, 
+[class*=" fa-"]::before,
+[class^="fa-"]::after, 
+[class*=" fa-"]::after {
+  font-family: 'FontAwesome' !important;
+}
+
+[class^="icon_"], 
+[class*=" icon_"], 
+[class^="arrow_"], 
+[class*=" arrow_"], 
+[class^="social_"], 
+[class*=" social_"], 
+.hero__categories__all::after,
+[class^="icon_"]::before, 
+[class*=" icon_"]::before, 
+[class^="arrow_"]::before, 
+[class*=" arrow_"]::before, 
+[class^="social_"]::before, 
+[class*=" social_"]::before,
+[class^="icon_"]::after, 
+[class*=" icon_"]::after, 
+[class^="arrow_"]::after, 
+[class*=" arrow_"]::after, 
+[class^="social_"]::after, 
+[class*=" social_"]::after {
+  font-family: 'ElegantIcons' !important;
 }
 
 html {
@@ -2474,12 +2509,51 @@ html, body {
         line-height: 1.5 !important;
         font-size: 14px !important;
     }
+
+    /* Hover rotation for categories submenu arrow on mobile layout */
+    .has-hero-submenu .hero-cat-link i.fa-angle-right {
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        display: inline-block !important; /* Ensure rotation works smoothly */
+    }
+    .has-hero-submenu:hover .hero-cat-link i.fa-angle-right {
+        transform: rotate(90deg) !important; /* Rotates 90 degrees clockwise pointing down */
+    }
+
+    /* Premium mobile dropdown entry animation for language picker in Hamburger */
+    .humberger__menu__widget .header__top__right__language ul {
+        top: 23px !important; /* Stable position */
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important; /* Prevent hover area overlap issues entirely */
+        transition: opacity 0.4s ease, visibility 0.4s ease !important; /* Smooth slow fade-in/out */
+        box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.3) !important;
+        border-radius: 8px !important;
+        background: #222222 !important; /* Matches humberger sidebar dark theme */
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .humberger__menu__widget .header__top__right__language:hover ul {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important; /* Enable clicks when visible */
+    }
+
+    /* Make language items hover feel premium */
+    .humberger__menu__widget .header__top__right__language ul li a {
+        transition: all 0.2s ease !important;
+        border-radius: 4px !important;
+    }
+    .humberger__menu__widget .header__top__right__language ul li a:hover {
+        background: rgba(86, 11, 173, 0.15) !important;
+        color: #560bad !important;
+    }
 }
 
 /* ==========================================================================
    Premium Desktop Dropdown Navigation Styling
    ========================================================================== */
 @media (min-width: 992px) {
+    /* Main Dropdown Container */
     /* Main Dropdown Container */
     .header__menu ul li .header__menu__dropdown {
         position: absolute;
@@ -2494,6 +2568,7 @@ html, body {
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
         opacity: 0 !important;
         visibility: hidden !important;
+        pointer-events: none !important; /* Ignore hover/clicks while hidden */
         transform: translateY(10px) !important;
         transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
                     transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
@@ -2505,7 +2580,21 @@ html, body {
         top: 40px !important;
         opacity: 1 !important;
         visibility: visible !important;
+        pointer-events: auto !important; /* Allow interactions when visible */
         transform: translateY(0) !important;
+    }
+
+    /* Pure CSS invisible bridge to eliminate mouse hover loss in transparent gap for Pages dropdown */
+    .header__menu ul li .header__menu__dropdown::after {
+        content: "" !important;
+        position: absolute !important;
+        top: -30px !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 30px !important;
+        background: transparent !important;
+        z-index: -1 !important;
+        display: block !important;
     }
 
     /* Popover Arrow Indicator */
@@ -2546,6 +2635,93 @@ html, body {
 
     /* Dropdown Item Link Hover */
     .header__menu ul li .header__menu__dropdown li a:hover {
+        background: rgba(86, 11, 173, 0.05) !important;
+        color: #560bad !important;
+    }
+
+    /* ==========================================================================
+       Language Dropdown Container (Desktop) - Unified with Pages Dropdown
+       ========================================================================== */
+    .header__lang ul {
+        position: absolute !important;
+        left: -15px !important;
+        top: 45px !important; /* Starts slightly lower for smooth upward transition */
+        background: #ffffff !important;
+        width: 140px !important;
+        z-index: 999 !important;
+        padding: 8px 0 !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(0, 0, 0, 0.07) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important; /* Ignore hover/clicks while hidden */
+        transform: translateY(10px) !important;
+        transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                    visibility 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Hover Activation with Slide-up Animation */
+    .header__lang:hover ul {
+        top: 28px !important; /* Slid up smoothly closer to trigger text */
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important; /* Allow interactions when visible */
+        transform: translateY(0) !important;
+    }
+
+    /* Pure CSS invisible bridge to eliminate mouse hover loss in transparent gap */
+    .header__lang ul::after {
+        content: "" !important;
+        position: absolute !important;
+        top: -30px !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 30px !important;
+        background: transparent !important;
+        z-index: -1 !important;
+        display: block !important;
+    }
+
+    /* Popover Arrow Indicator (Same style as Pages dropdown) */
+    .header__lang ul::before {
+        content: '' !important;
+        position: absolute !important;
+        top: -6px !important;
+        left: 20px !important; /* Positioned left near flag */
+        width: 10px !important;
+        height: 10px !important;
+        background: #ffffff !important;
+        transform: rotate(45deg) !important;
+        border-left: 1px solid rgba(0, 0, 0, 0.07) !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.07) !important;
+        z-index: 1 !important;
+    }
+
+    /* Dropdown Items (Unified spacing & border-radius hover) */
+    .header__lang ul li {
+        margin-right: 0 !important;
+        display: block !important;
+        padding: 0 6px !important;
+    }
+
+    .header__lang ul li a {
+        color: #4a4a4a !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        padding: 8px 12px !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        transition: all 0.2s ease !important;
+        letter-spacing: normal !important;
+        text-transform: none !important;
+        background: transparent !important;
+    }
+
+    /* Dropdown Item Link Hover */
+    .header__lang ul li a:hover {
         background: rgba(86, 11, 173, 0.05) !important;
         color: #560bad !important;
     }

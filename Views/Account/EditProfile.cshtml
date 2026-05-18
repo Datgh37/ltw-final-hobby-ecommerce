@@ -79,7 +79,7 @@
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>@Loc.T("Ngày sinh", "Birthdate")</p>
-                                    <input asp-for="BirthDate" type="date">
+                                    <input asp-for="BirthDate" type="date" max="@DateTime.Today.AddYears(-18).ToString("yyyy-MM-dd")">
                                     <span asp-validation-for="BirthDate" class="text-danger"></span>
                                 </div>
                             </div>
@@ -117,6 +117,24 @@
             // AJAX Edit Profile
             $('form[asp-action="EditProfile"]').on('submit', function(e) {
                 e.preventDefault();
+
+                // Validate 18+ on Frontend
+                const birthDateVal = $('#BirthDate').val();
+                if (birthDateVal) {
+                    const birthDate = new Date(birthDateVal);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    if (age < 18) {
+                        const isEn = $('html').attr('lang') === 'en';
+                        showToast(isEn ? "You must be at least 18 years old." : "Bạn phải đủ 18 tuổi để cập nhật thông tin.", "error");
+                        return false;
+                    }
+                }
+
                 const form = $(this);
                 const formData = new FormData(this);
 

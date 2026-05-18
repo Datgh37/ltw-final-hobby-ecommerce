@@ -1,0 +1,35 @@
+@using Microsoft.AspNetCore.Localization
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var currentCulture = requestCulture?.RequestCulture.Culture.Name ?? "vi-VN";
+    var isEnglish = currentCulture == "en-US";
+    var isAuth = ViewData["IsAuth"] as bool? ?? false;
+}
+
+<div class="header__lang @(isAuth ? "auth-lang-picker" : "")">
+    @if (isEnglish)
+    {
+        <img src="~/images/america.png" alt="English" class="lang-flag-img" />
+        <span class="header__lang__text">EN</span>
+    }
+    else
+    {
+        <img src="~/images/vietnam.png" alt="Vietnam" class="lang-flag-img" />
+        <span class="header__lang__text">VI</span>
+    }
+    <span class="arrow_carrot-down"></span>
+    <ul>
+        <li>
+            <a asp-controller="Language" asp-action="Change" asp-route-culture="vi-VN" asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+               class="@(!isEnglish ? "disabled-lang active-lang" : "")">
+                <img src="~/images/vietnam.png" alt="Vietnam" class="lang-flag-img-dropdown" /> Tiếng Việt
+            </a>
+        </li>
+        <li>
+            <a asp-controller="Language" asp-action="Change" asp-route-culture="en-US" asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+               class="@(isEnglish ? "disabled-lang active-lang" : "")">
+                <img src="~/images/america.png" alt="English" class="lang-flag-img-dropdown" /> English
+            </a>
+        </li>
+    </ul>
+</div>
