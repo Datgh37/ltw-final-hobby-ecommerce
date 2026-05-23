@@ -8,21 +8,30 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=${SQL_PASSWORD}
+      - MSSQL_MEMORY_LIMIT_MB=2048
     ports:
       - "1433:1433" # Mở cổng để bạn có thể dùng SSMS kết nối từ máy thật vào
     volumes:
       - sql_data:/var/opt/mssql # Lưu dữ liệu vào ổ đĩa ảo của Docker
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SQL_PASSWORD}", "-Q", "SELECT 1", "-C"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
 
   # Dịch vụ 2: Website ASP.NET MVC
   hobbyshop-web:
     build: .
     container_name: aspnet_web_app
+    restart: always
     env_file:
       - .env
     ports:
       - "8080:8080" # Truy cập localhost:8080 trên máy thật để kiểm tra
     depends_on:
-      - hobbyshop-db # Đợi database khởi động xong mới chạy web
+      hobbyshop-db:
+        condition: service_healthy # Đợi database khởi động xong và khỏe mạnh mới chạy web
 
   # Dịch vụ 3: Cloudflare Tunnel
   cf-tunnel:

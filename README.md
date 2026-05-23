@@ -21,10 +21,11 @@ TuNhanTamTInh_Ecommerce/
 │   └── SlugHelper.cs         # Hỗ trợ sinh slug tự động cho sản phẩm/danh mục
 ├── Views/               # Chứa các file giao diện Razor (.cshtml)
 │   ├── Home/            # View tương ứng của HomeController
-│   ├── Products/        # View tương ứng của ProductsController
-│   │   └── _ViewStart.cshtml     # Layout dành cho CRUD Products (sử dụng _LayoutCRUD)
-│   ├── Categories/      # View tương ứng của CategoriesController
-│   │   └── _ViewStart.cshtml     # Layout dành cho CRUD Categories (sử dụng _LayoutCRUD)
+│   ├── Products/        # View tương ứng của ProductsController (Giao diện hiển thị sản phẩm)
+│   ├── Admin/           # View tương ứng của AdminController
+│   │   ├── Categories/  # Quản lý CRUD Categories
+│   │   └── Products/    # Quản lý CRUD Products
+│   ├── Favorites/       # View tương ứng của trang Yêu thích (Wishlist)
 │   ├── Shared/          # Layout chính (_Layout.cshtml) và các Partial View dùng chung
 │   │   ├── _Layout.cshtml        # Layout chính cho trang khách (Frontend)
 │   │   ├── _ViewImports.cshtml   # Import namespaces và dependencies
@@ -156,7 +157,13 @@ Tạo file `Views/Shared/_ProductCard.cshtml`:
 7. **Login / Register (Đăng Nhập / Đăng Ký):**
    - **Trạng thái:** ✅ Hoàn thành 100%.
    - **Chi tiết:** Hệ thống xác thực bằng Cookie hoạt động mượt mà tại [AccountController.cs]. Hỗ trợ đăng ký, đăng nhập, quên mật khẩu (gửi email reset), đổi mật khẩu và trang cá nhân Profile hoàn chỉnh.
-8. **Thanh Toán & Đặt Đơn Hàng (Checkout & Order):**
+8. **Trang Yêu Thích (Wishlist):**
+   - **Trạng thái:** ✅ Hoàn thành 100%.
+   - **Chi tiết:** Đã phát triển thông qua [Favorites.cs] và hiển thị tại [Views/Favorites/Index.cshtml]. Người dùng có thể lưu các mô hình ưa thích và xem lại danh sách.
+9. **Khu Vực Quản Trị (Admin Area):**
+   - **Trạng thái:** ✅ Hoàn thành 100%.
+   - **Chi tiết:** Đã tách các tính năng quản lý (CRUD) danh mục và sản phẩm vào `AdminController.cs` và thư mục view `Views/Admin/`, giúp quản lý tách biệt và an toàn hơn.
+10. **Thanh Toán & Đặt Đơn Hàng (Checkout & Order):**
    - **Trạng thái:** ❌ Chưa phát triển (Đang đề xuất).
    - **Chi tiết:** Cần tạo bộ điều khiển `CheckoutController.cs` và view `Views/Checkout/Index.cshtml` để cho phép người dùng nhập thông tin nhận hàng, lựa chọn phương thức thanh toán, áp dụng mã giảm giá và lưu hóa đơn vào bảng `Orders` và `OrderDetails`.
 
@@ -171,16 +178,13 @@ Tạo file `Views/Shared/_ProductCard.cshtml`:
 1. **Thanh Toán Trực Tuyến (VNPay Sandbox):** Tích hợp cổng thanh toán VNPay Sandbox. Đây là "vũ khí" cực mạnh để lấy điểm tuyệt đối cho đồ án môn Web.
 2. **Quản Lý Đơn Hàng & Tracking (Khách hàng & Admin):** 
    - **Khách hàng:** Trang Profile cá nhân cho phép xem lịch sử đơn hàng, xem chi tiết và tracking trạng thái giao nhận đơn (Chờ xử lý, Đang giao, Đã giao, Đã hủy).
-   - **Admin:** Giao diện quản lý toàn bộ đơn hàng của hệ thống, cho phép thay đổi trạng thái và điền mã vận đơn thực tế.
-3. **Phân vùng Quản trị (Admin Area):** Chuyển các hành động CRUD (quản lý sản phẩm, danh mục, tài khoản, đơn hàng) vào một **Area** riêng biệt (`Areas/Admin`) thay vì viết chung trong Controllers chính để tăng tính bảo mật và chuyên nghiệp cho kiến trúc mã nguồn.
-4. **Hệ Thống Tiền Đặt Hàng (Pre-Order):** Rất đặc thù của Hobby Shop (do các mô hình thường công bố và cho đặt trước 3-6 tháng). Cần thêm trạng thái "Đặt hàng trước" cho các sản phẩm chưa phát hành.
+   - **Admin:** Giao diện quản lý toàn bộ đơn hàng của hệ thống trong Admin, cho phép thay đổi trạng thái và điền mã vận đơn thực tế.
+3. **Hệ Thống Tiền Đặt Hàng (Pre-Order):** Rất đặc thù của Hobby Shop (do các mô hình thường công bố và cho đặt trước 3-6 tháng). Cần thêm trạng thái "Đặt hàng trước" cho các sản phẩm chưa phát hành.
 
 ### 🎨 Ưu Tiên 2: Nhóm Tận Dụng Template Có Sẵn (Tối Ưu Trải Nghiệm - Dễ Làm)
 Nhóm này giúp trang web trông đồ sộ, nhiều chức năng nhưng lại cực kỳ dễ triển khai vì **template Ogani trong `wwwroot/` đã cung cấp sẵn giao diện (UI) 100%**:
-5. **Trang Blog / Tin tức & Review (Tận dụng `blog.html` và `blog-details.html`):** Rất thích hợp làm chức năng đăng bài Review đập hộp (Unboxing), thông báo hàng mới để kéo tương tác.
-6. **Mã Giảm Giá / Khuyến Mãi (Tận dụng `shoping-cart.html`):** Trong giỏ hàng đã có khối nhập mã giảm giá. Cần thêm API xử lý logic kiểm tra bảng `Vouchers` (kiểm tra hạn dùng, lượt dùng còn lại) để áp dụng giảm giá.
-7. **Trang Yêu Thích (Wishlist):** backend đã có sẵn các API `ToggleFavorite` và bảng `Favorites` trong DB. Chỉ cần tạo trang `Views/Account/Wishlist.cshtml` hiển thị các mô hình người dùng đã lưu thích.
-8. **Trang Liên Hệ & Bản Đồ (Tận dụng `contact.html`):** Có sẵn form liên hệ và chỗ nhúng Google Maps. Dùng để lưu lời nhắn của khách vào Database (bảng `Questions` hoặc bảng liên hệ riêng).
+4. **Mã Giảm Giá / Khuyến Mãi (Tận dụng `shoping-cart.html`):** Trong giỏ hàng đã có khối nhập mã giảm giá. Cần thêm API xử lý logic kiểm tra bảng `Vouchers` (kiểm tra hạn dùng, lượt dùng còn lại) để áp dụng giảm giá.
+5. **Trang Liên Hệ & Bản Đồ (Tận dụng `contact.html`):** Có sẵn form liên hệ và chỗ nhúng Google Maps. Dùng để lưu lời nhắn của khách vào Database (bảng `Questions` hoặc bảng liên hệ riêng).
 
 ---
 
@@ -224,19 +228,3 @@ Qua việc quét toàn bộ cấu trúc dự án thực tế, dưới đây là 
 * **Hướng triển khai:**
   * Tạo view `Views/Account/MyOrders.cshtml` hoặc tích hợp tab "Đơn hàng của tôi" vào trang [Views/Account/Profile.cshtml]
   * Sử dụng database view `v_OrderDetailsWithProduct` để hiển thị trực quan các mặt hàng đã mua kèm hình ảnh đại diện, giá tiền, số lượng, trạng thái đơn hàng hiện tại (`StatusName`) và mã vận đơn tracking.
-
-### 5️⃣ Module Tin Tức & Review Đập Hộp (Blog & Articles) - **ĐỘ ƯU TIÊN: THẨM MỸ**
-*Tận dụng giao diện Blog cực đẹp của Ogani để làm website thêm phong phú nội dung.*
-
-* **Hướng triển khai:**
-  * Tạo `BlogController.cs` để quản lý các bài viết tin tức hoặc bài viết review mô hình mới.
-  * Tải dữ liệu từ bảng `WebPages` hoặc tạo bảng mới `Blogs` trong SQL Server để quản lý nội dung bài viết.
-  * Tạo các View tương ứng sử dụng template của `wwwroot/blog.html` và `wwwroot/blog-details.html`.
-
-### 6️⃣ Kiến trúc chuyên nghiệp với Admin Area - **ĐỘ ƯU TIÊN: ĐIỂM 10 BẢO MẬT**
-*Hiện tại các trang CRUD Admin đang viết chung với Controller của khách hàng.*
-
-* **Hướng triển khai:**
-  * Tạo cấu trúc thư mục mới: `Areas/Admin/Controllers/` và `Areas/Admin/Views/`.
-  * Di chuyển các hành động quản trị viên (`AdminIndex`, `Create`, `Edit`, `Delete`) của `ProductsController` và `CategoriesController` sang `Areas/Admin/Controllers`.
-  * Điều này giúp phân tách hoàn toàn mã nguồn phía Admin và phía Client, nâng tầm chất lượng kiến trúc phần mềm cho đồ án tốt nghiệp hoặc đồ án cuối kỳ.

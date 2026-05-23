@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using TuNhanTamTInh_Ecommerce.Data;
 using TuNhanTamTInh_Ecommerce.Helpers;
 
@@ -60,9 +61,19 @@ namespace TuNhanTamTInh_Ecommerce
                 options.AddPolicy("AdminOnly", policy => policy.RequireClaim("RoleId", "0"));
             });
 
+            // Configure Forwarded Headers for Cloudflare Tunnel / Reverse Proxy hosting
+            builder.Services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            app.UseForwardedHeaders();
+
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
