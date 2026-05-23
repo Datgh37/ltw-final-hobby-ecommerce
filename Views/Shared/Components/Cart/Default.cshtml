@@ -11,7 +11,7 @@
     @if (Model.Items.Any())
     {
         <div class="cart-dropdown__header">
-            <span class="cart-dropdown__title">Giỏ hàng</span>
+            <span class="cart-dropdown__title">@Loc.T("Giỏ hàng", "Cart")</span>
             <span class="cart-dropdown__badge">@Model.TotalItems</span>
         </div>
         <div class="cart-dropdown__items">
@@ -33,17 +33,17 @@
         </div>
         <div class="cart-dropdown__footer">
             <div class="cart-dropdown__total">
-                <span>Tổng cộng</span>
+                <span>@Loc.T("Tổng cộng", "Total")</span>
                 <strong>@Model.GrandTotal.ToString("N0") ₫</strong>
             </div>
-            <a asp-controller="Cart" asp-action="Index" class="cart-dropdown__view-btn">Xem giỏ hàng</a>
+            <a asp-controller="Cart" asp-action="Index" class="cart-dropdown__view-btn">@Loc.T("Xem giỏ hàng", "View Cart")</a>
         </div>
     }
     else
     {
         <div class="cart-dropdown__empty">
             <i class="fa fa-shopping-basket"></i>
-            <p>Giỏ hàng trống</p>
+            <p>@Loc.T("Giỏ hàng trống", "Empty Cart")</p>
         </div>
     }
 </div>

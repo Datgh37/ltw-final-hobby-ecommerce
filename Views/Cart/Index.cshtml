@@ -47,7 +47,7 @@
                                             <h5 class="cart-product-title">@item.Product.ProductName</h5>
                                         </td>
                                         <td class="shoping__cart__price">
-                                            @item.Product.UnitPrice.ToString("N0") ₫
+                                            @item.Product.UnitPrice.ToString("N0")&nbsp;₫
                                         </td>
                                         <td class="shoping__cart__quantity">
                                             <div class="pro-qty-cart" data-max-stock="@item.Product.StockQuantity">
@@ -57,7 +57,7 @@
                                             </div>
                                         </td>
                                         <td class="shoping__cart__total subtotal">
-                                            @subtotal.ToString("N0") ₫
+                                            @subtotal.ToString("N0")&nbsp;₫
                                         </td>
                                         <td class="shoping__cart__item__close">
                                             <a href="javascript:void(0)" class="delete-cart-item" data-cart-item-id="@item.CartItemId">
@@ -93,8 +93,8 @@
                     <div class="shoping__checkout">
                         <h5>@Loc.T("Tổng đơn hàng", "Cart Total")</h5>
                         <ul>
-                            <li>@Loc.T("Tạm tính", "Subtotal") <span>@grandTotal.ToString("N0") ₫</span></li>
-                            <li>@Loc.T("Tổng cộng", "Total") <span id="grand-total">@grandTotal.ToString("N0") ₫</span></li>
+                            <li>@Loc.T("Tạm tính", "Subtotal") <span>@grandTotal.ToString("N0")&nbsp;₫</span></li>
+                            <li>@Loc.T("Tổng cộng", "Total") <span id="grand-total">@grandTotal.ToString("N0")&nbsp;₫</span></li>
                         </ul>
                         <a asp-controller="Checkout" asp-action="Index" class="primary-btn rounded-pill w-100 text-center">@Loc.T("TIẾN HÀNH THANH TOÁN", "PROCEED TO CHECKOUT")</a>
                     </div>

@@ -96,7 +96,14 @@ function updateCartQuantity(cartItemId, quantity, row) {
                 // Update specific row elements
                 if (row && row.length) {
                     row.find(".qty-input").val(response.quantity);
-                    row.find(".subtotal").text(response.subtotal + " ₫");
+                    row.find(".subtotal").text(response.subtotal + "\u00A0₫");
+                }
+                
+                // Sync main cart page row if it exists and wasn't the target
+                const mainRow = $(`.cart-row[data-cart-item-id='${cartItemId}']`);
+                if (mainRow.length > 0 && (!row || !row.is(mainRow))) {
+                    mainRow.find(".qty-input").val(response.quantity);
+                    mainRow.find(".subtotal").text(response.subtotal + "\u00A0₫");
                 }
                 
                 // Update global totals
@@ -133,6 +140,15 @@ function deleteCartItem(cartItemId, row, silent = false, onCancel) {
                             if ($(".cart-row").length === 0) location.reload(); 
                         });
                     }
+                    
+                    // Sync main cart page row if it exists and wasn't the target
+                    const mainRow = $(`.cart-row[data-cart-item-id='${cartItemId}']`);
+                    if (mainRow.length > 0 && (!row || !row.is(mainRow))) {
+                        mainRow.fadeOut(300, function() {
+                            $(this).remove();
+                            if ($(".cart-row").length === 0) location.reload();
+                        });
+                    }
                     updateGlobalTotals(response.grandTotal, response.totalItems);
                     reloadCartPreview();
                     if (!silent) {
@@ -164,7 +180,7 @@ function reloadCartPreview() {
         if (newTotal) {
             $(".header__cart__price span").text(newTotal);
         } else {
-            $(".header__cart__price span").text("0 ₫");
+            $(".header__cart__price span").text("0\u00A0₫");
         }
     });
 }
@@ -172,19 +188,19 @@ function reloadCartPreview() {
 // 7. Update Totals in Cart Index
 function updateGlobalTotals(grandTotal, totalItems) {
     // Update main checkout box
-    $("#grand-total").text(grandTotal + " ₫");
+    $("#grand-total").text(grandTotal + "\u00A0₫");
     
     // Target the first <li> for subtotal (Tạm tính)
-    $(".shoping__checkout ul li:contains('Tạm tính') span").text(grandTotal + " ₫");
+    $(".shoping__checkout ul li:contains('Tạm tính') span").text(grandTotal + "\u00A0₫");
     
     // Target the second <li> for total (Tổng cộng) - fallback if #grand-total is not enough
-    $(".shoping__checkout ul li:contains('Tổng cộng') span").text(grandTotal + " ₫");
+    $(".shoping__checkout ul li:contains('Tổng cộng') span").text(grandTotal + "\u00A0₫");
     
     // Update cart icon badge
     $(".cart-count").text(totalItems);
     
     // Update hamburger total price text dynamically
-    $(".header__cart__price span").text(grandTotal + " ₫");
+    $(".header__cart__price span").text(grandTotal + "\u00A0₫");
 }
 
     // 8. Event Listeners

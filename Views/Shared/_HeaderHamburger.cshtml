@@ -94,6 +94,7 @@
             <li>
                 <a href="#">@Loc.T("Trang", "Pages")</a>
                 <ul class="header__menu__dropdown">
+                    <li><a asp-controller="Cart" asp-action="Index">@Loc.T("Giỏ hàng", "Cart")</a></li>
                     @if (User.Identity!.IsAuthenticated)
                     {
                         @if (User.FindFirst("RoleId")?.Value == "0")
@@ -101,7 +102,6 @@
                             <li><a asp-controller="Admin" asp-action="Products">@Loc.T("Quản lý sản phẩm", "Products Admin")</a></li>
                             <li><a asp-controller="Admin" asp-action="Categories">@Loc.T("Quản lý danh mục", "Categories Admin")</a></li>
                         }
-                        <li><a asp-controller="Cart" asp-action="Index">@Loc.T("Giỏ hàng", "Cart")</a></li>
                     }
                 </ul>
             </li>

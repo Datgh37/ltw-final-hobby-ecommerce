@@ -14,7 +14,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-2 col-md-2 col-12 h-left d-flex justify-content-lg-start justify-content-center">
+            <div class="col-lg-2 col-md-6 col-12 h-left d-flex justify-content-md-start justify-content-center">
                 <div class="header__logo">
                     <a asp-controller="Home" asp-action="Index"><img src="~/images/Banner/logotoy.png" alt="Hobby Shop"></a>
                 </div>
@@ -31,6 +31,7 @@
                         <li>
                             <a>@Loc.T("Trang", "Pages")</a>
                             <ul class="header__menu__dropdown">
+                                <li><a asp-controller="Cart" asp-action="Index">@Loc.T("Giỏ hàng", "Cart")</a></li>
                                 @if (User.Identity!.IsAuthenticated)
                                 {
                                     @if (User.FindFirst("RoleId")?.Value == "0")
@@ -38,7 +39,6 @@
                                         <li><a asp-controller="Admin" asp-action="Products">@Loc.T("Quản lý sản phẩm", "Products Admin")</a></li>
                                         <li><a asp-controller="Admin" asp-action="Categories">@Loc.T("Quản lý danh mục", "Categories Admin")</a></li>
                                     }
-                                    <li><a asp-controller="Cart" asp-action="Index">@Loc.T("Giỏ hàng", "Cart")</a></li>
                                 }
                             </ul>
                         </li>

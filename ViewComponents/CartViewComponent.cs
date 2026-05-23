@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuNhanTamTInh_Ecommerce.Data;
+using TuNhanTamTInh_Ecommerce.Models;
 using TuNhanTamTInh_Ecommerce.Models.ViewModels;
 
 namespace TuNhanTamTInh_Ecommerce.ViewComponents
@@ -20,19 +21,29 @@ namespace TuNhanTamTInh_Ecommerce.ViewComponents
 
             try
             {
-                if (User.Identity?.IsAuthenticated == true)
-                {
-                    var accountId = UserClaimsPrincipal.FindFirst("AccountId")?.Value;
-                    if (!string.IsNullOrEmpty(accountId))
-                    {
-                        var cart = await _context.Carts
-                            .Include(x => x.CartItems)
-                                .ThenInclude(ci => ci.Product)
-                                    .ThenInclude(p => p.ProductImages)
-                            .FirstOrDefaultAsync(x => x.AccountId == accountId);
+                var accountId = User.Identity?.IsAuthenticated == true ? UserClaimsPrincipal.FindFirst("AccountId")?.Value : null;
+                HttpContext.Request.Cookies.TryGetValue("GuestCartId", out string? guestCartId);
 
-                        if (cart != null && cart.CartItems != null)
-                        {
+                Cart? cart = null;
+                if (!string.IsNullOrEmpty(accountId))
+                {
+                    cart = await _context.Carts
+                        .Include(x => x.CartItems)
+                            .ThenInclude(ci => ci.Product)
+                                .ThenInclude(p => p.ProductImages)
+                        .FirstOrDefaultAsync(x => x.AccountId == accountId);
+                }
+                else if (!string.IsNullOrEmpty(guestCartId))
+                {
+                    cart = await _context.Carts
+                        .Include(x => x.CartItems)
+                            .ThenInclude(ci => ci.Product)
+                                .ThenInclude(p => p.ProductImages)
+                        .FirstOrDefaultAsync(x => x.CartId == guestCartId);
+                }
+
+                if (cart != null && cart.CartItems != null)
+                {
                             model.TotalItems = cart.CartItems.Sum(x => x.Quantity);
                             model.GrandTotal = cart.CartItems.Sum(x => x.Quantity * x.Product.UnitPrice);
                             model.Items = cart.CartItems
@@ -52,8 +63,6 @@ namespace TuNhanTamTInh_Ecommerce.ViewComponents
                                     StockQuantity = ci.Product?.StockQuantity ?? 0
                                 })
                                 .ToList();
-                        }
-                    }
                 }
             }
             catch

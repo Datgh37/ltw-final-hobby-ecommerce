@@ -98,6 +98,14 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                             new ClaimsPrincipal(claimsIdentity),
                             authProperties);
 
+                        // Gộp giỏ hàng vãng lai vào giỏ hàng chính thức sau khi đăng nhập thành công.
+                        // Sử dụng stored procedure 'sp_SyncCart' để xử lý gộp số lượng an toàn.
+                        if (Request.Cookies.TryGetValue("GuestCartId", out string? guestCartId))
+                        {
+                            await _context.Database.ExecuteSqlRawAsync("EXEC sp_SyncCart @p0, @p1", guestCartId, account.AccountId);
+                            Response.Cookies.Delete("GuestCartId");
+                        }
+
                         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                         {
                             return Json(new { success = true, message = Loc.T("Đăng nhập thành công! Đang chuyển hướng...", "Login successful! Redirecting..."), returnUrl = returnUrl });
@@ -223,6 +231,14 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+            // Gộp giỏ hàng vãng lai vào giỏ hàng chính thức sau khi đăng ký thành công.
+            // Sử dụng stored procedure 'sp_SyncCart' để xử lý gộp số lượng an toàn.
+            if (Request.Cookies.TryGetValue("GuestCartId", out string? guestCartId))
+            {
+                await _context.Database.ExecuteSqlRawAsync("EXEC sp_SyncCart @p0, @p1", guestCartId, newAccount.AccountId);
+                Response.Cookies.Delete("GuestCartId");
+            }
 
             return Json(new { success = true, message = Loc.T("Đăng ký thành công! Đang chuyển hướng...", "Registration successful! Redirecting...") });
         }

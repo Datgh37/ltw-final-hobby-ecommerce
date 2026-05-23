@@ -18,20 +18,44 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             _context = context;
         }
 
+        // Lấy GuestCartId từ cookie của trình duyệt. 
+        // Nếu chưa có, tạo mới một GUID và lưu vào cookie với thời hạn 30 ngày.
+        // Hỗ trợ khách vãng lai (chưa đăng nhập) thêm sản phẩm vào giỏ hàng.
+        private string GetOrSetGuestCartId()
+        {
+            if (Request.Cookies.TryGetValue("GuestCartId", out string cartId))
+            {
+                return cartId;
+            }
+            cartId = Guid.NewGuid().ToString();
+            var options = new CookieOptions { Expires = DateTime.Now.AddDays(30), HttpOnly = true };
+            Response.Cookies.Append("GuestCartId", cartId, options);
+            return cartId;
+        }
+
         // GET: /Cart/Index
         public async Task<IActionResult> Index()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
             var accountId = User.FindFirst("AccountId")?.Value;
-            var cart = await _context.Carts
-                .Include(x => x.CartItems)
-                .ThenInclude(x => x.Product)
-                .ThenInclude(x => x.ProductImages)
-                .FirstOrDefaultAsync(x => x.AccountId == accountId);
+            var guestCartId = accountId == null ? GetOrSetGuestCartId() : null;
+
+            Cart? cart = null;
+            if (accountId != null)
+            {
+                cart = await _context.Carts
+                    .Include(x => x.CartItems)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.ProductImages)
+                    .FirstOrDefaultAsync(x => x.AccountId == accountId);
+            }
+            else
+            {
+                cart = await _context.Carts
+                    .Include(x => x.CartItems)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.ProductImages)
+                    .FirstOrDefaultAsync(x => x.CartId == guestCartId);
+            }
 
             if (cart == null)
             {
@@ -47,27 +71,29 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
             if (quantity <= 0) return Json(new { success = false, message = Loc.T("Số lượng không hợp lệ", "Invalid quantity") });
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Json(new { success = false, message = Loc.T("Vui lòng đăng nhập để mua hàng", "Please login to purchase items") });
-            }
 
-            // Lấy AccountId từ Identity (xác thực người dùng hiện tại)
             var accountId = User.FindFirst("AccountId")?.Value;
-            if (string.IsNullOrEmpty(accountId))
-            {
-                return Json(new { success = false, message = Loc.T("Không tìm thấy tài khoản", "Account not found") });
-            }
+            var guestCartId = accountId == null ? GetOrSetGuestCartId() : null;
 
-            var cart = await _context.Carts
-                .Include(x => x.CartItems)
-                .FirstOrDefaultAsync(x => x.AccountId == accountId);
+            Cart? cart = null;
+            if (accountId != null)
+            {
+                cart = await _context.Carts
+                    .Include(x => x.CartItems)
+                    .FirstOrDefaultAsync(x => x.AccountId == accountId);
+            }
+            else
+            {
+                cart = await _context.Carts
+                    .Include(x => x.CartItems)
+                    .FirstOrDefaultAsync(x => x.CartId == guestCartId);
+            }
 
             if (cart == null)
             {
                 cart = new Cart
                 {
-                    CartId = Guid.NewGuid().ToString(),
+                    CartId = accountId != null ? Guid.NewGuid().ToString() : guestCartId,
                     AccountId = accountId,
                     CreatedAt = DateTime.Now
                 };
@@ -107,7 +133,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             await _context.SaveChangesAsync();
             
-            var summary = await GetCartSummary(accountId);
+            var summary = await GetCartSummary(accountId, guestCartId);
             return Json(new { 
                 success = true, 
                 totalItems = summary.TotalItems, 
@@ -124,13 +150,22 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             // Lấy danh tính người dùng hiện tại để đảm bảo quyền sở hữu (Chống lỗi IDOR)
             var accountId = User.FindFirst("AccountId")?.Value;
-            if (string.IsNullOrEmpty(accountId)) return Json(new { success = false, message = Loc.T("Vui lòng đăng nhập", "Please login") });
+            Request.Cookies.TryGetValue("GuestCartId", out string? guestCartId);
 
-            var cartItem = await _context.CartItems
+            // Chỉ tìm sản phẩm nếu nó thuộc về AccountId hoặc GuestCartId hiện tại để bảo mật
+            var cartItemQuery = _context.CartItems
                 .Include(x => x.Product)
                 .Include(x => x.Cart)
-                // Chỉ tìm sản phẩm nếu nó thuộc về AccountId của người đang đăng nhập
-                .FirstOrDefaultAsync(x => x.CartItemId == cartItemId && x.Cart.AccountId == accountId);
+                .Where(x => x.CartItemId == cartItemId);
+
+            if (accountId != null)
+                cartItemQuery = cartItemQuery.Where(x => x.Cart.AccountId == accountId);
+            else if (!string.IsNullOrEmpty(guestCartId))
+                cartItemQuery = cartItemQuery.Where(x => x.Cart.CartId == guestCartId);
+            else
+                return Json(new { success = false });
+
+            var cartItem = await cartItemQuery.FirstOrDefaultAsync();
 
             if (cartItem == null) return Json(new { success = false });
 
@@ -142,7 +177,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             cartItem.Quantity = quantity;
             await _context.SaveChangesAsync();
 
-            var summary = await GetCartSummary(cartItem.Cart.AccountId);
+            var summary = await GetCartSummary(accountId, guestCartId);
             
             return Json(new {
                 success = true,
@@ -160,19 +195,28 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         {
             // Bảo mật: Xác thực danh tính từ Cookie/Token thay vì tin tưởng ID từ client
             var accountId = User.FindFirst("AccountId")?.Value;
-            if (string.IsNullOrEmpty(accountId)) return Json(new { success = false, message = Loc.T("Vui lòng đăng nhập", "Please login") });
+            Request.Cookies.TryGetValue("GuestCartId", out string? guestCartId);
 
-            var cartItem = await _context.CartItems
+            // Verification: Kiểm tra chéo ID món hàng với ID chủ sở hữu (Chống lỗi IDOR)
+            var cartItemQuery = _context.CartItems
                 .Include(x => x.Cart)
-                // Verification: Kiểm tra chéo ID món hàng với ID chủ sở hữu
-                .FirstOrDefaultAsync(x => x.CartItemId == cartItemId && x.Cart.AccountId == accountId);
+                .Where(x => x.CartItemId == cartItemId);
+
+            if (accountId != null)
+                cartItemQuery = cartItemQuery.Where(x => x.Cart.AccountId == accountId);
+            else if (!string.IsNullOrEmpty(guestCartId))
+                cartItemQuery = cartItemQuery.Where(x => x.Cart.CartId == guestCartId);
+            else
+                return Json(new { success = false });
+
+            var cartItem = await cartItemQuery.FirstOrDefaultAsync();
 
             if (cartItem == null) return Json(new { success = false });
 
             _context.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
 
-            var summary = await GetCartSummary(accountId);
+            var summary = await GetCartSummary(accountId, guestCartId);
 
             return Json(new {
                 success = true,
@@ -188,12 +232,23 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         // Helper to get cart stats
-        private async Task<(int TotalItems, decimal GrandTotal)> GetCartSummary(string accountId)
+        private async Task<(int TotalItems, decimal GrandTotal)> GetCartSummary(string? accountId, string? guestCartId = null)
         {
-            var cart = await _context.Carts
-                .Include(x => x.CartItems)
-                .ThenInclude(x => x.Product)
-                .FirstOrDefaultAsync(x => x.AccountId == accountId);
+            Cart? cart = null;
+            if (accountId != null)
+            {
+                cart = await _context.Carts
+                    .Include(x => x.CartItems)
+                    .ThenInclude(x => x.Product)
+                    .FirstOrDefaultAsync(x => x.AccountId == accountId);
+            }
+            else if (!string.IsNullOrEmpty(guestCartId))
+            {
+                cart = await _context.Carts
+                    .Include(x => x.CartItems)
+                    .ThenInclude(x => x.Product)
+                    .FirstOrDefaultAsync(x => x.CartId == guestCartId);
+            }
 
             if (cart == null) return (0, 0);
 
