@@ -1,0 +1,125 @@
+@model TuNhanTamTInh_Ecommerce.Models.ViewModels.CheckoutPageViewModel
+@{
+    var summary = Model.Summary;
+}
+<link rel="stylesheet" href="~/css/checkout.css" />
+<!-- Checkout Section Begin -->
+<section class="checkout spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 style="text-align: center;">@Loc.T("THANH TOÁN", "CHECK OUT")</h2>
+            </div>
+        </div>
+        <div class="checkout__form">
+            <h4>@Loc.T("Thông tin giao hàng","Delivery Information")</h4>
+            <form asp-controller="CheckOut" asp-action="PlaceOrder" method="post">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger mb-4">
+                        <h5 class="alert-heading mb-2"><i class="fa fa-exclamation-triangle"></i>@Loc.T("Lỗi đặt hàng", "Order Error")</h5>
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger mb-0" })
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="checkout__input">
+                            <p>@Loc.T("Họ và Tên", "Full Name")<span>*</span></p>
+                            <input asp-for="Checkout.FullName" placeholder="@Loc.T("Nhập họ và tên", "Enter full name")">
+                            <span class="error-msg text-danger small d-block mt-1" id="error-Checkout_FullName"></span>
+                        </div>
+                        <div class="checkout__input">
+                            <p>@Loc.T("Số điện thoại", "Phone Number")<span>*</span></p>
+                            <input asp-for="Checkout.Phone" placeholder="@Loc.T("Nhập số điện thoại", "Enter phone number")">
+                            <span class="error-msg text-danger small d-block mt-1" id="error-Checkout_Phone"></span>
+                        </div>
+                        @* <div class="checkout__input">
+                            <p>Email<span>*</span></p>
+                            <input asp-for="Checkout.Email" placeholder="@Loc.T("Nhập địa chỉ email", "Enter email address")">
+                            <span class="error-msg text-danger small d-block mt-1" id="error-Checkout_Email"></span>
+                        </div> *@
+                        
+                        <div class="checkout__input">
+                            <p>@Loc.T("Địa chỉ nhận hàng", "Delivery Address")<span>*</span></p>
+                            <input asp-for="Checkout.Address" placeholder="@Loc.T("Nhập địa chỉ nhận hàng", "Enter delivery address")">
+                            <span class="error-msg text-danger small d-block mt-1" id="error-Checkout_Address"></span>
+                        </div>
+                        @* <div class="checkout__input">
+                            <p>Ghi chú về đơn hàng<span></span></p>
+                            <input asp-for="Checkout.Note" placeholder="@Loc.T("Nhập ghi chú về đơn hàng", "Enter order notes")">
+                        </div> *@
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+
+                        <div class="checkout-summary">
+                            <div class="checkout__order__products">
+                                <span>@Loc.T("Đơn hàng của bạn", "Your Order")</span>
+                            </div>
+                            <ul>
+                                @foreach (var item in Model.Cart.CartItems)
+                                {
+                                    <li>
+                                        @item.Product.ProductName
+                                        x @item.Quantity
+
+                                        <span>
+                                            @((item.Product.UnitPrice * item.Quantity).ToString("N0")) ₫
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                            <div class="checkout__order__subtotal">
+                                Tạm tính
+                                <span>@summary.Subtotal.ToString("N0") ₫</span>
+                            </div>
+
+                            <!-- VOUCHER -->
+                            <div class="summary-row">
+                                <span> @Loc.T("Giảm giá", "Discount")
+                                    @if (!string.IsNullOrEmpty(summary.VoucherCode)){<small class="text-success">(@summary.VoucherCode)</small>}
+                                </span>
+                                <span>
+                                    @if (summary.DiscountAmount > 0){<text>-@summary.DiscountAmount.ToString("N0") ₫</text>}
+                                    else{<text>-0 ₫</text>}
+                                </span>
+
+                            </div>
+
+                            <div class="summary-row">
+                                <span>@Loc.T("Phí vận chuyển:", "Shipping Fee:")</span>
+                                <span>------</span>
+                            </div>
+                            <div class="checkout__order__total">
+                                @Loc.T("Tổng cộng", "Total")
+                                <span>@summary.FinalTotal.ToString("N0") ₫</span>
+                            </div>
+
+                            <div class="payment-methods">
+                                <h4>@Loc.T("Phương thức thanh toán", "Payment Method")</h4>
+                                <div class="payment-method">
+                                    <input type="radio" asp-for="Checkout.PaymentMethod" value="COD">
+                                    <label>@Loc.T("Thanh toán khi nhận hàng (COD)", "Pay when receiving (COD)")</label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="radio" asp-for="Checkout.PaymentMethod" value="Bank">
+                                    <label>@Loc.T("Chuyển khoản ngân hàng", "Bank transfer")</label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="radio" asp-for="Checkout.PaymentMethod" value="Card">
+                                    <label>@Loc.T("Thẻ tín dụng / Ghi nợ", "Credit Card / Debit Card")</label>
+                                </div>
+                                <span asp-validation-for="Checkout.PaymentMethod"class="text-danger small d-block mt-2"></span>
+                            </div>
+                            <button type="submit" class="btn-submit" id="btn-submit-order">@Loc.T("XÁC NHẬN ĐẶT HÀNG", "CONFIRM ORDER")</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<!-- Checkout Section End -->
+@section Scripts {
+    <script src="~/js/checkout.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+}
