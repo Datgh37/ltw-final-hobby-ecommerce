@@ -4,6 +4,13 @@
     ViewData["Title"] = Loc.T("Giỏ hàng", "Shopping Cart");
     decimal grandTotal = Model.Sum(x => x.Quantity * x.Product.UnitPrice);
 
+    decimal discount = 0;
+    if (!string.IsNullOrEmpty(Context.Session.GetString("DiscountAmount")))
+    {
+        discount = Convert.ToDecimal(Context.Session.GetString("DiscountAmount"));
+    }
+    decimal finalTotal = grandTotal - discount;
+
     var breadcrumb = new BreadcrumbViewModel
     {
         Title = Loc.T("Giỏ hàng", "Shopping Cart"),
@@ -82,8 +89,8 @@
                     <div class="shoping__continue">
                         <div class="shoping__discount">
                             <h5>@Loc.T("Mã giảm giá", "Discount Codes")</h5>
-                            <form action="#">
-                                <input type="text" placeholder="@Loc.T("Nhập mã giảm giá...", "Enter coupon code...")">
+                            <form id="voucher-form">
+                                <input type="text" id="voucher-code" name="voucherCode" value="@Context.Session.GetString("VoucherCode")" placeholder="@Loc.T("Nhập mã giảm giá...", "Enter coupon code...")">
                                 <button type="submit" class="site-btn rounded-pill">@Loc.T("ÁP DỤNG", "APPLY")</button>
                             </form>
                         </div>
@@ -93,8 +100,9 @@
                     <div class="shoping__checkout">
                         <h5>@Loc.T("Tổng đơn hàng", "Cart Total")</h5>
                         <ul>
-                            <li>@Loc.T("Tạm tính", "Subtotal") <span>@grandTotal.ToString("N0")&nbsp;₫</span></li>
-                            <li>@Loc.T("Tổng cộng", "Total") <span id="grand-total">@grandTotal.ToString("N0")&nbsp;₫</span></li>
+                            <li>@Loc.T("Tạm tính", "Subtotal") <span id="subtotal">@grandTotal.ToString("N0")&nbsp;₫</span></li>
+                            <li>@Loc.T("Giảm giá", "Discount")<span id="discount-label"></span><span id="discount"> -0 ₫</span></li>
+                            <li>@Loc.T("Tổng cộng", "Total") <span id="final-total">@grandTotal.ToString("N0")&nbsp;₫</span></li>
                         </ul>
                         <a asp-controller="Checkout" asp-action="Index" class="primary-btn rounded-pill w-100 text-center">@Loc.T("TIẾN HÀNH THANH TOÁN", "PROCEED TO CHECKOUT")</a>
                     </div>
@@ -120,3 +128,27 @@
         }
     </div>
 </section>
+@section Scripts{
+    <script>
+        $("#voucher-form").submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/Cart/ApplyVoucher',
+                type: 'POST',
+                data: { voucherCode: $("#voucher-code").val()},
+                success: function (res) {
+                    if (res.success) {
+                        $("#discount-label").text(res.discountText);
+                        $("#discount").text( "-" + Number(res.discount) .toLocaleString('vi-VN') + " ₫" );
+                        $("#final-total").text( Number(res.finalTotal).toLocaleString('vi-VN') + " ₫" );
+                    }
+                    else {alert(res.message); }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    alert("AJAX ERROR");
+                }
+            });
+        });
+    </script>
+}

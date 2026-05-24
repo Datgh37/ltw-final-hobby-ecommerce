@@ -132,12 +132,13 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             }
 
             await _context.SaveChangesAsync();
-            
+
             var summary = await GetCartSummary(accountId, guestCartId);
-            return Json(new { 
-                success = true, 
-                totalItems = summary.TotalItems, 
-                message = Loc.T("Đã thêm vào giỏ hàng", "Added to cart") 
+            return Json(new
+            {
+                success = true,
+                totalItems = summary.TotalItems,
+                message = Loc.T("Đã thêm vào giỏ hàng", "Added to cart")
             });
         }
 
@@ -178,8 +179,9 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             await _context.SaveChangesAsync();
 
             var summary = await GetCartSummary(accountId, guestCartId);
-            
-            return Json(new {
+
+            return Json(new
+            {
                 success = true,
                 quantity = cartItem.Quantity,
                 subtotal = (cartItem.Product.UnitPrice * quantity).ToString("N0"),
@@ -218,7 +220,8 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             var summary = await GetCartSummary(accountId, guestCartId);
 
-            return Json(new {
+            return Json(new
+            {
                 success = true,
                 totalItems = summary.TotalItems,
                 grandTotal = summary.GrandTotal.ToString("N0")
@@ -256,6 +259,106 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             decimal grandTotal = cart.CartItems.Sum(x => (decimal)x.Quantity * x.Product.UnitPrice);
 
             return (totalItems, grandTotal);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ApplyVoucher(string voucherCode)
+        {
+            //var accountId = User.FindFirst("AccountId")?.Value;
+            //Cart? cart = null;
+            //if (accountId != null)
+            //{
+            //    cart = await _context.Carts
+            //        .Include(c => c.CartItems)
+            //        .ThenInclude(ci => ci.Product)
+            //        .FirstOrDefaultAsync(c =>
+            //            c.AccountId == accountId);
+            //}
+            var cart = await _context.Carts
+                .Include(c => c.CartItems)
+                .ThenInclude(ci => ci.Product)
+                .FirstOrDefaultAsync();
+            if (cart == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Không tìm thấy giỏ hàng"
+                });
+            }
+
+            decimal subtotal = cart.CartItems.Sum(x =>
+                x.Product.UnitPrice * x.Quantity);
+
+            // KHÔNG NHẬP VOUCHER
+            if (string.IsNullOrWhiteSpace(voucherCode))
+            {
+                HttpContext.Session.SetString(
+                    "DiscountAmount",
+                    "0"
+                );
+
+                return Json(new
+                {
+                    success = true,
+                    discount = 0,
+                    finalTotal = subtotal
+                });
+            }
+
+            var voucher = await _context.Vouchers
+                .FirstOrDefaultAsync(v =>
+                    v.VoucherCode == voucherCode &&
+                    v.IsActive);
+
+            if (voucher == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Voucher không hợp lệ"
+                });
+            }
+
+            decimal discount = 0;
+            string discountText = "";
+
+            // GIẢM %
+            if (voucher.DiscountPercent.HasValue)
+            {
+                discount = subtotal * voucher.DiscountPercent.Value / 100;
+                discountText = $"({voucher.DiscountPercent.Value}%)";
+            }
+
+            // GIẢM TIỀN
+            else if (voucher.DiscountAmount.HasValue)
+            {
+                discount = voucher.DiscountAmount.Value;
+            }
+
+            // KHÔNG CHO ÂM
+            if (discount > subtotal)
+            {
+                discount = subtotal;
+            }
+
+            decimal finalTotal = subtotal - discount;
+
+            HttpContext.Session.SetString(
+                "DiscountAmount",
+                discount.ToString()
+            );
+            HttpContext.Session.SetString(
+                "DiscountText",
+                discountText
+            );
+            return Json(new
+            {
+                success = true,
+                discount = discount,
+                finalTotal = finalTotal,
+                discountText = discountText
+            });
         }
     }
 }
