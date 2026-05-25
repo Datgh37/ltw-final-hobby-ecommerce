@@ -83,7 +83,11 @@
                                         <small class="text-muted">@Loc.T("SL:", "Qty:") @item.Quantity</small>
                                     </div>
                                     <div class="fw-bold ms-2 text-end">
-                                        @((item.Product.UnitPrice * item.Quantity).ToString("N0")) ₫
+                                        @((item.Product.GetFinalPrice() * item.Quantity).ToString("N0")) ₫
+                                        @if (item.Product.Discount > 0)
+                                        {
+                                            <br/><small class="text-muted text-decoration-line-through fw-normal">@((item.Product.UnitPrice * item.Quantity).ToString("N0")) ₫</small>
+                                        }
                                     </div>
                                 </div>
                             }
@@ -140,15 +144,9 @@
                                 </label>
                             </div>
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" asp-for="Checkout.PaymentMethod" value="Bank" id="payBank">
-                                <label class="form-check-label" for="payBank">
-                                    @Loc.T("Chuyển khoản ngân hàng", "Bank transfer")
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" asp-for="Checkout.PaymentMethod" value="Card" id="payCard">
-                                <label class="form-check-label" for="payCard">
-                                    @Loc.T("Thẻ tín dụng / Ghi nợ", "Credit / Debit Card")
+                                <input class="form-check-input" type="radio" asp-for="Checkout.PaymentMethod" value="VNPAY" id="payVnpay">
+                                <label class="form-check-label" for="payVnpay">
+                                    <i class="fa fa-credit-card me-1 text-primary"></i> @Loc.T("Thanh toán qua VNPAY (QR/ATM)", "Pay via VNPAY (QR/ATM)")
                                 </label>
                             </div>
                             <span asp-validation-for="Checkout.PaymentMethod" class="text-danger small"></span>
@@ -175,7 +173,7 @@
                 $.post('@Url.Action("ApplyVoucher", "Cart")', { voucherCode: code }, function (res) {
                     var msgEl = $('#voucherMessage');
                     if (res.success) {
-                        msgEl.removeClass('text-danger').addClass('text-success').text('@Loc.T("Đã áp dụng mã thành công!", "Voucher applied successfully!")');
+                        msgEl.removeClass('text-danger').addClass('text-success').text('@Html.Raw(Loc.T("Đã áp dụng mã thành công!", "Voucher applied successfully!"))');
                         
                         // Update UI
                         $('#summaryDiscount').text('-' + res.discount.toLocaleString('vi-VN') + ' ₫');
@@ -194,13 +192,11 @@
                 });
             });
 
-            // Intercept form submission for Payment Method WIP and Double Submit Prevention
+            // Intercept form submission for Double Submit Prevention
             $('form').submit(function (e) {
-                var selectedMethod = $('input[name="Checkout.PaymentMethod"]:checked').val();
-                if (selectedMethod === 'Bank' || selectedMethod === 'Card') {
-                    e.preventDefault();
-                    showToast('@Html.Raw(Loc.T("Tính năng thanh toán trực tuyến đang được phát triển (WIP). Vui lòng chọn COD.", "Online payment is WIP. Please choose COD."))', 'error');
-                    return;
+                // Check jQuery Validation (from _ValidationScriptsPartial)
+                if (!$(this).valid()) {
+                    return; // jQuery Validation will display error messages, do NOT disable the button
                 }
 
                 // Double Submit Prevention

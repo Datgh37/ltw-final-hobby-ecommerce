@@ -29,9 +29,9 @@
                         <div class="d-none d-md-flex w-100 py-3 border-bottom history-table-header align-items-center">
                             <div class="col-md-2 ps-4">@Loc.T("Mã đơn", "Order ID")</div>
                             <div class="col-md-3">@Loc.T("Ngày đặt", "Order Date")</div>
-                            <div class="col-md-3">@Loc.T("Trạng thái", "Status")</div>
+                            <div class="col-md-2">@Loc.T("Trạng thái", "Status")</div>
                             <div class="col-md-2">@Loc.T("Tổng tiền", "Total Amount")</div>
-                            <div class="col-md-2 text-end pe-4"></div>
+                            <div class="col-md-3 text-end pe-4"></div>
                         </div>
 
                         <!-- Table Rows -->
@@ -45,16 +45,24 @@
                                     <div class="col-12 col-md-3 text-start ps-3 ps-md-0 py-2 py-md-0 fs-6">
                                         <span class="d-inline d-md-none text-muted fw-normal me-2">@Loc.T("Ngày đặt:", "Order Date:")</span>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")
                                     </div>
-                                    <div class="col-12 col-md-3 text-start ps-3 ps-md-0 py-2 py-md-0">
+                                    <div class="col-12 col-md-2 text-start ps-3 ps-md-0 py-2 py-md-0">
                                         <span class="d-inline d-md-none text-muted fw-normal me-2">@Loc.T("Trạng thái:", "Status:")</span><span class="badge history-status-badge">@Loc.T(order.StatusName, order.StatusNameEn)</span>
                                     </div>
                                     <div class="col-12 col-md-2 text-start ps-3 ps-md-0 py-2 py-md-0 fw-bold fs-6">
                                         <span class="d-inline d-md-none text-muted fw-normal me-2">@Loc.T("Tổng tiền:", "Total:")</span>@order.TotalAmount.ToString("N0") ₫
                                     </div>
-                                    <div class="col-12 col-md-2 text-start text-md-end ps-3 ps-md-0 pe-md-4 py-2 py-md-0 history-action-cell">
-                                        <a asp-action="Details" asp-route-id="@order.OrderId" class="primary-btn history-detail-btn">
-                                            @Loc.T("Chi tiết", "Details")
-                                        </a>
+                                    <div class="col-12 col-md-3 text-start text-md-end ps-3 ps-md-0 pe-md-4 py-2 py-md-0 history-action-cell">
+                                        <div class="d-flex flex-row gap-2 justify-content-start justify-content-md-end align-items-center">
+                                            <a asp-action="Details" asp-route-id="@order.OrderId" class="primary-btn history-detail-btn">
+                                                @Loc.T("Chi tiết", "Details")
+                                            </a>
+                                            @if (order.PaymentMethod == "VNPAY" && !order.IsPaid && (order.StatusId == 0 || order.StatusId == 1))
+                                            {
+                                                <a asp-controller="CheckOut" asp-action="RepayOrder" asp-route-id="@order.OrderId" class="primary-btn history-pay-btn">
+                                                    <i class="fa fa-credit-card me-1"></i>@Loc.T("Thanh toán", "Pay")
+                                                </a>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             }

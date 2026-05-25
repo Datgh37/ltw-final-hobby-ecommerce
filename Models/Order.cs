@@ -29,6 +29,8 @@ public partial class Order
 
     public string? VoucherCode { get; set; }
 
+    public string? TransactionId { get; set; }
+
     public virtual Account Account { get; set; } = null!;
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();

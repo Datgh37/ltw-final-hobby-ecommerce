@@ -135,9 +135,10 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         
         // GET: /Account/Register
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register(string returnUrl = "/")
         {
-            if (User.Identity!.IsAuthenticated) return RedirectToAction("Index", "Home");
+            if (User.Identity!.IsAuthenticated) return LocalRedirect(returnUrl);
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
         
@@ -186,7 +187,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         // POST: /Account/Register (AJAX)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = "/")
         {
             if (!ModelState.IsValid)
             {
@@ -247,7 +248,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 Response.Cookies.Delete("GuestCartId");
             }
 
-            return Json(new { success = true, message = Loc.T("Đăng ký thành công! Đang chuyển hướng...", "Registration successful! Redirecting...") });
+            return Json(new { success = true, message = Loc.T("Đăng ký thành công! Đang chuyển hướng...", "Registration successful! Redirecting..."), returnUrl = returnUrl });
         }
 
         // GET /Account/Profile

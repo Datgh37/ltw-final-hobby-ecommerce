@@ -57,6 +57,17 @@ public partial class Product
 
     public int StockQuantity { get; set; }
 
+    /// <summary>
+    /// Tính giá bán thực tế sau khi áp dụng Discount của sản phẩm.
+    /// Hỗ trợ cả Discount dạng phần trăm nguyên (20 = 20%) lẫn dạng thập phân (0.2 = 20%).
+    /// </summary>
+    public decimal GetFinalPrice()
+    {
+        if (Discount <= 0) return UnitPrice;
+        double discountPercent = Discount > 1 ? Discount : Discount * 100;
+        return UnitPrice * (1m - (decimal)discountPercent / 100m);
+    }
+
     public DateTime CreatedAt { get; set; }
 
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();

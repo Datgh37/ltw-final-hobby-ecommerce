@@ -174,6 +174,7 @@ CREATE TABLE [dbo].[Orders](
     -- CÁC TRƯỜNG MỞ RỘNG
     [TrackingNumber] [nvarchar](100) NULL, -- Mã vận đơn (GHTK, ViettelPost...)
     [VoucherCode] [nvarchar](50) NULL,     -- Mã giảm giá đã áp dụng
+    [TransactionId] [nvarchar](100) NULL,  -- Mã giao dịch thanh toán trực tuyến (VNPAY, ZaloPay...)
  CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([OrderID] ASC)
 )
 GO

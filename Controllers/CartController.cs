@@ -184,7 +184,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             {
                 success = true,
                 quantity = cartItem.Quantity,
-                subtotal = (cartItem.Product.UnitPrice * quantity).ToString("N0"),
+                subtotal = (cartItem.Product.GetFinalPrice() * quantity).ToString("N0"),
                 cartSubtotal = summary.Subtotal.ToString("N0"),
                 discount = summary.Discount.ToString("N0"),
                 grandTotal = summary.GrandTotal.ToString("N0"),
@@ -260,7 +260,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             if (cart == null) return (0, 0, 0, 0);
 
             int totalItems = cart.CartItems.Sum(x => x.Quantity);
-            decimal subtotal = cart.CartItems.Sum(x => (decimal)x.Quantity * x.Product.UnitPrice);
+            decimal subtotal = cart.CartItems.Sum(x => (decimal)x.Quantity * x.Product.GetFinalPrice());
             decimal discount = 0;
 
             string? voucherCode = HttpContext.Session.GetString("VoucherCode");
@@ -326,7 +326,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             }
 
             decimal subtotal = cart.CartItems.Sum(x =>
-                x.Product.UnitPrice * x.Quantity);
+                x.Product.GetFinalPrice() * x.Quantity);
 
             // KHÔNG NHẬP VOUCHER HOẶC XÓA VOUCHER
             if (string.IsNullOrWhiteSpace(voucherCode))
@@ -364,6 +364,20 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     success = false,
                     message = Loc.T("Mã giảm giá này đã hết lượt sử dụng", "This voucher has reached its usage limit")
                 });
+            }
+
+            // KIỂM TRA USER ĐÃ TỪNG DÙNG CHƯA
+            if (accountId != null)
+            {
+                bool hasUsed = await _context.Orders.AnyAsync(o => o.AccountId == accountId && o.VoucherCode == voucherCode && o.StatusId != 4);
+                if (hasUsed)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = Loc.T("Bạn đã sử dụng mã giảm giá này rồi!", "You have already used this voucher!")
+                    });
+                }
             }
 
             decimal discount = 0;

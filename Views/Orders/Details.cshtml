@@ -125,9 +125,16 @@
                     </ul>
                     <a asp-action="History" class="primary-btn mt-3 order-details-back-btn">@Loc.T("QUAY LẠI DANH SÁCH", "BACK TO LIST")</a>
                     
+                    @if (Model.PaymentMethod == "VNPAY" && !Model.IsPaid && (Model.StatusId == 0 || Model.StatusId == 1))
+                    {
+                        <a asp-controller="CheckOut" asp-action="RepayOrder" asp-route-id="@Model.OrderId" class="primary-btn w-100 mt-2 details-pay-btn text-center text-white font-weight-bold">
+                            <i class="fa fa-credit-card me-1"></i>@Loc.T("THANH TOÁN NGAY", "PAY NOW")
+                        </a>
+                    }
+
                     @if (Model.StatusId == 0 || Model.StatusId == 1)
                     {
-                        <form asp-action="CancelOrder" asp-route-id="@Model.OrderId" method="post" class="mt-2" onsubmit="return confirm('@Loc.T("Bạn có chắc chắn muốn hủy đơn hàng này không? Hành động này không thể hoàn tác.", "Are you sure you want to cancel this order? This action cannot be undone.")');">
+                        <form id="cancel-order-form" asp-action="CancelOrder" asp-route-id="@Model.OrderId" method="post" class="mt-2">
                             <button type="submit" class="primary-btn w-100 mt-2 btn-danger">@Loc.T("HỦY ĐƠN HÀNG", "CANCEL ORDER")</button>
                         </form>
                     }
@@ -141,3 +148,19 @@
 
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#cancel-order-form').on('submit', function (e) {
+                e.preventDefault();
+                const form = this;
+                const message = "@Html.Raw(Loc.T("Bạn có chắc chắn muốn hủy đơn hàng này không? Hành động này không thể hoàn tác.", "Are you sure you want to cancel this order? This action cannot be undone."))";
+                
+                showConfirm(message, function () {
+                    form.submit();
+                });
+            });
+        });
+    </script>
+}

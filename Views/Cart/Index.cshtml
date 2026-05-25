@@ -2,7 +2,7 @@
 @model List<CartItem>
 @{
     ViewData["Title"] = Loc.T("Giỏ hàng", "Shopping Cart");
-    decimal grandTotal = Model.Sum(x => x.Quantity * x.Product.UnitPrice);
+    decimal grandTotal = Model.Sum(x => x.Quantity * x.Product.GetFinalPrice());
 
     decimal discount = 0;
     if (!string.IsNullOrEmpty(Context.Session.GetString("DiscountAmount")))
@@ -47,14 +47,23 @@
                                 @foreach (var item in Model)
                                 {
                                     var primaryImage = item.Product.ProductImages.FirstOrDefault(x => x.IsPrimary);
-                                    decimal subtotal = item.Product.UnitPrice * item.Quantity;
+                                    decimal subtotal = item.Product.GetFinalPrice() * item.Quantity;
                                     <tr class="cart-row" data-cart-item-id="@item.CartItemId">
                                         <td class="cart-product-cell">
                                             <img src="@Url.Content(primaryImage?.ImageUrl ?? "~/images/product-default.png")" class="cart-item-img" alt="@item.Product.ProductName">
                                             <h5 class="cart-product-title">@item.Product.ProductName</h5>
                                         </td>
                                         <td class="shoping__cart__price">
-                                            @item.Product.UnitPrice.ToString("N0")&nbsp;₫
+                                            @if (item.Product.Discount > 0)
+                                            {
+                                                <span>@item.Product.GetFinalPrice().ToString("N0")&nbsp;₫</span>
+                                                <br/>
+                                                <small class="text-muted text-decoration-line-through">@item.Product.UnitPrice.ToString("N0")&nbsp;₫</small>
+                                            }
+                                            else
+                                            {
+                                                @item.Product.UnitPrice.ToString("N0")<text>&nbsp;₫</text>
+                                            }
                                         </td>
                                         <td class="shoping__cart__quantity">
                                             <div class="pro-qty-cart" data-max-stock="@item.Product.StockQuantity">
@@ -156,7 +165,7 @@
                         }
                         $("#discount").text( "-" + Number(res.discount).toLocaleString('vi-VN') + " ₫" );
                         $("#final-total").text( Number(res.finalTotal).toLocaleString('vi-VN') + " ₫" );
-                        showToast('@Loc.T("Áp dụng mã giảm giá thành công", "Voucher applied successfully")', 'success');
+                        showToast('@Html.Raw(Loc.T("Áp dụng mã giảm giá thành công", "Voucher applied successfully"))', 'success');
                     }
                     else { 
                         showToast(res.message, 'error'); 

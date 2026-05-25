@@ -37,6 +37,8 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     StatusName = o.Status.StatusName,
                     StatusNameEn = o.Status.StatusNameEn,
                     IsPaid = o.IsPaid,
+                    PaymentMethod = o.PaymentMethod,
+                    StatusId = o.StatusId,
                     TotalAmount = o.OrderDetails.Sum(od => od.UnitPrice * od.Quantity) + o.ShippingFee // Trừ Discount sẽ tính kỹ hơn trong Details
                 })
                 .ToListAsync();
@@ -176,11 +178,18 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 {
                     try
                     {
+                        string vnpayNote = "";
+                        if (order.IsPaid && order.PaymentMethod == "VNPAY")
+                        {
+                            vnpayNote = $"<p style='color: #d9534f;'><strong>{Loc.T("Lưu ý:", "Note:")}</strong> {Loc.T("Đơn hàng của bạn đã được thanh toán qua VNPAY. Chúng tôi sẽ tiến hành đối soát và hoàn tiền lại vào tài khoản của bạn trong vòng 3-5 ngày làm việc.", "Your order has been paid via VNPAY. We will process and refund to your account within 3-5 business days.")}</p>";
+                        }
+
                         string bodyHtml = $@"
                             <h2>{Loc.T("Thông báo hủy đơn hàng", "Order Cancellation Notice")} #{order.OrderId}</h2>
                             <p>{Loc.T("Xin chào", "Hello")} <strong>{order.FullName}</strong>,</p>
                             <p>{Loc.T("Đơn hàng của bạn đã được hủy thành công theo yêu cầu.", "Your order has been successfully cancelled as requested.")}</p>
                             <p>{Loc.T("Nếu bạn đã thanh toán trước, chúng tôi sẽ tiến hành hoàn tiền theo chính sách của cửa hàng.", "If you paid in advance, we will process your refund according to our policy.")}</p>
+                            {vnpayNote}
                             <br/>
                             <p>{Loc.T("Nếu có bất kỳ thắc mắc nào, vui lòng liên hệ bộ phận hỗ trợ của chúng tôi.", "If you have any questions, please contact our support team.")}</p>
                             <p><strong>Hobby Shop Team</strong></p>

@@ -61,7 +61,7 @@
                         <button type="submit" class="btn auth-btn w-100">@Loc.T("ĐĂNG NHẬP", "LOGIN")</button>
                         
                         <div class="text-center mt-4">
-                            <p class="text-muted auth-footer-text">@Loc.T("Chưa có tài khoản?", "Don't have an account?") <a asp-controller="Account" asp-action="Register" class="auth-link">@Loc.T("Đăng ký ngay", "Register now")</a></p>
+                            <p class="text-muted auth-footer-text">@Loc.T("Chưa có tài khoản?", "Don't have an account?") <a asp-controller="Account" asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]" class="auth-link">@Loc.T("Đăng ký ngay", "Register now")</a></p>
                         </div>
                     </form>
                 </div>

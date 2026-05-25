@@ -45,7 +45,7 @@ namespace TuNhanTamTInh_Ecommerce.ViewComponents
                 if (cart != null && cart.CartItems != null)
                 {
                             model.TotalItems = cart.CartItems.Sum(x => x.Quantity);
-                            model.GrandTotal = cart.CartItems.Sum(x => x.Quantity * x.Product.UnitPrice);
+                            model.GrandTotal = cart.CartItems.Sum(x => x.Quantity * x.Product.GetFinalPrice());
                             model.Items = cart.CartItems
                                 .OrderByDescending(x => x.CartItemId)
                                 .Select(ci => new CartPreviewItem

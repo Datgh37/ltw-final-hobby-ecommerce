@@ -1,0 +1,152 @@
+@{
+    ViewData["Title"] = Loc.T("Về chúng tôi - Tứ Nhãn Tam Tinh", "About Us - Tu Nhan Tam Tinh");
+}
+
+@await Component.InvokeAsync("HeroSection", new { isHome = false })
+
+<link rel="stylesheet" href="~/css/about-us.css" asp-append-version="true" />
+
+<section class="about-section py-5">
+    <div class="container">
+        <!-- Brand Title & Header -->
+        <div class="row justify-content-center text-center mb-5">
+            <div class="col-lg-8">
+                <div class="about-header-glowing animate-fade-in">
+                    <span class="cyber-subtitle">TỨ NHÃN TAM TINH GROUP</span>
+                    <h1 class="cyber-title">@Loc.T("CHÚC MỪNG THẮNG LỚN", "THE JOURNEY OF INNOVATION")</h1>
+                    <p class="cyber-desc mt-3">
+                        @Loc.T(
+                            "Chào mừng bạn đến với tổng hành dinh của Tứ Nhãn Tam Tinh - biệt đội 3 chàng lính ngự lâm mang sứ mệnh 'chữa lành' bằng code. Dự án Hobby Shop này không chỉ là đồ án môn học, mà còn là nơi chúng tôi dồn hết tâm huyết để tạo ra một thiên đường mua sắm mô hình mượt mà đến mức... người lướt thích thú, người mua gật gù!",
+                            "Welcome to the headquarters of Tu Nhan Tam Tinh. The Hobby Shop project is our final assignment, crafted with care from stunning front-end layouts to robust backend logic to build a complete model figure store."
+                        )
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 Members Card Section -->
+        <div class="row align-items-center justify-content-center g-4 mb-5">
+            <!-- Member Left: Phạm Gia Bảo -->
+            <div class="col-12 col-md-6 col-lg-4 order-lg-1 order-2">
+                <div class="member-card animate-slide-left hover-card">
+                    <div class="card-glow-border"></div>
+                    <div class="card-inner p-4 text-center">
+                        <div class="avatar-container mb-4">
+                            <img src="@Url.Content("~/images/bao-verstappen.jpg")" alt="Phạm Gia Bảo" class="member-img img-fluid">
+                            <span class="tech-bubble front">CSS</span>
+                            <span class="tech-bubble back">JS</span>
+                        </div>
+                        <span class="role-badge member-badge">@Loc.T("Thành viên", "Member")</span>
+                        <h3 class="member-name">Phạm Gia Bảo</h3>
+                        <p class="member-alias">@Loc.T("Chuyên Front End", "Front-End Specialist")</p>
+                        <hr class="member-divider">
+                        <div class="member-details text-start">
+                            <p class="detail-line"><strong>@Loc.T("Kỹ năng chính:", "Key Skills:")</strong> HTML5, CSS3, JavaScript, UI/UX.</p>
+                            <p class="detail-line"><strong>@Loc.T("Đóng góp:", "Contribution:")</strong> @Loc.T("Phù thủy giao diện của nhóm. Bảo đảm nhận việc 'make-up' cho trang web bằng các dòng CSS lung linh, thiết kế các hiệu ứng mượt mà và tối ưu hóa trải nghiệm thị giác của người dùng.", "The UI wizard of the team. Bao is responsible for bringing the website to life with stunning layouts, smooth interactive effects, and optimizing the overall visual user experience.")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leader Center (Highlighted & Scaled): Trịnh Thành Đạt -->
+            <div class="col-12 col-md-12 col-lg-4 order-lg-2 order-1 text-center">
+                <div class="member-card leader-card animate-slide-up hover-card">
+                    <div class="card-glow-border-leader"></div>
+                    <div class="card-inner p-5 text-center">
+                        <div class="leader-crown-badge">
+                            <i class="fa fa-crown text-warning"></i> LEADER
+                        </div>
+                        <div class="avatar-container mb-4">
+                            <img src="@Url.Content("~/images/dat-alpha.jpg")" alt="Trịnh Thành Đạt" class="member-img leader-img img-fluid">
+                            <span class="tech-bubble csharp">C#</span>
+                            <span class="tech-bubble dotnet">.NET</span>
+                        </div>
+                        <span class="role-badge leader-badge">@Loc.T("Trưởng nhóm", "Team Leader")</span>
+                        <h2 class="member-name leader-name-text">Trịnh Thành Đạt</h2>
+                        <p class="member-alias">@Loc.T("All Rounder Fullstack - Việc gì cũng tới tay", "All-Rounder Fullstack - Handles Everything")</p>
+                        <hr class="member-divider">
+                        <div class="member-details text-start">
+                            <p class="detail-line"><strong>@Loc.T("Kỹ năng chính:", "Key Skills:")</strong> ASP.NET Core MVC, C#, SQL Server, Git.</p>
+                            <p class="detail-line"><strong>@Loc.T("Đóng góp:", "Contribution:")</strong> @Loc.T("Đầu tàu đa năng kiêm 'cứu hộ viên' của cả nhóm. Đạt chịu trách nhiệm kết nối mọi mảnh ghép của dự án, thiết kế kiến trúc backend vững chắc và gỡ mọi lỗi phát sinh ở cả hai đầu trận tuyến.", "The versatile leader and resident troubleshooter. Dat is responsible for connecting all parts of the project, designing robust backend systems, and resolving any technical issues across the board.")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member Right: Trần Nguyên Khang -->
+            <div class="col-12 col-md-6 col-lg-4 order-lg-3 order-3">
+                <div class="member-card animate-slide-right hover-card">
+                    <div class="card-glow-border"></div>
+                    <div class="card-inner p-4 text-center">
+                        <div class="avatar-container mb-4">
+                            <img src="@Url.Content("~/images/khang-lander.jpg")" alt="Trần Nguyên Khang" class="member-img img-fluid">
+                            <span class="tech-bubble sql">SQL</span>
+                            <span class="tech-bubble docker">Docker</span>
+                        </div>
+                        <span class="role-badge member-badge">@Loc.T("Thành viên", "Member")</span>
+                        <h3 class="member-name">Trần Nguyên Khang</h3>
+                        <p class="member-alias">@Loc.T("Flexible - Nhạc nào cũng nhảy", "Flexible - Versatile & Adaptable")</p>
+                        <hr class="member-divider">
+                        <div class="member-details text-start">
+                            <p class="detail-line"><strong>@Loc.T("Kỹ năng chính:", "Key Skills:")</strong> C#, SQL Server, Docker.</p>
+                            <p class="detail-line"><strong>@Loc.T("Đóng góp:", "Contribution:")</strong> @Loc.T("Chiến binh linh hoạt sẵn sàng ứng cứu ở mọi khâu. Khang phụ trách hỗ trợ hệ thống, chuẩn hóa môi trường phát triển và luôn có mặt hỗ trợ đồng đội bất kể là frontend hay backend.", "A highly adaptable developer ready to support any phase of the project. Khang maintains system setup, standardizes development environments, and helps team members with both frontend and backend tasks.")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Achievements Section -->
+        <div class="row mt-5 pt-4">
+            <div class="col-lg-12">
+                <div class="tech-showcase p-5 animate-fade-in">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <span class="cyber-subtitle">PROJECT HIGHLIGHTS</span>
+                            <h3 class="showcase-title">@Loc.T("BẢN LĨNH DỰ ÁN HOBBY SHOP", "CAPABILITIES OF HOBBY SHOP")</h3>
+                            <p class="showcase-desc mt-3">
+                                @Loc.T(
+                                    "Dự án này tập trung giải quyết các bài toán e-commerce thực tế. Từ tối ưu hóa hiển thị, thanh toán qua VNPAY, thiết lập mã giảm giá thông minh, cho đến popup kính mờ (glassmorphism) đồng bộ, giúp nâng cao trải nghiệm mua sắm mô hình chuyên nghiệp.",
+                                    "This project focuses on solving practical e-commerce challenges. From handling discounted product pricing, integrating VNPAY sandbox payments, seamless redirect pathing for guest signups, to a matching glassmorphism cancel modal, we aimed to significantly improve user experience."
+                                )
+                            </p>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row g-3">
+                                <div class="col-sm-6">
+                                    <div class="tech-feature-card">
+                                        <i class="fa fa-server text-purple mb-2"></i>
+                                        <h5>ASP.NET Core 8</h5>
+                                        <p class="small text-muted mb-0">@Loc.T("Hệ thức MVC ổn định, tổ chức mã nguồn rõ ràng và dễ bảo trì.", "Stable, easy-to-maintain MVC framework with clean code organization.")</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="tech-feature-card">
+                                        <i class="fa fa-credit-card text-success mb-2"></i>
+                                        <h5>VNPAY Payment Gateway</h5>
+                                        <p class="small text-muted mb-0">@Loc.T("Tích hợp thanh toán trực tuyến, hỗ trợ thanh toán lại tiện lợi từ lịch sử.", "Integrated online payment, supporting convenient repayment from order history.")</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="tech-feature-card">
+                                        <i class="fa fa-cubes text-info mb-2"></i>
+                                        <h5>Dockerized Environment</h5>
+                                        <p class="small text-muted mb-0">@Loc.T("Đóng gói ứng dụng qua Docker, giúp chạy thử nghiệm local đồng bộ.", "Neatly packaged via Docker, enabling smooth and synchronized local setup.")</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="tech-feature-card">
+                                        <i class="fa fa-language text-warning mb-2"></i>
+                                        <h5>Global i18n</h5>
+                                        <p class="small text-muted mb-0">@Loc.T("Hỗ trợ song ngữ Anh - Việt, mang đến trải nghiệm mua sắm thân thiện.", "English & Vietnamese support, offering a friendly shopping experience.")</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

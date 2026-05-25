@@ -186,7 +186,7 @@
                         }
                     },
                     error: function () {
-                        showToast('@Loc.T("Có lỗi xảy ra. Vui lòng thử lại.", "An error occurred. Please try again.")', 'error');
+                        showToast('@Html.Raw(Loc.T("Có lỗi xảy ra. Vui lòng thử lại.", "An error occurred. Please try again."))', 'error');
                         $btn.prop('disabled', false).html('<span class="icon_close"></span>');
                     }
                 });
@@ -202,7 +202,7 @@
                     headers: { 'RequestVerificationToken': token },
                     success: function (res) {
                         if (res.success) {
-                            showToast('@Loc.T("Đã thêm vào giỏ hàng!", "Added to cart!")', 'success');
+                            showToast('@Html.Raw(Loc.T("Đã thêm vào giỏ hàng!", "Added to cart!"))', 'success');
                             // Cập nhật badge giỏ hàng nếu có
                             if (res.cartCount !== undefined) {
                                 $('#cartCount, #cartCountMobile').text(res.cartCount);
@@ -212,11 +212,11 @@
                                 reloadCartPreview();
                             }
                         } else {
-                            showToast(res.message || '@Loc.T("Không thể thêm vào giỏ hàng.", "Could not add to cart.")', 'error');
+                            showToast(res.message || '@Html.Raw(Loc.T("Không thể thêm vào giỏ hàng.", "Could not add to cart."))', 'error');
                         }
                     },
                     error: function () {
-                        showToast('@Loc.T("Vui lòng đăng nhập để thêm vào giỏ hàng.", "Please login to add to cart.")', 'error');
+                        showToast('@Html.Raw(Loc.T("Vui lòng đăng nhập để thêm vào giỏ hàng.", "Please login to add to cart."))', 'error');
                     }
                 });
             });

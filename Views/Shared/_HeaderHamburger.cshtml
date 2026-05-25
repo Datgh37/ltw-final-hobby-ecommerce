@@ -103,7 +103,9 @@
                     }
                 </ul>
             </li>
-            <li><a href="#">@Loc.T("Liên hệ", "Contact")</a></li>
+            <li class="@(currentController == "AboutUs" ? "active" : "")">
+                <a asp-controller="AboutUs" asp-action="Index">@Loc.T("Giới thiệu", "About Us")</a>
+            </li>
             @if (User.Identity!.IsAuthenticated)
             {
                 <li>

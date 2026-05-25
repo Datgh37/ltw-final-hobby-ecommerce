@@ -11,5 +11,7 @@ namespace TuNhanTamTInh_Ecommerce.Models.ViewModels
         public string StatusName { get; set; } = null!;
         public string StatusNameEn { get; set; } = null!;
         public bool IsPaid { get; set; }
+        public string PaymentMethod { get; set; } = null!;
+        public int StatusId { get; set; }
     }
 }
