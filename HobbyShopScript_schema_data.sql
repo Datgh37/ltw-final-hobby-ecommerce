@@ -1,4 +1,4 @@
-USE Ecommerce_Hobby_Shop
+﻿USE Ecommerce_Hobby_Shop
 GO
 
 -----------------------------------------------------------
@@ -960,7 +960,7 @@ GO
 -----------------------------------------------------------
 -- 4. REVIEWS & OTHER DATA
 -----------------------------------------------------------
-INSERT INTO [dbo].[Reviews] (ProductID, AccountID, Rating, Comment) VALUES
+/*INSERT INTO [dbo].[Reviews] (ProductID, AccountID, Rating, Comment) VALUES
 (1, N'customer1', 5, N'Chất lượng mô hình rất tuyệt vời! Shop đóng gói cẩn thận.'),
 (2, N'customer2', 4, N'Sản phẩm đẹp nhưng giao hàng hơi chậm một chút.'),
 (3, N'customer1', 5, N'Hoàn thiện cực kỳ sắc nét, màu sơn đẹp và chuẩn xác.'),
@@ -1069,7 +1069,7 @@ INSERT INTO [dbo].[Reviews] (ProductID, AccountID, Rating, Comment) VALUES
 (106, N'customer2', 5, N'Suisei nendoroid fan idol không thể bỏ qua.'),
 (107, N'customer1', 5, N'Albedo bản váy cưới đẹp lộng lẫy.');
 GO
-
+*/
 INSERT INTO [dbo].[Vouchers] (VoucherCode, DiscountPercent, DiscountAmount, UsageLimit, ExpiryDate) VALUES
 (N'WELCOME', 10, NULL, 100, '2030-12-31'),
 (N'SALE50K', NULL, 50000, 50, '2030-12-31'),
