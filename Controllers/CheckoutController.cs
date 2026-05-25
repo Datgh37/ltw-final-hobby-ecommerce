@@ -283,7 +283,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 vnpay.AddRequestData("vnp_Command", "pay");
                 vnpay.AddRequestData("vnp_TmnCode", _configuration["VNPAY:TmnCode"] ?? "");
                 vnpay.AddRequestData("vnp_Amount", (finalTotalAmount * 100).ToString("0"));
-                vnpay.AddRequestData("vnp_CreateDate", order.OrderDate.ToString("yyyyMMddHHmmss"));
+                vnpay.AddRequestData("vnp_CreateDate", GetVietnamTime().ToString("yyyyMMddHHmmss"));
                 vnpay.AddRequestData("vnp_CurrCode", "VND");
                 vnpay.AddRequestData("vnp_IpAddr", VnPayLibrary.GetIpAddress(HttpContext));
                 vnpay.AddRequestData("vnp_Locale", "vn");
@@ -292,7 +292,8 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 
                 string returnUrl = $"{Request.Scheme}://{Request.Host}{_configuration["VNPAY:ReturnUrl"]}";
                 vnpay.AddRequestData("vnp_ReturnUrl", returnUrl);
-                vnpay.AddRequestData("vnp_TxnRef", order.OrderId.ToString());
+                // Tạo mã giao dịch kết hợp mã đơn hàng và timestamp để đảm bảo tính duy nhất tuyệt đối trên VNPAY Sandbox
+                vnpay.AddRequestData("vnp_TxnRef", $"{order.OrderId}_{DateTime.UtcNow.Ticks}");
 
                 string paymentUrl = vnpay.CreateRequestUrl(_configuration["VNPAY:Url"] ?? "", _configuration["VNPAY:HashSecret"] ?? "");
                 
@@ -321,7 +322,9 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     }
                 }
 
-                int orderId = Convert.ToInt32(vnpay.GetResponseData("vnp_TxnRef"));
+                // Tách mã đơn gốc ra từ chuỗi giao dịch duy nhất (dạng orderId_timestamp)
+                string txnRef = vnpay.GetResponseData("vnp_TxnRef") ?? "";
+                int orderId = Convert.ToInt32(txnRef.Split('_')[0]);
                 string vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
                 string vnp_TransactionNo = vnpay.GetResponseData("vnp_TransactionNo");
                 string vnp_SecureHash = Request.Query["vnp_SecureHash"].ToString();
@@ -518,7 +521,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_TmnCode", _configuration["VNPAY:TmnCode"] ?? "");
             vnpay.AddRequestData("vnp_Amount", (finalTotalAmount * 100).ToString("0"));
-            vnpay.AddRequestData("vnp_CreateDate", order.OrderDate.ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_CreateDate", GetVietnamTime().ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_CurrCode", "VND");
             vnpay.AddRequestData("vnp_IpAddr", VnPayLibrary.GetIpAddress(HttpContext));
             vnpay.AddRequestData("vnp_Locale", "vn");
@@ -527,11 +530,38 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             
             string returnUrl = $"{Request.Scheme}://{Request.Host}{_configuration["VNPAY:ReturnUrl"]}";
             vnpay.AddRequestData("vnp_ReturnUrl", returnUrl);
-            vnpay.AddRequestData("vnp_TxnRef", order.OrderId.ToString());
+            // Tạo mã giao dịch kết hợp mã đơn hàng và timestamp để tránh trùng lặp khi thanh toán lại
+            vnpay.AddRequestData("vnp_TxnRef", $"{order.OrderId}_{DateTime.UtcNow.Ticks}");
 
             string paymentUrl = vnpay.CreateRequestUrl(_configuration["VNPAY:Url"] ?? "", _configuration["VNPAY:HashSecret"] ?? "");
             
             return Redirect(paymentUrl);
+        }
+
+        // Helper sinh thời gian chuẩn Việt Nam (GMT+7) hoạt động đa nền tảng (Windows/Linux Docker)
+        private DateTime GetVietnamTime()
+        {
+            var utcTime = DateTime.UtcNow;
+            try
+            {
+                // Thử múi giờ chuẩn Windows trước
+                var tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                return TimeZoneInfo.ConvertTimeFromUtc(utcTime, tz);
+            }
+            catch
+            {
+                try
+                {
+                    // Thử múi giờ chuẩn Linux IANA
+                    var tz = TimeZoneInfo.FindSystemTimeZoneById("Asia/Ho_Chi_Minh");
+                    return TimeZoneInfo.ConvertTimeFromUtc(utcTime, tz);
+                }
+                catch
+                {
+                    // Fallback thủ công nếu cả 2 hệ điều hành đều không có sẵn múi giờ (UTC + 7 tiếng)
+                    return utcTime.AddHours(7);
+                }
+            }
         }
     }
 }
