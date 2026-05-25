@@ -1,0 +1,81 @@
+@model IEnumerable<TuNhanTamTInh_Ecommerce.Models.Order>
+
+@{
+    ViewData["Title"] = "Quản lý Đơn hàng";
+}
+
+<section class="crud-page">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="crud-page__header">
+            <div class="crud-page__breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                <span>/</span>
+                <span>Đơn hàng</span>
+            </div>
+            <h1><i class="fa fa-shopping-cart"></i> Quản lý Đơn hàng</h1>
+            <p>Quản lý và cập nhật trạng thái các đơn hàng của hệ thống.</p>
+        </div>
+
+        <!-- Table Card -->
+        <div class="crud-card">
+            <div class="crud-table-wrapper">
+                <table class="crud-table">
+                    <thead>
+                        <tr>
+                            <th>Mã Đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Trạng thái</th>
+                            <th>Thanh toán</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>#@item.OrderId</td>
+                                <td>
+                                    <strong>@item.FullName</strong>
+                                    <br /><small>@item.Account.Email</small>
+                                </td>
+                                <td>@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @{
+                                        string badgeClass = item.StatusId switch
+                                        {
+                                            0 => "crud-badge--yellow", // Pending
+                                            1 => "crud-badge--blue",   // Preparing
+                                            2 => "crud-badge--blue",   // Shipping
+                                            3 => "crud-badge--green",  // Delivered
+                                            4 => "crud-badge--red",    // Cancelled
+                                            _ => ""
+                                        };
+                                    }
+                                    <span class="crud-badge @badgeClass">@item.Status?.StatusName</span>
+                                </td>
+                                <td>
+                                    <span class="crud-badge @(item.IsPaid ? "crud-badge--green" : "crud-badge--yellow")">
+                                        @(item.IsPaid ? "Đã thanh toán" : "Chưa thanh toán")
+                                    </span>
+                                </td>
+                                <td class="crud-actions">
+                                    <a asp-controller="Admin" asp-action="OrderEdit" asp-route-id="@item.OrderId" class="crud-btn--edit" title="Cập nhật">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a asp-controller="Admin" asp-action="OrderDetails" asp-route-id="@item.OrderId" class="crud-btn--detail" title="Chi tiết">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a asp-controller="Admin" asp-action="OrderDelete" asp-route-id="@item.OrderId" class="crud-btn--delete" title="Xóa">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

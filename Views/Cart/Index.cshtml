@@ -101,7 +101,10 @@
                         <h5>@Loc.T("Tổng đơn hàng", "Cart Total")</h5>
                         <ul>
                             <li>@Loc.T("Tạm tính", "Subtotal") <span id="subtotal">@grandTotal.ToString("N0")&nbsp;₫</span></li>
-                            <li>@Loc.T("Giảm giá", "Discount")<span id="discount-label"></span><span id="discount"> -0 ₫</span></li>
+                            <li class="shoping__checkout-discount-li">
+                                @Loc.T("Giảm giá", "Discount")<span id="discount"> -0 ₫</span>
+                                <div id="discount-label" class="shoping__checkout-voucher-label"></div>
+                            </li>
                             <li>@Loc.T("Tổng cộng", "Total") <span id="final-total">@grandTotal.ToString("N0")&nbsp;₫</span></li>
                         </ul>
                         <a asp-controller="Checkout" asp-action="Index" class="primary-btn rounded-pill w-100 text-center">@Loc.T("TIẾN HÀNH THANH TOÁN", "PROCEED TO CHECKOUT")</a>
@@ -130,6 +133,13 @@
 </section>
 @section Scripts{
     <script>
+        $(document).ready(function() {
+            @if (TempData["error"] != null)
+            {
+                <text>showToast('@TempData["error"]', 'error');</text>
+            }
+        });
+
         $("#voucher-form").submit(function (e) {
             e.preventDefault();
             $.ajax({
@@ -138,15 +148,23 @@
                 data: { voucherCode: $("#voucher-code").val()},
                 success: function (res) {
                     if (res.success) {
-                        $("#discount-label").text(res.discountText);
-                        $("#discount").text( "-" + Number(res.discount) .toLocaleString('vi-VN') + " ₫" );
+                        var code = $("#voucher-code").val();
+                        if(code) {
+                            $("#discount-label").text('(' + code + ')');
+                        } else {
+                            $("#discount-label").text('');
+                        }
+                        $("#discount").text( "-" + Number(res.discount).toLocaleString('vi-VN') + " ₫" );
                         $("#final-total").text( Number(res.finalTotal).toLocaleString('vi-VN') + " ₫" );
+                        showToast('@Loc.T("Áp dụng mã giảm giá thành công", "Voucher applied successfully")', 'success');
                     }
-                    else {alert(res.message); }
+                    else { 
+                        showToast(res.message, 'error'); 
+                    }
                 },
                 error: function (xhr) {
                     console.log(xhr);
-                    alert("AJAX ERROR");
+                    showToast("AJAX ERROR", 'error');
                 }
             });
         });

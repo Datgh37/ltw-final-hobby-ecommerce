@@ -3619,7 +3619,9 @@ body {
     line-height: 1;
 }
 
-.cart-empty__icon .fa-shopping-basket {
+.cart-empty__icon .fa-shopping-basket,
+.cart-empty__icon .fa-heart-o,
+.cart-empty__icon .fa-list-alt {
     color: #d1c4e9;
     /* Light purple tint to match Trinity Hobby Shop theme! */
 }
@@ -4264,4 +4266,312 @@ body {
 
 .dropdown-menu .dropdown-item.text-danger:hover i {
     color: #bd2130 !important;
+}
+
+/* =====================================================
+   CHECKOUT PAGE CUSTOM CLASSES
+===================================================== */
+.checkout-cart-container {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+/* Custom scrollbar for checkout container */
+.checkout-cart-container::-webkit-scrollbar {
+    width: 6px;
+}
+.checkout-cart-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+.checkout-cart-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+.checkout-cart-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.checkout-img-wrapper {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.checkout-item-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.checkout-item-title {
+    max-width: 200px;
+}
+
+/* Edit Profile Form Styles */
+.custom-gender-select {
+    height: 46px !important;
+    padding: 0 40px 0 20px !important;
+    border-radius: 4px !important;
+    border: 1px solid #ebebeb !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    font-size: 16px !important;
+    color: #1c1c1c !important;
+    display: flex !important;
+    align-items: center !important;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px auto;
+}
+
+/* History Order Page - Details Button */
+@media (min-width: 768px) {
+    .history-action-cell {
+        padding-right: 30px !important;
+        padding-left: 30px !important;
+        text-align: right;
+    }
+}
+@media (max-width: 767px) {
+    .history-action-cell {
+        text-align: left;
+        padding-right: 0 !important;
+    }
+}
+
+.history-detail-btn {
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    display: inline-block;
+    text-align: center;
+    min-width: 90px;
+}
+
+.history-status-badge {
+    background-color: #7F56D9;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: normal;
+    color: #fff;
+    display: inline-block;
+}
+
+.history-table-header {
+    font-size: 18px;
+    color: #1c1c1c;
+    font-weight: 700;
+}
+
+.history-back-btn {
+    background-color: #333 !important;
+    padding: 10px 30px !important;
+    color: #fff !important;
+}
+
+.history-back-btn:hover {
+    background-color: #555 !important;
+    color: #fff !important;
+}
+
+.history-order-row {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+@media (min-width: 768px) {
+    .history-order-row {
+        flex-direction: row !important;
+        align-items: center !important;
+        padding: 20px 0 !important;
+        margin-bottom: 0 !important;
+        border: none !important;
+        border-bottom: 1px solid #ebebeb !important;
+        border-radius: 0 !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Order Details Page - External CSS Migration */
+.order-details-product-cell {
+    text-align: left !important;
+    padding-left: 20px !important;
+}
+
+.order-details-product-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 15px;
+}
+
+.order-details-product-title {
+    display: inline-block;
+    font-size: 16px;
+    margin: 0;
+}
+
+.order-details-qty {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1c1c1c;
+}
+
+.order-details-info-card {
+    background: #f5f5f5;
+    padding: 30px;
+    border-radius: 4px;
+    height: 100%;
+}
+
+.order-details-card-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.order-details-text-line {
+    margin-bottom: 10px;
+    color: #1c1c1c;
+}
+
+.order-details-text-line-spacing {
+    margin-bottom: 15px;
+    color: #1c1c1c;
+}
+
+.order-details-text-line-last {
+    margin-bottom: 0;
+    color: #1c1c1c;
+}
+
+.order-details-status-badge {
+    background-color: #7F56D9;
+    font-size: 14px;
+    padding: 6px 12px;
+    margin-left: 10px;
+    font-weight: normal;
+    color: #fff;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.order-details-tracking-line {
+    margin-bottom: 0;
+    margin-top: 10px;
+    color: #1c1c1c;
+}
+
+.order-details-tracking-num {
+    color: #d9534f;
+    font-weight: bold;
+}
+
+.order-summary-voucher-tag {
+    color: #28a745;
+    font-size: 14px;
+    float: none;
+    font-weight: normal;
+    margin-left: 5px;
+}
+
+.order-summary-discount {
+    color: #28a745;
+}
+
+.order-summary-divider {
+    border-bottom: 1px solid #ebebeb !important;
+    padding-bottom: 15px !important;
+    margin-bottom: 15px !important;
+}
+
+.order-summary-total-row {
+    border: none !important;
+}
+
+.order-summary-total-price {
+    color: #d9534f !important;
+    font-size: 22px !important;
+}
+
+.order-details-back-btn {
+    background-color: #333 !important;
+    color: #fff !important;
+    width: 100%;
+    text-align: center;
+}
+
+.order-details-back-btn:hover {
+    background-color: #555 !important;
+    color: #fff !important;
+}
+
+/* Tablet and Large Mobile Layout adjustments for Shopping Cart Table */
+@media only screen and (max-width: 767.98px) {
+    .shoping__cart__table table {
+        width: 100%;
+    }
+
+    .shoping__cart__table table thead th,
+    .shoping__cart__table table tbody tr td {
+        padding: 8px 10px !important; 
+    }
+
+    /* Fix image and title sizing on mobile to not be pushed */
+    .cart-product-cell, .order-details-product-cell {
+        padding-left: 10px !important;
+        display: flex !important;
+        align-items: center;
+    }
+
+    .cart-item-img, .order-details-product-img {
+        width: 50px !important;
+        height: 50px !important;
+        margin-right: 10px !important;
+        flex-shrink: 0;
+    }
+
+    .cart-product-title, .order-details-product-title {
+        font-size: 13px !important;
+        margin-left: 0 !important;
+        white-space: normal;
+        line-height: 1.4;
+    }
+
+    .shoping__cart__price,
+    .shoping__cart__total,
+    .shoping__cart__quantity {
+        font-size: 13px !important;
+    }
+}
+
+/* Small Mobile - fallback to horizontal scroll if it gets too narrow */
+@media only screen and (max-width: 575.98px) {
+    .shoping__cart__table {
+        overflow-x: auto;
+        display: block;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 20px;
+    }
+    
+    .shoping__cart__table table {
+        min-width: 480px; 
+    }
 }

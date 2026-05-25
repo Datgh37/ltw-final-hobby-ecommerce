@@ -2337,6 +2337,30 @@ ol {
 	float: right;
 }
 
+.shoping__checkout ul li.shoping__checkout-discount-li {
+	padding-bottom: 0;
+	border-bottom: none;
+}
+
+.shoping__checkout ul li .shoping__checkout-voucher-label,
+.checkout-voucher-label {
+	font-size: 13px !important;
+	color: #0d6efd !important;
+	font-weight: normal !important;
+	margin-top: 4px;
+	display: block;
+	float: none !important;
+	clear: both;
+}
+
+.primary-btn.btn-danger {
+    background-color: #dc3545 !important;
+}
+
+.primary-btn.btn-secondary {
+    background-color: #6c757d !important;
+}
+
 .shoping__checkout .primary-btn {
 	display: block;
 	text-align: center;

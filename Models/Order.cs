@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace TuNhanTamTInh_Ecommerce.Models;
@@ -22,6 +22,8 @@ public partial class Order
     public decimal ShippingFee { get; set; }
 
     public int StatusId { get; set; }
+
+    public bool IsPaid { get; set; }
 
     public string? TrackingNumber { get; set; }
 

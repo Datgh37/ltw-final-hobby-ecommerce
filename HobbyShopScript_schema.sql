@@ -155,6 +155,7 @@ GO
 CREATE TABLE [dbo].[Statuses](
     [StatusID] [int] NOT NULL,
     [StatusName] [nvarchar](50) NOT NULL,
+    [StatusNameEN] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_Statuses] PRIMARY KEY CLUSTERED ([StatusID] ASC)
 )
 GO
@@ -169,6 +170,7 @@ CREATE TABLE [dbo].[Orders](
     [PaymentMethod] [nvarchar](50) NOT NULL DEFAULT (N'COD'),
     [ShippingFee] [decimal](18, 2) NOT NULL DEFAULT (0),
     [StatusID] [int] NOT NULL DEFAULT (0),
+    [IsPaid] [bit] NOT NULL DEFAULT (0), -- Xác định xem đơn đã được thanh toán trước chưa
     -- CÁC TRƯỜNG MỞ RỘNG
     [TrackingNumber] [nvarchar](100) NULL, -- Mã vận đơn (GHTK, ViettelPost...)
     [VoucherCode] [nvarchar](50) NULL,     -- Mã giảm giá đã áp dụng
@@ -341,6 +343,61 @@ BEGIN
         -- Xóa sạch giỏ hàng vãng lai tạm thời
         DELETE FROM [dbo].[CartItems] WHERE [CartID] = @GuestCartID;
         DELETE FROM [dbo].[Carts] WHERE [CartID] = @GuestCartID;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END
+GO
+
+-- 2. Thủ tục Hủy đơn hàng và hoàn lại tồn kho
+CREATE PROCEDURE [dbo].[sp_CancelOrder]
+    @OrderID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        DECLARE @CurrentStatus INT;
+        DECLARE @VoucherCode NVARCHAR(50);
+        
+        -- Lấy trạng thái hiện tại của đơn hàng và mã giảm giá (nếu có)
+        SELECT @CurrentStatus = StatusID, @VoucherCode = VoucherCode
+        FROM [dbo].[Orders] 
+        WHERE OrderID = @OrderID;
+
+        -- Chỉ cho phép hủy nếu đơn hàng đang ở trạng thái 0 (Chờ xử lý) hoặc 1 (Đang chuẩn bị)
+        IF @CurrentStatus IS NOT NULL AND @CurrentStatus < 2
+        BEGIN
+            -- 1. Cập nhật trạng thái đơn hàng thành 4 (Đã hủy)
+            UPDATE [dbo].[Orders]
+            SET StatusID = 4
+            WHERE OrderID = @OrderID;
+
+            -- 2. Hoàn lại số lượng tồn kho cho các sản phẩm trong đơn hàng
+            UPDATE p
+            SET p.StockQuantity = p.StockQuantity + od.Quantity
+            FROM [dbo].[Products] p
+            INNER JOIN [dbo].[OrderDetails] od ON p.ProductID = od.ProductID
+            WHERE od.OrderID = @OrderID;
+
+            -- 3. Hoàn lại lượt sử dụng cho Voucher (nếu có)
+            IF @VoucherCode IS NOT NULL AND @VoucherCode <> ''
+            BEGIN
+                UPDATE [dbo].[Vouchers]
+                SET UsedCount = CASE WHEN UsedCount > 0 THEN UsedCount - 1 ELSE 0 END
+                WHERE VoucherCode = @VoucherCode;
+            END
+        END
+        ELSE
+        BEGIN
+            -- Có thể throw error hoặc return tuỳ thiết kế, ở đây ta throw error để EF bắt được
+            RAISERROR('Không thể hủy đơn hàng này (Trạng thái không hợp lệ).', 16, 1);
+        END
 
         COMMIT TRANSACTION;
     END TRY

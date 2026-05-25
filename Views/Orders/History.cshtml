@@ -1,0 +1,87 @@
+@using TuNhanTamTInh_Ecommerce.Models.ViewModels
+@model IEnumerable<TuNhanTamTInh_Ecommerce.Models.ViewModels.OrderHistoryViewModel>
+@{
+    ViewData["Title"] = Loc.T("Lịch sử đơn hàng", "Order History");
+    var breadcrumb = new BreadcrumbViewModel
+    {
+        Title = Loc.T("Lịch sử đơn hàng", "Order History"),
+        Items = new List<BreadcrumbItem>
+        {
+            new BreadcrumbItem(Loc.T("Trang chủ", "Home"), Url.Action("Index", "Home")),
+            new BreadcrumbItem(Loc.T("Hồ sơ", "Profile"), Url.Action("Profile", "Account")),
+            new BreadcrumbItem(Loc.T("Lịch sử đơn hàng", "Order History"))
+        }
+    };
+}
+
+@await Component.InvokeAsync("HeroSection", new { isHome = false })
+
+<partial name="_Breadcrumb" model="breadcrumb" />
+
+<section class="shoping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="shoping__cart__table">
+                        <!-- Table Header (Desktop only) -->
+                        <div class="d-none d-md-flex w-100 py-3 border-bottom history-table-header align-items-center">
+                            <div class="col-md-2 ps-4">@Loc.T("Mã đơn", "Order ID")</div>
+                            <div class="col-md-3">@Loc.T("Ngày đặt", "Order Date")</div>
+                            <div class="col-md-3">@Loc.T("Trạng thái", "Status")</div>
+                            <div class="col-md-2">@Loc.T("Tổng tiền", "Total Amount")</div>
+                            <div class="col-md-2 text-end pe-4"></div>
+                        </div>
+
+                        <!-- Table Rows -->
+                        <div class="w-100">
+                            @foreach (var order in Model)
+                            {
+                                <div class="history-order-row">
+                                    <div class="col-12 col-md-2 text-start ps-3 ps-md-4 py-2 py-md-0 fw-bold">
+                                        <span class="d-inline d-md-none text-muted fw-normal me-2">@Loc.T("Mã đơn:", "Order ID:")</span>#@order.OrderId
+                                    </div>
+                                    <div class="col-12 col-md-3 text-start ps-3 ps-md-0 py-2 py-md-0 fs-6">
+                                        <span class="d-inline d-md-none text-muted fw-normal me-2">@Loc.T("Ngày đặt:", "Order Date:")</span>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                                    </div>
+                                    <div class="col-12 col-md-3 text-start ps-3 ps-md-0 py-2 py-md-0">
+                                        <span class="d-inline d-md-none text-muted fw-normal me-2">@Loc.T("Trạng thái:", "Status:")</span><span class="badge history-status-badge">@Loc.T(order.StatusName, order.StatusNameEn)</span>
+                                    </div>
+                                    <div class="col-12 col-md-2 text-start ps-3 ps-md-0 py-2 py-md-0 fw-bold fs-6">
+                                        <span class="d-inline d-md-none text-muted fw-normal me-2">@Loc.T("Tổng tiền:", "Total:")</span>@order.TotalAmount.ToString("N0") ₫
+                                    </div>
+                                    <div class="col-12 col-md-2 text-start text-md-end ps-3 ps-md-0 pe-md-4 py-2 py-md-0 history-action-cell">
+                                        <a asp-action="Details" asp-route-id="@order.OrderId" class="primary-btn history-detail-btn">
+                                            @Loc.T("Chi tiết", "Details")
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="cart-empty text-center py-5">
+                        <div class="cart-empty__icon mb-4">
+                            <i class="fa fa-list-alt"></i>
+                        </div>
+                        <h5 class="mb-2">@Loc.T("Bạn chưa có đơn hàng nào.", "You don't have any orders yet.")</h5>
+                        <p class="text-muted mb-4">@Loc.T("Hãy tiếp tục mua sắm để ủng hộ cửa hàng nhé!", "Let's continue shopping to support the store!")</p>
+                        <a asp-controller="Products" asp-action="Index" class="primary-btn rounded-pill">
+                            <i class="fa fa-shopping-bag me-2"></i> @Loc.T("MUA SẮM NGAY", "SHOP NOW")
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 text-center mt-4">
+                <a asp-controller="Home" asp-action="Index" class="site-btn rounded history-back-btn">
+                    <i class="fa fa-arrow-left me-2"></i>@Loc.T("QUAY LẠI TRANG CHỦ", "BACK TO HOME")
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

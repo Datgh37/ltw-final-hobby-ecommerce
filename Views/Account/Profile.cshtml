@@ -42,27 +42,27 @@
 
                         <div class="row mt-4">
                             <div class="col-md-6 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-user mr-2"></i>@Loc.T("Tên đăng nhập", "Username")</p>
+                                <p class="text-muted mb-1"><i class="fa fa-user mr-2"></i> @Loc.T("Tên đăng nhập", "Username")</p>
                                 <h5 class="font-weight-bold">@Model.AccountId</h5>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-phone mr-2"></i>@Loc.T("Số điện thoại", "Phone Number")</p>
+                                <p class="text-muted mb-1"><i class="fa fa-phone mr-2"></i> @Loc.T("Số điện thoại", "Phone Number")</p>
                                 <h5 class="font-weight-bold">@(string.IsNullOrEmpty(Model.PhoneNumber) ? Loc.T("Chưa cập nhật", "Not Updated") : Model.PhoneNumber)</h5>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-calendar mr-2"></i>@Loc.T("Ngày sinh", "Birthdate")</p>
+                                <p class="text-muted mb-1"><i class="fa fa-calendar mr-2"></i> @Loc.T("Ngày sinh", "Birthdate")</p>
                                 <h5 class="font-weight-bold">@(Model.BirthDate?.ToString("dd/MM/yyyy") ?? Loc.T("Chưa cập nhật", "Not Updated"))</h5>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-venus-mars mr-2"></i>@Loc.T("Giới tính", "Gender")</p>
+                                <p class="text-muted mb-1"><i class="fa fa-venus-mars mr-2"></i> @Loc.T("Giới tính", "Gender")</p>
                                 <h5 class="font-weight-bold">@(Model.Gender ? Loc.T("Nam", "Male") : Loc.T("Nữ", "Female"))</h5>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-map-marker mr-2"></i>@Loc.T("Địa chỉ", "Address")</p>
+                                <p class="text-muted mb-1"><i class="fa fa-map-marker mr-2"></i> @Loc.T("Địa chỉ", "Address")</p>
                                 <h5 class="font-weight-bold">@(string.IsNullOrEmpty(Model.Address) ? Loc.T("Chưa cập nhật", "Not Updated") : Model.Address)</h5>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <p class="text-muted mb-1"><i class="fa fa-clock-o mr-2"></i>@Loc.T("Ngày tham gia", "Joined Date")</p>
+                                <p class="text-muted mb-1"><i class="fa fa-clock-o mr-2"></i> @Loc.T("Ngày tham gia", "Joined Date")</p>
                                 <h5 class="font-weight-bold">@(Model.CreatedAt.ToString("dd/MM/yyyy"))</h5>
                             </div>
                         </div>

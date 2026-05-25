@@ -29,6 +29,7 @@ namespace TuNhanTamTInh_Ecommerce
 
             // Add services to the container.
             builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+            builder.Services.AddSingleton<Microsoft.Extensions.Localization.IStringLocalizerFactory, CustomStringLocalizerFactory>();
 
             builder.Services.AddControllersWithViews()
                 .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)

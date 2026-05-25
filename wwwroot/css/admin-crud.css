@@ -215,6 +215,55 @@
     color: #fff;
 }
 
+/* VOUCHER / ORDERS STYLING */
+.crud-form-group--mt-30 {
+    margin-top: 30px;
+}
+
+.crud-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+    text-transform: none;
+}
+
+.crud-checkbox-input {
+    width: 20px;
+    height: 20px;
+}
+
+.crud-card__title--mt-40 {
+    margin-top: 40px;
+}
+
+.crud-table-footer-cell {
+    font-weight: bold;
+}
+
+.crud-table-footer-cell--right {
+    text-align: right;
+}
+
+.crud-table-footer-cell--border-top {
+    border-top: 2px solid #ebebeb;
+}
+
+.crud-table-footer-cell--total {
+    font-size: 16px;
+    color: #e7515a;
+}
+
+.crud-btn--yellow {
+    background: #e2a03f;
+    color: #fff;
+}
+
+.crud-btn--yellow:hover {
+    background: #c9882a;
+    color: #fff;
+}
+
 /* ===== FORM STYLES ===== */
 .crud-form .form-group {
     margin-bottom: 20px;
@@ -459,6 +508,16 @@
 .crud-badge--red {
     background: #fde8e9;
     color: #c93c44;
+}
+
+.crud-badge--blue {
+    background: #e8f4fd;
+    color: #1565c0;
+}
+
+.crud-badge--yellow {
+    background: #fff3e0;
+    color: #e65100;
 }
 
 /* ===== RESPONSIVE & LAYOUT OPTIMIZATION (PC, TABLET, MOBILE) ===== */

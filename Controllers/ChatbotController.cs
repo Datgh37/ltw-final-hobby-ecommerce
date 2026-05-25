@@ -130,30 +130,17 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
                 var orderStatuses = await _context.Statuses
                     .OrderBy(s => s.StatusId)
-                    .Select(s => s.StatusName)
+                    .Select(s => new { s.StatusName, s.StatusNameEn })
                     .ToListAsync();
                 
                 string orderStatusFlow;
                 if (isEnglish)
                 {
-                    var translatedStatuses = orderStatuses.Select(name => name switch
-                    {
-                        "Chờ xác nhận" => "Pending Confirmation",
-                        "Đã xác nhận" => "Confirmed",
-                        "Đang chuẩn bị" => "Packaging",
-                        "Đang đóng gói" => "Packaging",
-                        "Đang vận chuyển" => "Shipping",
-                        "Đang giao hàng" => "Shipping",
-                        "Giao thành công" => "Delivered",
-                        "Đã giao" => "Delivered",
-                        "Đã hủy" => "Cancelled",
-                        _ => name
-                    });
-                    orderStatusFlow = string.Join(" → ", translatedStatuses);
+                    orderStatusFlow = string.Join(" → ", orderStatuses.Select(s => !string.IsNullOrEmpty(s.StatusNameEn) ? s.StatusNameEn : s.StatusName));
                 }
                 else
                 {
-                    orderStatusFlow = string.Join(" → ", orderStatuses);
+                    orderStatusFlow = string.Join(" → ", orderStatuses.Select(s => s.StatusName));
                 }
 
                 var topViewed = await _context.Products

@@ -1,0 +1,143 @@
+@using TuNhanTamTInh_Ecommerce.Models.ViewModels
+@model TuNhanTamTInh_Ecommerce.Models.ViewModels.OrderDetailsViewModel
+@{
+    ViewData["Title"] = Loc.T("Chi tiết đơn hàng", "Order Details");
+    var breadcrumb = new BreadcrumbViewModel
+    {
+        Title = Loc.T("Chi tiết đơn hàng", "Order Details") + " #" + Model.OrderId,
+        Items = new List<BreadcrumbItem>
+        {
+            new BreadcrumbItem(Loc.T("Trang chủ", "Home"), Url.Action("Index", "Home")),
+            new BreadcrumbItem(Loc.T("Lịch sử đơn hàng", "Order History"), Url.Action("History", "Orders")),
+            new BreadcrumbItem(Loc.T("Chi tiết", "Details"))
+        }
+    };
+}
+
+@await Component.InvokeAsync("HeroSection", new { isHome = false })
+
+<partial name="_Breadcrumb" model="breadcrumb" />
+
+<section class="shoping-cart spad">
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="shoping__cart__table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="cart-product-header">@Loc.T("Sản phẩm", "Product")</th>
+                                <th>@Loc.T("Đơn giá", "Unit Price")</th>
+                                <th>@Loc.T("Số lượng", "Quantity")</th>
+                                <th>@Loc.T("Thành tiền", "Total")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td class="cart-product-cell order-details-product-cell">
+                                        <img src="@Url.Content(item.ProductImage)" alt="@item.ProductName" class="order-details-product-img">
+                                        <h5 class="cart-product-title order-details-product-title">@item.ProductName</h5>
+                                    </td>
+                                    <td class="shoping__cart__price">
+                                        @item.UnitPrice.ToString("N0") ₫
+                                    </td>
+                                    <td class="shoping__cart__quantity">
+                                        <span class="order-details-qty">@item.Quantity</span>
+                                    </td>
+                                    <td class="shoping__cart__total">
+                                        @((item.UnitPrice * item.Quantity).ToString("N0")) ₫
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="shoping__continue order-details-info-card">
+                            <h4 class="order-details-card-title">@Loc.T("Thông tin giao hàng", "Delivery Info")</h4>
+                            <p class="order-details-text-line"><strong>@Loc.T("Người nhận:", "Receiver:")</strong> @Model.FullName</p>
+                            <p class="order-details-text-line"><strong>@Loc.T("Điện thoại:", "Phone:")</strong> @Model.PhoneNumber</p>
+                            <p class="order-details-text-line"><strong>Email:</strong> @Model.Email</p>
+                            <p class="order-details-text-line-last"><strong>@Loc.T("Địa chỉ:", "Address:")</strong> @Model.Address</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="shoping__continue order-details-info-card">
+                            <h4 class="order-details-card-title">@Loc.T("Trạng thái & Thanh toán", "Status & Payment")</h4>
+                            <p class="order-details-text-line-spacing">
+                                <strong>@Loc.T("Trạng thái:", "Status:")</strong>
+                                <span class="badge order-details-status-badge">@Loc.T(Model.StatusName, Model.StatusNameEn)</span>
+                            </p>
+                            <p class="order-details-text-line-spacing">
+                                <strong>@Loc.T("Thanh toán:", "Payment Status:")</strong>
+                                @if (Model.IsPaid)
+                                {
+                                    <span class="text-success fw-bold ms-2">@Loc.T("Đã thanh toán", "Paid")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger fw-bold ms-2">@Loc.T("Chưa thanh toán", "Unpaid")</span>
+                                }
+                            </p>
+                            <p class="order-details-text-line">
+                                <strong>@Loc.T("Phương thức:", "Method:")</strong>
+                                @if(Model.PaymentMethod == "COD"){
+                                    <span>@Loc.T("Thanh toán khi nhận hàng", "Cash on Delivery")</span>
+                                } else {
+                                    <span>@Model.PaymentMethod</span>
+                                }
+                            </p>
+                            <p class="order-details-text-line-last"><strong>@Loc.T("Ngày đặt:", "Order Date:")</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                            @if (!string.IsNullOrEmpty(Model.TrackingNumber))
+                            {
+                                <p class="order-details-tracking-line"><strong>@Loc.T("Mã vận đơn:", "Tracking Number:")</strong> <span class="order-details-tracking-num">@Model.TrackingNumber</span></p>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-4">
+                <div class="shoping__checkout mt-4 mt-lg-0">
+                    <h5>@Loc.T("Tổng quan đơn hàng", "Order Summary")</h5>
+                    <ul>
+                        <li>@Loc.T("Tạm tính", "Subtotal") <span>@Model.Subtotal.ToString("N0") ₫</span></li>
+                        <li class="shoping__checkout-discount-li">
+                            @Loc.T("Giảm giá", "Discount")
+                            <span class="order-summary-discount">
+                                @if (Model.DiscountAmount > 0){<text>-@Model.DiscountAmount.ToString("N0") ₫</text>}
+                                else{<text>-0 ₫</text>}
+                            </span>
+                            @if (!string.IsNullOrEmpty(Model.VoucherCode))
+                            {
+                                <div class="shoping__checkout-voucher-label">
+                                    (@Model.VoucherCode)
+                                </div>
+                            }
+                        </li>
+                        <li class="order-summary-divider">@Loc.T("Phí vận chuyển", "Shipping Fee") <span>@Model.ShippingFee.ToString("N0") ₫</span></li>
+                        <li class="order-summary-total-row">@Loc.T("Tổng cộng", "Total") <span class="order-summary-total-price">@Model.FinalTotal.ToString("N0") ₫</span></li>
+                    </ul>
+                    <a asp-action="History" class="primary-btn mt-3 order-details-back-btn">@Loc.T("QUAY LẠI DANH SÁCH", "BACK TO LIST")</a>
+                    
+                    @if (Model.StatusId == 0 || Model.StatusId == 1)
+                    {
+                        <form asp-action="CancelOrder" asp-route-id="@Model.OrderId" method="post" class="mt-2" onsubmit="return confirm('@Loc.T("Bạn có chắc chắn muốn hủy đơn hàng này không? Hành động này không thể hoàn tác.", "Are you sure you want to cancel this order? This action cannot be undone.")');">
+                            <button type="submit" class="primary-btn w-100 mt-2 btn-danger">@Loc.T("HỦY ĐƠN HÀNG", "CANCEL ORDER")</button>
+                        </form>
+                    }
+                    else if (Model.StatusId == 2)
+                    {
+                        <button type="button" class="primary-btn w-100 mt-2 btn-disabled btn-secondary" disabled title="@Loc.T("Đơn hàng đang được giao, không thể hủy.", "Order is being shipped, cannot cancel.")">@Loc.T("HỦY ĐƠN HÀNG", "CANCEL ORDER")</button>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

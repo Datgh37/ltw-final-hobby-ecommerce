@@ -198,6 +198,9 @@ public partial class EcommerceHobbyShopContext : DbContext
             entity.Property(e => e.PhoneNumber).HasMaxLength(24);
             entity.Property(e => e.ShippingFee).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.StatusId).HasColumnName("StatusID");
+            entity.Property(e => e.IsPaid)
+                .HasDefaultValue(false)
+                .HasColumnName("IsPaid");
             entity.Property(e => e.TrackingNumber).HasMaxLength(100);
             entity.Property(e => e.VoucherCode).HasMaxLength(50);
 
@@ -355,6 +358,9 @@ public partial class EcommerceHobbyShopContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("StatusID");
             entity.Property(e => e.StatusName).HasMaxLength(50);
+            entity.Property(e => e.StatusNameEn)
+                .HasMaxLength(50)
+                .HasColumnName("StatusNameEN");
         });
 
         modelBuilder.Entity<Supplier>(entity =>

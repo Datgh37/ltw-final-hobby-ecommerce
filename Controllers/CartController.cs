@@ -185,6 +185,8 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 success = true,
                 quantity = cartItem.Quantity,
                 subtotal = (cartItem.Product.UnitPrice * quantity).ToString("N0"),
+                cartSubtotal = summary.Subtotal.ToString("N0"),
+                discount = summary.Discount.ToString("N0"),
                 grandTotal = summary.GrandTotal.ToString("N0"),
                 totalItems = summary.TotalItems
             });
@@ -224,6 +226,8 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             {
                 success = true,
                 totalItems = summary.TotalItems,
+                cartSubtotal = summary.Subtotal.ToString("N0"),
+                discount = summary.Discount.ToString("N0"),
                 grandTotal = summary.GrandTotal.ToString("N0")
             });
         }
@@ -235,7 +239,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         // Helper to get cart stats
-        private async Task<(int TotalItems, decimal GrandTotal)> GetCartSummary(string? accountId, string? guestCartId = null)
+        private async Task<(int TotalItems, decimal Subtotal, decimal Discount, decimal GrandTotal)> GetCartSummary(string? accountId, string? guestCartId = null)
         {
             Cart? cart = null;
             if (accountId != null)
@@ -253,50 +257,83 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     .FirstOrDefaultAsync(x => x.CartId == guestCartId);
             }
 
-            if (cart == null) return (0, 0);
+            if (cart == null) return (0, 0, 0, 0);
 
             int totalItems = cart.CartItems.Sum(x => x.Quantity);
-            decimal grandTotal = cart.CartItems.Sum(x => (decimal)x.Quantity * x.Product.UnitPrice);
+            decimal subtotal = cart.CartItems.Sum(x => (decimal)x.Quantity * x.Product.UnitPrice);
+            decimal discount = 0;
 
-            return (totalItems, grandTotal);
+            string? voucherCode = HttpContext.Session.GetString("VoucherCode");
+            if (!string.IsNullOrEmpty(voucherCode))
+            {
+                var voucher = await _context.Vouchers.FirstOrDefaultAsync(v => v.VoucherCode == voucherCode && v.IsActive);
+                if (voucher != null && (!voucher.ExpiryDate.HasValue || voucher.ExpiryDate.Value >= DateTime.Now))
+                {
+                    if (voucher.DiscountPercent.HasValue)
+                    {
+                        discount = subtotal * voucher.DiscountPercent.Value / 100;
+                    }
+                    else if (voucher.DiscountAmount.HasValue)
+                    {
+                        discount = voucher.DiscountAmount.Value;
+                    }
+                    if (discount > subtotal) discount = subtotal;
+
+                    HttpContext.Session.SetString("DiscountAmount", discount.ToString());
+                }
+                else
+                {
+                    HttpContext.Session.Remove("DiscountAmount");
+                    HttpContext.Session.Remove("DiscountText");
+                    HttpContext.Session.Remove("VoucherCode");
+                }
+            }
+
+            decimal grandTotal = subtotal - discount;
+
+            return (totalItems, subtotal, discount, grandTotal);
         }
 
         [HttpPost]
         public async Task<IActionResult> ApplyVoucher(string voucherCode)
         {
-            //var accountId = User.FindFirst("AccountId")?.Value;
-            //Cart? cart = null;
-            //if (accountId != null)
-            //{
-            //    cart = await _context.Carts
-            //        .Include(c => c.CartItems)
-            //        .ThenInclude(ci => ci.Product)
-            //        .FirstOrDefaultAsync(c =>
-            //            c.AccountId == accountId);
-            //}
-            var cart = await _context.Carts
-                .Include(c => c.CartItems)
-                .ThenInclude(ci => ci.Product)
-                .FirstOrDefaultAsync();
+            var accountId = User.FindFirst("AccountId")?.Value;
+            Request.Cookies.TryGetValue("GuestCartId", out string? guestCartId);
+
+            Cart? cart = null;
+            if (accountId != null)
+            {
+                cart = await _context.Carts
+                    .Include(c => c.CartItems)
+                    .ThenInclude(ci => ci.Product)
+                    .FirstOrDefaultAsync(c => c.AccountId == accountId);
+            }
+            else if (!string.IsNullOrEmpty(guestCartId))
+            {
+                cart = await _context.Carts
+                    .Include(c => c.CartItems)
+                    .ThenInclude(ci => ci.Product)
+                    .FirstOrDefaultAsync(c => c.CartId == guestCartId);
+            }
+
             if (cart == null)
             {
                 return Json(new
                 {
                     success = false,
-                    message = "Không tìm thấy giỏ hàng"
+                    message = Loc.T("Không tìm thấy giỏ hàng", "Cart not found")
                 });
             }
 
             decimal subtotal = cart.CartItems.Sum(x =>
                 x.Product.UnitPrice * x.Quantity);
 
-            // KHÔNG NHẬP VOUCHER
+            // KHÔNG NHẬP VOUCHER HOẶC XÓA VOUCHER
             if (string.IsNullOrWhiteSpace(voucherCode))
             {
-                HttpContext.Session.SetString(
-                    "DiscountAmount",
-                    "0"
-                );
+                HttpContext.Session.Remove("DiscountAmount");
+                HttpContext.Session.Remove("DiscountText");
+                HttpContext.Session.Remove("VoucherCode");
 
                 return Json(new
                 {
@@ -311,12 +348,21 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     v.VoucherCode == voucherCode &&
                     v.IsActive);
 
-            if (voucher == null)
+            if (voucher == null || (voucher.ExpiryDate.HasValue && voucher.ExpiryDate.Value < DateTime.Now))
             {
                 return Json(new
                 {
                     success = false,
-                    message = "Voucher không hợp lệ"
+                    message = Loc.T("Voucher không hợp lệ hoặc đã hết hạn", "Invalid or expired voucher")
+                });
+            }
+
+            if (voucher.UsageLimit.HasValue && voucher.UsedCount >= voucher.UsageLimit.Value)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = Loc.T("Mã giảm giá này đã hết lượt sử dụng", "This voucher has reached its usage limit")
                 });
             }
 
@@ -351,6 +397,10 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             HttpContext.Session.SetString(
                 "DiscountText",
                 discountText
+            );
+            HttpContext.Session.SetString(
+                "VoucherCode",
+                voucher.VoucherCode
             );
             return Json(new
             {

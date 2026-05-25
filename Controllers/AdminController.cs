@@ -471,6 +471,148 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
         #endregion
 
+        #region Order Management Actions
+
+        // GET: Admin/Orders
+        [Route("Orders")]
+        public async Task<IActionResult> Orders()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.Account)
+                .Include(o => o.Status)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+            return View("~/Views/Admin/Orders/Index.cshtml", orders);
+        }
+
+        // GET: Admin/Orders/Details/5
+        [Route("Orders/Details/{id}")]
+        public async Task<IActionResult> OrderDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders
+                .Include(o => o.Account)
+                .Include(o => o.Status)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Product)
+                .FirstOrDefaultAsync(m => m.OrderId == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View("~/Views/Admin/Orders/Details.cshtml", order);
+        }
+
+        // GET: Admin/Orders/Edit/5
+        [HttpGet("Orders/Edit/{id}")]
+        public async Task<IActionResult> OrderEdit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["StatusId"] = new SelectList(_context.Statuses, "StatusId", "StatusName", order.StatusId);
+            return View("~/Views/Admin/Orders/Edit.cshtml", order);
+        }
+
+        // POST: Admin/Orders/Edit/5
+        [HttpPost("Orders/Edit/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> OrderEdit(int id, [Bind("OrderId,StatusId,IsPaid")] Order orderUpdate)
+        {
+            if (id != orderUpdate.OrderId)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    order.StatusId = orderUpdate.StatusId;
+                    order.IsPaid = orderUpdate.IsPaid;
+                    _context.Update(order);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!OrderExists(order.OrderId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Orders));
+            }
+            ViewData["StatusId"] = new SelectList(_context.Statuses, "StatusId", "StatusName", orderUpdate.StatusId);
+            return View("~/Views/Admin/Orders/Edit.cshtml", orderUpdate);
+        }
+
+        // GET: Admin/Orders/Delete/5
+        [HttpGet("Orders/Delete/{id}")]
+        public async Task<IActionResult> OrderDelete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders
+                .Include(o => o.Account)
+                .Include(o => o.Status)
+                .FirstOrDefaultAsync(m => m.OrderId == id);
+            
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View("~/Views/Admin/Orders/Delete.cshtml", order);
+        }
+
+        // POST: Admin/Orders/Delete/5
+        [HttpPost("Orders/Delete/{id}"), ActionName("OrderDelete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> OrderDeleteConfirmed(int id)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .FirstOrDefaultAsync(m => m.OrderId == id);
+                
+            if (order != null)
+            {
+                _context.OrderDetails.RemoveRange(order.OrderDetails);
+                _context.Orders.Remove(order);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Orders));
+        }
+
+        #endregion
+
         #region Helpers
 
         private bool ProductExists(int id)
@@ -481,6 +623,11 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         private bool CategoryExists(int id)
         {
             return _context.Categories.Any(e => e.CategoryId == id);
+        }
+
+        private bool OrderExists(int id)
+        {
+            return _context.Orders.Any(e => e.OrderId == id);
         }
 
         private void PopulateDropdowns(int? selectedCategory = null, int? selectedSeries = null, string? selectedSupplier = null)

@@ -107,7 +107,7 @@ function updateCartQuantity(cartItemId, quantity, row) {
                 }
                 
                 // Update global totals
-                updateGlobalTotals(response.grandTotal, response.totalItems);
+                updateGlobalTotals(response.cartSubtotal, response.discount, response.grandTotal, response.totalItems);
                 
                 // Update header cart preview
                 reloadCartPreview();
@@ -149,7 +149,7 @@ function deleteCartItem(cartItemId, row, silent = false, onCancel) {
                             if ($(".cart-row").length === 0) location.reload();
                         });
                     }
-                    updateGlobalTotals(response.grandTotal, response.totalItems);
+                    updateGlobalTotals(response.cartSubtotal, response.discount, response.grandTotal, response.totalItems);
                     reloadCartPreview();
                     if (!silent) {
                         const isEn = $('html').attr('lang') === 'en';
@@ -186,14 +186,18 @@ function reloadCartPreview() {
 }
 
 // 7. Update Totals in Cart Index
-function updateGlobalTotals(grandTotal, totalItems) {
+function updateGlobalTotals(cartSubtotal, discount, grandTotal, totalItems) {
     // Update main checkout box
-    $("#grand-total").text(grandTotal + "\u00A0₫");
+    $("#grand-total").text(cartSubtotal + "\u00A0₫");
     
-    // Target the first <li> for subtotal (Tạm tính)
-    $(".shoping__checkout ul li:contains('Tạm tính') span").text(grandTotal + "\u00A0₫");
+    // Target the specific IDs from Cart Index for voucher layout
+    if ($("#discount").length > 0) {
+        $("#discount").text("-" + discount + "\u00A0₫");
+        $("#final-total").text(grandTotal + "\u00A0₫");
+    }
     
-    // Target the second <li> for total (Tổng cộng) - fallback if #grand-total is not enough
+    // Fallback for old layouts (Tạm tính / Tổng cộng)
+    $(".shoping__checkout ul li:contains('Tạm tính') span").text(cartSubtotal + "\u00A0₫");
     $(".shoping__checkout ul li:contains('Tổng cộng') span").text(grandTotal + "\u00A0₫");
     
     // Update cart icon badge

@@ -10,9 +10,7 @@ INSERT INTO [dbo].[Roles] (RoleID, RoleName, RoleName_EN) VALUES
 GO
 
 INSERT INTO [dbo].[Accounts] (AccountID, Password, FullName, Email, PhoneNumber, Address, Gender, IsActive, RoleID) VALUES
-(N'admin', N'admin123', N'Admin', N'admin@hobbyshop.com', N'0123456789', N'Biên Hòa, Đồng Nai', 1, 1, 0),
-(N'customer1', N'cust123', N'Nguyễn Văn A', N'nva@gmail.com', N'0987654321', N'TP. Hồ Chí Minh', 1, 1, 1),
-(N'customer2', N'cust123', N'Trần Thị B', N'ttb@gmail.com', N'0912345678', N'Đà Nẵng', 0, 1, 1);
+(N'admin', N'admin123', N'Admin', N'admin@hobbyshop.com', N'0123456789', N'Biên Hòa, Đồng Nai', 1, 1, 0)
 GO
 
 -----------------------------------------------------------
@@ -353,7 +351,12 @@ INSERT INTO [dbo].[Products] (ProductID, ProductName, ProductName_EN, ProductSlu
 (131, N'Shana (Burning-Eyed)', N'Shana (Burning-Eyed)', N'shana-burning-eyed', 3, 9, N'OTHER', 4650000, N'Tỉ lệ: Scale Figure 1/7. – Chất liệu: Nhựa PVC, ABS cao cấp. – Đặc điểm: Thiết kế anime chi tiết với màu sắc nổi bật và tạo hình sống động.', N'Scale: 1/7 Scale Figure. – Material: Premium PVC, ABS. – Features: Design of anime detailed với outstanding colors and vivid posing.', 0, 0, 10),
 (132, N'Erza Scarlet (Bunny Ver.)', N'Erza Scarlet (Bunny Ver.)', N'erza-scarlet-bunny-ver', 3, 9, N'GSC', 6650000, N'Tỉ lệ: Scale Figure 1/7. – Chất liệu: Nhựa PVC, ABS cao cấp. – Đặc điểm: Thiết kế anime chi tiết với màu sắc nổi bật và tạo hình sống động.', N'Scale: 1/7 Scale Figure. – Material: Premium PVC, ABS. – Features: Design of anime detailed với outstanding colors and vivid posing.', 0, 0, 10),
 (133, N'Keqing (Dạ Hành Ver.)', N'Keqing (Dạ Hành Ver.)', N'keqing-d-hnh-ver', 3, 9, N'OTHER', 5650000, N'Tỉ lệ: Scale Figure 1/7. – Chất liệu: Nhựa PVC, ABS cao cấp. – Đặc điểm: Thiết kế anime chi tiết với màu sắc nổi bật và tạo hình sống động.', N'Scale: 1/7 Scale Figure. – Material: Premium PVC, ABS. – Features: Design of anime detailed với outstanding colors and vivid posing.', 0, 0, 10),
-(134, N'Asuna (Stacia Ver.)', N'Asuna (Stacia Ver.)', N'asuna-stacia-ver', 3, 9, N'GSC', 3650000, N'Tỉ lệ: Scale Figure 1/7. – Chất liệu: Nhựa PVC, ABS cao cấp. – Đặc điểm: Trang phục chiến đấu nổi bật cùng đường nét mềm mại.', N'Scale: 1/7 Scale Figure. – Material: Premium PVC, ABS. – Features: Trang phục chiến đấu nổi bật cùng đường nét mềm mại.', 0, 0, 10);
+(134, N'Asuna (Stacia Ver.)', N'Asuna (Stacia Ver.)', N'asuna-stacia-ver', 3, 9, N'GSC', 3650000, N'Tỉ lệ: Scale Figure 1/7. – Chất liệu: Nhựa PVC, ABS cao cấp. – Đặc điểm: Trang phục chiến đấu nổi bật cùng đường nét mềm mại.', N'Scale: 1/7 Scale Figure. – Material: Premium PVC, ABS. – Features: Trang phục chiến đấu nổi bật cùng đường nét mềm mại.', 0, 0, 10),
+(135, N'Sản phẩm Thử nghiệm #1', N'Test-Product#1', N'test-product-1', 5, NULL, N'OTHER', 5000, N'Sản phẩm dùng để test thanh toán.', N'Test product for payment.', 0, 0, 100),
+(136, N'Sản phẩm Thử nghiệm #2', N'Test-Product#2', N'test-product-2', 5, NULL, N'OTHER', 5000, N'Sản phẩm dùng để test thanh toán.', N'Test product for payment.', 0, 0, 100),
+(137, N'Sản phẩm Thử nghiệm #3', N'Test-Product#3', N'test-product-3', 5, NULL, N'OTHER', 5000, N'Sản phẩm dùng để test thanh toán.', N'Test product for payment.', 0, 0, 100),
+(138, N'Sản phẩm Thử nghiệm #4', N'Test-Product#4', N'test-product-4', 5, NULL, N'OTHER', 5000, N'Sản phẩm dùng để test thanh toán.', N'Test product for payment.', 0, 0, 100),
+(139, N'Sản phẩm Thử nghiệm #5', N'Test-Product#5', N'test-product-5', 5, NULL, N'OTHER', 5000, N'Sản phẩm dùng để test thanh toán.', N'Test product for payment.', 0, 0, 100);
 SET IDENTITY_INSERT [dbo].[Products] OFF;
 GO
 
@@ -944,7 +947,12 @@ INSERT INTO [dbo].[ProductImages] (ImageID, ProductID, ImageURL, IsPrimary) VALU
 (583, 134, N'~/images/Figure/ScaleFigure/23_Asuna (2).jpg', 0),
 (584, 134, N'~/images/Figure/ScaleFigure/23_Asuna (3).jpg', 0),
 (585, 134, N'~/images/Figure/ScaleFigure/23_Asuna (4).jpg', 0),
-(586, 134, N'~/images/Figure/ScaleFigure/23_Asuna_Main.jpg', 1);
+(586, 134, N'~/images/Figure/ScaleFigure/23_Asuna_Main.jpg', 1),
+(587, 135, N'~/images/default-product.png', 1),
+(588, 136, N'~/images/default-product.png', 1),
+(589, 137, N'~/images/default-product.png', 1),
+(590, 138, N'~/images/default-product.png', 1),
+(591, 139, N'~/images/default-product.png', 1);
 SET IDENTITY_INSERT [dbo].[ProductImages] OFF;
 GO
 
@@ -1068,22 +1076,22 @@ INSERT INTO [dbo].[Vouchers] (VoucherCode, DiscountPercent, DiscountAmount, Usag
 (N'SALE15P', 15, NULL, 100, '2030-12-31');
 GO
 
-INSERT INTO [dbo].[Statuses] (StatusID, StatusName) VALUES
-(0, N'Chờ xử lý'),
-(1, N'Đang chuẩn bị hàng'),
-(2, N'Đang giao hàng'),
-(3, N'Đã giao thành công'),
-(4, N'Đã hủy');
+INSERT INTO [dbo].[Statuses] (StatusID, StatusName, StatusNameEN) VALUES
+(0, N'Chờ xử lý', N'Pending'),
+(1, N'Đang chuẩn bị hàng', N'Preparing'),
+(2, N'Đang giao hàng', N'Shipping'),
+(3, N'Đã giao thành công', N'Delivered'),
+(4, N'Đã hủy', N'Cancelled');
 GO
 
-INSERT INTO [dbo].[Orders] (AccountID, FullName, Address, PhoneNumber, PaymentMethod, ShippingFee, StatusID) VALUES
-(N'customer1', N'Nguyễn Văn A', N'Hà Nội', N'0987654321', N'COD', 30000, 0);
-GO
+-- INSERT INTO [dbo].[Orders] (AccountID, FullName, Address, PhoneNumber, PaymentMethod, ShippingFee, StatusID) VALUES
+-- (N'customer1', N'Nguyễn Văn A', N'Hà Nội', N'0987654321', N'COD', 30000, 0);
+-- GO
 
-INSERT INTO [dbo].[OrderDetails] (OrderID, ProductID, UnitPrice, Quantity, Discount) VALUES
-(1, 1, 4500000, 1, 0),
-(1, 2, 3500000, 1, 0);
-GO
+-- INSERT INTO [dbo].[OrderDetails] (OrderID, ProductID, UnitPrice, Quantity, Discount) VALUES
+-- (1, 1, 4500000, 1, 0),
+-- (1, 2, 3500000, 1, 0);
+-- GO
 
 
 UPDATE [dbo].[Products] 

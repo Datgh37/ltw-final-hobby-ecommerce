@@ -1,0 +1,64 @@
+@model TuNhanTamTInh_Ecommerce.Models.Order
+
+@{
+    ViewData["Title"] = "Cập nhật Đơn hàng #" + Model.OrderId;
+}
+
+<section class="crud-page">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="crud-page__header">
+            <div class="crud-page__breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                <span>/</span>
+                <a asp-action="Orders">Đơn hàng</a>
+                <span>/</span>
+                <span>Cập nhật</span>
+            </div>
+            <h1><i class="fa fa-pencil"></i> Cập nhật Đơn hàng #@Model.OrderId</h1>
+            <p>Thay đổi trạng thái xử lý hoặc trạng thái thanh toán của đơn hàng.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="crud-card">
+                    <div class="crud-card__title">
+                        <i class="fa fa-edit"></i> Biểu mẫu cập nhật
+                    </div>
+
+                    <form asp-action="OrderEdit" class="crud-form">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="OrderId" />
+
+                        <div class="form-group">
+                            <label class="control-label">Trạng thái đơn hàng</label>
+                            <select asp-for="StatusId" class="form-control nice-select" asp-items="ViewBag.StatusId"></select>
+                            <span asp-validation-for="StatusId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group crud-form-group--mt-30">
+                            <label class="crud-checkbox-label">
+                                <input type="checkbox" asp-for="IsPaid" class="crud-checkbox-input" />
+                                <span>Đánh dấu là đã thanh toán</span>
+                            </label>
+                            <span asp-validation-for="IsPaid" class="text-danger"></span>
+                        </div>
+
+                        <div class="crud-btn-group">
+                            <button type="submit" class="crud-btn crud-btn--primary">
+                                <i class="fa fa-save"></i> LƯU THAY ĐỔI
+                            </button>
+                            <a asp-action="Orders" class="crud-btn crud-btn--secondary">
+                                <i class="fa fa-arrow-left"></i> HUỶ BỎ
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

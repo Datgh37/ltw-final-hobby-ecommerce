@@ -68,7 +68,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                     {
                         if (!account.IsActive)
                         {
-                            ModelState.AddModelError(string.Empty, "Tài khoản của bạn chưa được kích hoạt. Vui lòng kiểm tra email.");
+                            ModelState.AddModelError(string.Empty, Loc.T("Tài khoản của bạn chưa được kích hoạt. Vui lòng kiểm tra email.", "Your account is not activated. Please check your email."));
                             return View(model);
                         }
 
@@ -155,6 +155,13 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             // 2. Kiểm tra Email tồn tại chưa
             var emailExists = await _context.Accounts.AnyAsync(a => a.Email == email);
             if (emailExists) return Json(new { success = false, message = Loc.T("Email này đã được sử dụng.", "This email is already in use.") });
+
+            // 3. Kiểm tra tính hợp lệ của domain email và chống Typo
+            var emailValidation = await EmailValidator.ValidateEmailDomainAsync(email);
+            if (!emailValidation.IsValid)
+            {
+                return Json(new { success = false, message = emailValidation.ErrorMessage });
+            }
 
             var otpCode = new Random().Next(100000, 999999).ToString();
             HttpContext.Session.SetString("RegisterOTP", otpCode);
@@ -260,6 +267,11 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
+            // CLEAR OTP SESSION
+            HttpContext.Session.Remove("EmailChangeOTP");
+            HttpContext.Session.Remove("EmailChangeEmail");
+            HttpContext.Session.Remove("EmailChangeOTPVerified");
+
             var accountId = User.FindFirst("AccountId")?.Value;
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.AccountId == accountId);
             if (account == null) return NotFound();
@@ -309,10 +321,25 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 // Kiểm tra trùng Email khi thay đổi
                 if (account.Email != model.Email)
                 {
+                    // Kiểm tra OTP xác thực đổi email
+                    if (HttpContext.Session.GetString("EmailChangeOTPVerified") != "true")
+                    {
+                        ModelState.AddModelError("Email", Loc.T("Bạn chưa xác thực OTP cho email mới.", "You have not verified OTP for the new email."));
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return Json(new { success = false, message = Loc.T("Bạn chưa xác thực OTP cho email mới.", "You have not verified OTP for the new email.") });
+                        }
+                        return View(model);
+                    }
+
                     var emailExists = await _context.Accounts.AnyAsync(a => a.Email == model.Email && a.AccountId != model.AccountId);
                     if (emailExists)
                     {
-                        ModelState.AddModelError("Email", "Email này đã được sử dụng bởi tài khoản khác.");
+                        ModelState.AddModelError("Email", Loc.T("Email này đã được sử dụng bởi tài khoản khác.", "This email is already used by another account."));
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return Json(new { success = false, message = Loc.T("Email này đã được sử dụng bởi tài khoản khác.", "This email is already used by another account.") });
+                        }
                         return View(model);
                     }
                 }
@@ -417,6 +444,13 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
 
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
             if (account == null) return Json(new { success = false, message = Loc.T("Email này không tồn tại trong hệ thống.", "This email does not exist in the system.") });
+
+            // 3. Kiểm tra tính hợp lệ của domain email và chống Typo
+            var emailValidation = await EmailValidator.ValidateEmailDomainAsync(email);
+            if (!emailValidation.IsValid)
+            {
+                return Json(new { success = false, message = emailValidation.ErrorMessage });
+            }
 
             var otpCode = new Random().Next(100000, 999999).ToString();
             HttpContext.Session.SetString("ResetOTP", otpCode);
@@ -530,6 +564,67 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
+        }
+        // POST: /Account/SendEmailChangeOTP (AJAX)
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SendEmailChangeOTP(string newEmail)
+        {
+            if (string.IsNullOrEmpty(newEmail)) return Json(new { success = false, message = Loc.T("Vui lòng nhập email.", "Please enter email.") });
+
+            var emailExists = await _context.Accounts.AnyAsync(a => a.Email == newEmail);
+            if (emailExists) return Json(new { success = false, message = Loc.T("Email này đã được sử dụng bởi tài khoản khác.", "This email is already used by another account.") });
+
+            // Kiểm tra tính hợp lệ của domain email và chống Typo
+            var emailValidation = await EmailValidator.ValidateEmailDomainAsync(newEmail);
+            if (!emailValidation.IsValid)
+            {
+                return Json(new { success = false, message = emailValidation.ErrorMessage });
+            }
+
+            var otpCode = new Random().Next(100000, 999999).ToString();
+            HttpContext.Session.SetString("EmailChangeOTP", otpCode);
+            HttpContext.Session.SetString("EmailChangeEmail", newEmail);
+            HttpContext.Session.Remove("EmailChangeOTPVerified");
+
+            try
+            {
+                string subject = Loc.T("Mã xác thực thay đổi Email - Hobby Shop", "Email Change Verification OTP - Hobby Shop");
+                string body = Loc.T($"<h3>Mã xác thực của bạn là: <b style='color:#560bad;'>{otpCode}</b></h3><p>Mã này sẽ hết hạn sau 10 phút. Vui lòng nhập mã này để hoàn tất thay đổi email.</p>",
+                                     $"<h3>Your verification code is: <b style='color:#560bad;'>{otpCode}</b></h3><p>This code will expire in 10 minutes. Please enter this code to complete email change.</p>");
+                await EmailHelper.SendEmailAsync(_configuration, newEmail, subject, body);
+                return Json(new { success = true, message = Loc.T("Mã OTP đã được gửi vào email mới của bạn.", "OTP code has been sent to your new email.") });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = Loc.T("Lỗi khi gửi email: ", "Error sending email: ") + ex.Message });
+            }
+        }
+
+        // POST: /Account/VerifyEmailChangeOTP (AJAX)
+        [HttpPost]
+        [Authorize]
+        public IActionResult VerifyEmailChangeOTP(string code)
+        {
+            var sessionOTP = HttpContext.Session.GetString("EmailChangeOTP");
+
+            if (!string.IsNullOrEmpty(sessionOTP) && code == sessionOTP)
+            {
+                HttpContext.Session.SetString("EmailChangeOTPVerified", "true");
+                return Json(new { success = true, message = Loc.T("Xác thực thành công.", "Verification successful.") });
+            }
+            return Json(new { success = false, message = Loc.T("Mã xác thực không chính xác.", "Verification code is incorrect.") });
+        }
+
+        // POST: /Account/ClearEmailChangeOTP (AJAX)
+        [HttpPost]
+        [Authorize]
+        public IActionResult ClearEmailChangeOTP()
+        {
+            HttpContext.Session.Remove("EmailChangeOTP");
+            HttpContext.Session.Remove("EmailChangeEmail");
+            HttpContext.Session.Remove("EmailChangeOTPVerified");
+            return Json(new { success = true });
         }
     }
 }

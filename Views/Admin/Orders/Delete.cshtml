@@ -1,0 +1,63 @@
+@model TuNhanTamTInh_Ecommerce.Models.Order
+
+@{
+    ViewData["Title"] = "Xóa Đơn hàng #" + Model.OrderId;
+}
+
+<section class="crud-page">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="crud-page__header">
+            <div class="crud-page__breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                <span>/</span>
+                <a asp-action="Orders">Đơn hàng</a>
+                <span>/</span>
+                <span>Xóa</span>
+            </div>
+            <h1><i class="fa fa-trash"></i> Xóa Đơn hàng #@Model.OrderId</h1>
+            <p>Xác nhận xóa vĩnh viễn đơn hàng này khỏi hệ thống.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="crud-card">
+                    <div class="crud-delete-warning">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        <span>CẢNH BÁO: Hành động này sẽ xóa vĩnh viễn đơn hàng và các chi tiết sản phẩm đi kèm. KHÔNG THỂ HOÀN TÁC!</span>
+                    </div>
+
+                    <div class="crud-card__title">
+                        <i class="fa fa-info-circle"></i> Thông tin đơn hàng sẽ bị xóa
+                    </div>
+
+                    <dl class="crud-detail-list">
+                        <dt>Mã đơn hàng</dt>
+                        <dd>#@Model.OrderId</dd>
+
+                        <dt>Khách hàng</dt>
+                        <dd>@Model.FullName (@Model.Account?.Email)</dd>
+
+                        <dt>Ngày đặt</dt>
+                        <dd>@Model.OrderDate.ToString("dd/MM/yyyy HH:mm:ss")</dd>
+
+                        <dt>Trạng thái</dt>
+                        <dd>@Model.Status?.StatusName</dd>
+                    </dl>
+
+                    <form asp-action="OrderDelete" class="mt-4">
+                        <input type="hidden" asp-for="OrderId" />
+                        <div class="crud-btn-group">
+                            <button type="submit" class="crud-btn crud-btn--danger">
+                                <i class="fa fa-trash"></i> XÁC NHẬN XÓA
+                            </button>
+                            <a asp-action="Orders" class="crud-btn crud-btn--secondary">
+                                <i class="fa fa-arrow-left"></i> HUỶ BỎ
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

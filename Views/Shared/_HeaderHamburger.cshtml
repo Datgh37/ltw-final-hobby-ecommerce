@@ -23,13 +23,9 @@
                 <img src="@Url.Content(User.FindFirst("UserImage")?.Value ?? "~/images/user-default.png")"
                      alt="Avatar" class="rounded-circle header-mobile-avatar mr-3">
                 <div class="user-info">
-                    <span class="d-block text-dark fw-bold h6 mb-1">@User.Identity.Name</span>
+                    <span class="d-block text-dark fw-bold h6 mb-1">@User.FindFirst("AccountId")?.Value</span>
                     <a asp-controller="Account" asp-action="Profile" class="d-block small text-purple text-decoration-none font-weight-bold mb-1">@Loc.T("Hồ sơ cá nhân", "My Profile") <i class="fa fa-angle-right"></i></a>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-block">
-                        <button type="submit" class="btn btn-link text-danger p-0 small text-decoration-none font-weight-bold" style="font-size: 85%; vertical-align: middle;">
-                            <i class="fa fa-sign-out"></i> @Loc.T("Đăng xuất", "Logout")
-                        </button>
-                    </form>
+                    <a asp-controller="Orders" asp-action="History" class="d-block small text-purple text-decoration-none font-weight-bold mb-1">@Loc.T("Lịch sử đơn hàng", "Order History") <i class="fa fa-angle-right"></i></a>
                 </div>
             </div>
         }
@@ -97,15 +93,27 @@
                     <li><a asp-controller="Cart" asp-action="Index">@Loc.T("Giỏ hàng", "Cart")</a></li>
                     @if (User.Identity!.IsAuthenticated)
                     {
+                        <li><a asp-controller="Orders" asp-action="History">@Loc.T("Lịch sử đơn hàng", "Order History")</a></li>
                         @if (User.FindFirst("RoleId")?.Value == "0")
                         {
                             <li><a asp-controller="Admin" asp-action="Products">@Loc.T("Quản lý sản phẩm", "Products Admin")</a></li>
                             <li><a asp-controller="Admin" asp-action="Categories">@Loc.T("Quản lý danh mục", "Categories Admin")</a></li>
+                            <li><a asp-controller="Admin" asp-action="Orders">@Loc.T("Quản lý đơn hàng", "Orders Admin")</a></li>
                         }
                     }
                 </ul>
             </li>
             <li><a href="#">@Loc.T("Liên hệ", "Contact")</a></li>
+            @if (User.Identity!.IsAuthenticated)
+            {
+                <li>
+                    <form asp-controller="Account" asp-action="Logout" method="post" id="logout-mobile-form" class="m-0 p-0">
+                        <a href="javascript:void(0);" onclick="document.getElementById('logout-mobile-form').submit();" class="text-danger fw-bold">
+                            <i class="fa fa-sign-out"></i> @Loc.T("Đăng xuất", "Logout")
+                        </a>
+                    </form>
+                </li>
+            }
         </ul>
     </nav>
     <div id="mobile-menu-wrap"></div>

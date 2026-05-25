@@ -21,7 +21,7 @@
     <div class="container">
         <div class="checkout-premium">
             <h4 class="text-center">@Loc.T("Chỉnh sửa hồ sơ cá nhân", "Edit Personal Profile")</h4>
-            <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
+            <form asp-action="EditProfile" method="post" enctype="multipart/form-data" id="editProfileForm">
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                 <input type="hidden" asp-for="AccountId" />
                 <input type="hidden" asp-for="Image" />
@@ -54,16 +54,27 @@
 
                         <div class="row">
                             <div class="col-lg-6">
-                                <div class="checkout__input">
+                                <div class="checkout__input mb-1">
                                     <p>Email<span>*</span></p>
-                                    <input asp-for="Email" placeholder="example@email.com">
+                                    <input asp-for="Email" placeholder="example@email.com" data-original-email="@(User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? Model.Email)">
                                     <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                                <!-- OTP Section (Hidden by default) -->
+                                <div id="otpSection" class="mb-4 p-3 border rounded bg-light d-none">
+                                    <p class="text-warning small fw-bold mb-2"><i class="fa fa-info-circle"></i> @Loc.T("Bạn đã đổi Email. Vui lòng xác thực OTP.", "You changed Email. Please verify OTP.")</p>
+                                    <div class="input-group mb-2">
+                                        <input type="text" id="otpCode" class="form-control" placeholder="@Loc.T("Nhập mã OTP", "Enter OTP")">
+                                        <button type="button" class="btn text-white px-3" style="background: #7F56D9;" id="btnSendOTP">@Loc.T("Gửi mã", "Send OTP")</button>
+                                    </div>
+                                    <button type="button" class="btn text-white w-100 btn-sm py-2 fw-bold" style="background: #7F56D9;" id="btnVerifyOTP">@Loc.T("Xác thực OTP", "Verify OTP")</button>
+                                    <span id="otpMessage" class="small mt-1 d-block"></span>
+                                    <input type="hidden" id="isOtpVerified" value="false" />
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>@Loc.T("Số điện thoại", "Phone Number")</p>
-                                    <input asp-for="PhoneNumber" placeholder="0123 456 789">
+                                    <input asp-for="PhoneNumber" placeholder="0123456789">
                                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                                 </div>
                             </div>
@@ -79,7 +90,7 @@
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>@Loc.T("Ngày sinh", "Birthdate")</p>
-                                    <input asp-for="BirthDate" type="date" max="@DateTime.Today.AddYears(-18).ToString("yyyy-MM-dd")">
+                                    <input asp-for="BirthDate" type="date">
                                     <span asp-validation-for="BirthDate" class="text-danger"></span>
                                 </div>
                             </div>
@@ -95,7 +106,7 @@
                         </div>
 
                         <div class="mt-5 text-center d-flex flex-column align-items-center">
-                            <button type="submit" class="site-btn rounded-pill px-5 text-uppercase mb-3">
+                            <button type="submit" class="site-btn rounded-pill px-5 text-uppercase mb-3" id="btnSubmitForm">
                                 <i class="fa fa-save mr-2"></i> @Loc.T("Lưu thay đổi", "Save Changes")
                             </button>
                             <a asp-action="Profile" class="text-muted no-decoration"><i class="fa fa-arrow-left mr-2"></i> @Loc.T("Quay lại hồ sơ", "Back to Profile")</a>
@@ -108,17 +119,111 @@
 </section>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
     <script>
         $(document).ready(function() {
             // Vô hiệu hóa nice-select cho ô chọn giới tính
-            $('.no-nice-select').niceSelect('destroy');
+            try {
+                $('.no-nice-select').niceSelect('destroy');
+            } catch(e) {}
+            // Xóa wrapper niceSelect nếu vẫn còn tồn tại
+            $('.custom-gender-select').closest('.nice-select').replaceWith(function() {
+                return $(this).find('select');
+            });
+            // Đảm bảo select gốc hiển thị
+            $('.custom-gender-select').show();
+
+            // Email Change Logic
+            const originalEmail = $('#Email').data('original-email');
+            
+            $('#Email').on('input change blur', function() {
+                const currentEmail = $(this).val().trim();
+                if (currentEmail !== originalEmail && currentEmail !== '') {
+                    $('#otpSection').removeClass('d-none').slideDown();
+                    $('#isOtpVerified').val('false');
+                    $('#btnSubmitForm').prop('disabled', true);
+                } else {
+                    $('#otpSection').slideUp(function() { $(this).addClass('d-none'); });
+                    $('#isOtpVerified').val('true');
+                    $('#btnSubmitForm').prop('disabled', false);
+                    // Reset OTP session logic
+                    $.post('@Url.Action("ClearEmailChangeOTP", "Account")');
+                }
+            });
+
+            $('#btnSendOTP').click(function() {
+                const isEn = $('html').attr('lang') === 'en';
+                if (!$('#editProfileForm').validate().element('#Email')) {
+                    showToast(isEn ? "Please enter a valid email format before sending OTP." : "Vui lòng nhập định dạng email hợp lệ trước khi gửi OTP.", "error");
+                    return; // Stop if email format is invalid
+                }
+
+                const email = $('#Email').val().trim();
+                if(!email) {
+                    showToast(isEn ? "Email cannot be empty." : "Email không được để trống.", "error");
+                    return;
+                }
+
+                const btn = $(this);
+                btn.prop('disabled', true).text('@Html.Raw(Loc.T("Đang gửi...", "Sending..."))');
+
+                $.post('@Url.Action("SendEmailChangeOTP", "Account")', { newEmail: email }, function(res) {
+                    if(res.success) {
+                        $('#otpMessage').removeClass('text-danger').addClass('text-success').text(res.message);
+                        let timeLeft = 60;
+                        const interval = setInterval(function() {
+                            btn.text(timeLeft + 's');
+                            timeLeft--;
+                            if (timeLeft < 0) {
+                                clearInterval(interval);
+                                btn.prop('disabled', false).text('@Html.Raw(Loc.T("Gửi lại", "Resend"))');
+                            }
+                        }, 1000);
+                    } else {
+                        $('#otpMessage').removeClass('text-success').addClass('text-danger').text(res.message);
+                        btn.prop('disabled', false).text('@Html.Raw(Loc.T("Gửi mã", "Send OTP"))');
+                    }
+                });
+            });
+
+            $('#btnVerifyOTP').click(function() {
+                const isEn = $('html').attr('lang') === 'en';
+                const code = $('#otpCode').val().trim();
+                if(!code) {
+                    showToast(isEn ? "Please enter the OTP code." : "Vui lòng nhập mã OTP.", "error");
+                    return;
+                }
+
+                $.post('@Url.Action("VerifyEmailChangeOTP", "Account")', { code: code }, function(res) {
+                    if(res.success) {
+                        $('#otpMessage').removeClass('text-danger').addClass('text-success').text(res.message);
+                        $('#isOtpVerified').val('true');
+                        $('#btnSubmitForm').prop('disabled', false);
+                        $('#otpSection').find('input, button').prop('disabled', true);
+                    } else {
+                        $('#otpMessage').removeClass('text-success').addClass('text-danger').text(res.message);
+                    }
+                });
+            });
 
             // AJAX Edit Profile
-            $('form[asp-action="EditProfile"]').on('submit', function(e) {
+            $('#editProfileForm').on('submit', function(e) {
                 e.preventDefault();
+                
+                const form = $(this);
+                if (!form.valid()) {
+                    return false;
+                }
 
-                // Validate 18+ on Frontend
+                // Check OTP Verification if email changed
+                const currentEmail = $('#Email').val();
+                if (currentEmail !== originalEmail && $('#isOtpVerified').val() !== 'true') {
+                    const isEn = $('html').attr('lang') === 'en';
+                    showToast(isEn ? "Please verify the OTP for the new email." : "Vui lòng xác thực OTP cho email mới.", "error");
+                    return false;
+                }
+
+                // Validate 18+ and <= 100 on Frontend
                 const birthDateVal = $('#BirthDate').val();
                 if (birthDateVal) {
                     const birthDate = new Date(birthDateVal);
@@ -128,15 +233,14 @@
                     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
                         age--;
                     }
-                    if (age < 18) {
+                    if (age < 18 || age > 100) {
                         const isEn = $('html').attr('lang') === 'en';
-                        showToast(isEn ? "You must be at least 18 years old." : "Bạn phải đủ 18 tuổi để cập nhật thông tin.", "error");
+                        showToast(isEn ? "Age must be between 18 and 100 years old." : "Tuổi của bạn phải từ 18 đến 100 tuổi.", "error");
                         return false;
                     }
                 }
 
-                const form = $(this);
-                const formData = new FormData(this);
+                const formData = new FormData(form[0]);
 
                 $.ajax({
                     url: form.attr('action'),
@@ -155,7 +259,7 @@
                         }
                     },
                     error: function() {
-                        showToast("@Loc.T("Đã có lỗi xảy ra khi cập nhật hồ sơ.", "An error occurred while updating profile.")", "error");
+                        showToast("@Html.Raw(Loc.T("Đã có lỗi xảy ra khi cập nhật hồ sơ.", "An error occurred while updating profile."))", "error");
                     }
                 });
             });
