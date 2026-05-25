@@ -2,8 +2,6 @@
     ViewData["Title"] = Loc.T("Về chúng tôi - Tứ Nhãn Tam Tinh", "About Us - Tu Nhan Tam Tinh");
 }
 
-@await Component.InvokeAsync("HeroSection", new { isHome = false })
-
 <link rel="stylesheet" href="~/css/about-us.css" asp-append-version="true" />
 
 <section class="about-section py-5">
@@ -38,7 +36,7 @@
                         </div>
                         <span class="role-badge member-badge">@Loc.T("Thành viên", "Member")</span>
                         <h3 class="member-name">Phạm Gia Bảo</h3>
-                        <p class="member-alias">@Loc.T("Chuyên Front End", "Front-End Specialist")</p>
+                        <p class="member-alias">@Loc.T("Chuyên Front End - Đẹp từng pixel", "Front-End Specialist - Perfecting Every Pixel")</p>
                         <hr class="member-divider">
                         <div class="member-details text-start">
                             <p class="detail-line"><strong>@Loc.T("Kỹ năng chính:", "Key Skills:")</strong> HTML5, CSS3, JavaScript, UI/UX.</p>
@@ -150,3 +148,17 @@
 
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.member-card').on('mousemove', function (e) {
+                var rect = this.getBoundingClientRect(),
+                    x = e.clientX - rect.left,
+                    y = e.clientY - rect.top;
+                this.style.setProperty('--x', x + 'px');
+                this.style.setProperty('--y', y + 'px');
+            });
+        });
+    </script>
+}

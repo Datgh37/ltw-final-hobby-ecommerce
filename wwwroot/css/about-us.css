@@ -3,6 +3,12 @@
    Strictly managed via External CSS - No Inline Styles Allowed
    ========================================================================== */
 
+/* Reset main content spacing to stick to header specifically for About Us page */
+.page-content {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
 /* Main Container Base */
 .about-section {
     background: radial-gradient(circle at 50% 50%, #110825 0%, #06020f 100%);

@@ -10,6 +10,38 @@ namespace TuNhanTamTInh_Ecommerce
     {
         public static void Main(string[] args)
         {
+            var isContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+
+            // Tự động nạp file .env ở thư mục gốc nếu tồn tại (Hỗ trợ chạy ngoài Docker vẫn nhận cấu hình bảo mật)
+            var envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+            if (File.Exists(envPath))
+            {
+                foreach (var line in File.ReadAllLines(envPath))
+                {
+                    var trimmed = line.Trim();
+                    if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("#")) continue;
+                    var parts = trimmed.Split('=', 2);
+                    if (parts.Length == 2)
+                    {
+                        var key = parts[0].Trim();
+                        var value = parts[1].Trim();
+
+                        // Nếu chạy ngoài container (local host), ta KHÔNG nạp ConnectionString từ .env 
+                        // để hệ thống tự sử dụng ConnectionString cục bộ (có pass sa = 123456) trong appsettings.json
+                        if (!isContainer && key.StartsWith("ConnectionStrings"))
+                        {
+                            continue;
+                        }
+
+                        // Chỉ set nếu chưa có sẵn để tránh ghi đè các cấu hình hệ thống hoặc Docker Compose
+                        if (Environment.GetEnvironmentVariable(key) == null)
+                        {
+                            Environment.SetEnvironmentVariable(key, value);
+                        }
+                    }
+                }
+            }
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Chỉ ép cổng khi deploy (non-Development) có cung cấp PORT.
