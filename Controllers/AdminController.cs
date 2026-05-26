@@ -544,30 +544,26 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            // Bỏ qua kiểm tra ModelState.IsValid vì các trường bắt buộc khác của model Order (như Address, AccountId...) không được gửi lên từ form chỉnh sửa
+            try
             {
-                try
-                {
-                    order.StatusId = orderUpdate.StatusId;
-                    order.IsPaid = orderUpdate.IsPaid;
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OrderExists(order.OrderId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                order.StatusId = orderUpdate.StatusId;
+                order.IsPaid = orderUpdate.IsPaid;
+                _context.Update(order);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Orders));
             }
-            ViewData["StatusId"] = new SelectList(_context.Statuses, "StatusId", "StatusName", orderUpdate.StatusId);
-            return View("~/Views/Admin/Orders/Edit.cshtml", orderUpdate);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!OrderExists(order.OrderId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         // GET: Admin/Orders/Delete/5

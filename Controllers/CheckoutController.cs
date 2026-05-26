@@ -178,7 +178,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             {
                 appliedVoucher = await _context.Vouchers.FirstOrDefaultAsync(v => v.VoucherCode == sessionVoucherCode && v.IsActive);
                 
-                if (appliedVoucher == null || (appliedVoucher.ExpiryDate.HasValue && appliedVoucher.ExpiryDate.Value < DateTime.Now))
+                if (appliedVoucher == null || (appliedVoucher.ExpiryDate.HasValue && appliedVoucher.ExpiryDate.Value < GetVietnamTime()))
                 {
                     TempData["error"] = Loc.T("Voucher không hợp lệ hoặc đã hết hạn. Vui lòng đặt hàng lại.", "Invalid or expired voucher. Please order again.");
                     HttpContext.Session.Remove("VoucherCode");
@@ -212,7 +212,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
             var order = new Order
             {
                 AccountId = accountId,
-                OrderDate = DateTime.Now,
+                OrderDate = GetVietnamTime(),
                 FullName = vm.Checkout.FullName,
                 Address = vm.Checkout.Address,
                 PhoneNumber = vm.Checkout.Phone,
@@ -539,9 +539,27 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
         }
 
         // Helper sinh thời gian chuẩn Việt Nam (GMT+7) hoạt động đa nền tảng (Windows/Linux Docker)
+        // Đặc biệt: Tích hợp cơ chế đồng bộ giờ chuẩn quốc tế từ Internet qua Google HTTP HEAD request để sửa triệt để lỗi lệch giờ WSL/Docker
         private DateTime GetVietnamTime()
         {
             var utcTime = DateTime.UtcNow;
+            try
+            {
+                using (var client = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(2) })
+                {
+                    var request = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Head, "https://www.google.com");
+                    var response = client.Send(request);
+                    if (response.Headers.Date.HasValue)
+                    {
+                        utcTime = response.Headers.Date.Value.UtcDateTime;
+                    }
+                }
+            }
+            catch
+            {
+                // Fallback nếu mất mạng hoặc lỗi request, tiếp tục dùng giờ hệ thống
+            }
+
             try
             {
                 // Thử múi giờ chuẩn Windows trước

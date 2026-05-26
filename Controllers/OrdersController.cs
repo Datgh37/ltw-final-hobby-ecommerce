@@ -123,6 +123,7 @@ namespace TuNhanTamTInh_Ecommerce.Controllers
                 StatusNameEn = order.Status.StatusNameEn,
                 IsPaid = order.IsPaid,
                 TrackingNumber = order.TrackingNumber,
+                TransactionId = order.TransactionId,
                 VoucherCode = order.VoucherCode,
                 ShippingFee = order.ShippingFee,
                 Subtotal = subtotal,

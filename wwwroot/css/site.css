@@ -3799,6 +3799,7 @@ body {
     margin-top: 8px;
     display: flex;
     align-items: center;
+    justify-content: center; /* Căn giữa dòng đánh giá và lượt xem */
 }
 
 .fav-meta-sep {
@@ -3945,10 +3946,11 @@ body {
    ============================================ */
 @media (max-width: 767px) {
 
-    /* Enforce compact horizontal widths without scrolling */
+    /* Cho phép bảng co giãn cột tự động và scroll ngang thoải mái trên di động */
     .shoping__cart__table table {
-        table-layout: fixed !important;
-        width: 100% !important;
+        table-layout: auto !important;
+        width: auto !important;
+        min-width: 750px !important;
     }
 
     /* Redistribute remaining Wishlist columns beautifully */
@@ -4571,8 +4573,16 @@ body {
 
 /* Tablet and Large Mobile Layout adjustments for Shopping Cart Table */
 @media only screen and (max-width: 767.98px) {
-    .shoping__cart__table table {
+    .shoping__cart__table {
+        overflow-x: auto;
+        display: block;
         width: 100%;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 20px;
+    }
+
+    .shoping__cart__table table {
+        min-width: 650px; /* Tạo chiều rộng tối thiểu để bảng không bị nén chữ, hỗ trợ scroll ngang */
     }
 
     .shoping__cart__table table thead th,
@@ -4585,6 +4595,7 @@ body {
         padding-left: 10px !important;
         display: flex !important;
         align-items: center;
+        min-width: 320px !important; /* Đảm bảo cột sản phẩm rộng rãi hiển thị tên dài */
     }
 
     .cart-item-img, .order-details-product-img {
@@ -4605,21 +4616,6 @@ body {
     .shoping__cart__total,
     .shoping__cart__quantity {
         font-size: 13px !important;
-    }
-}
-
-/* Small Mobile - fallback to horizontal scroll if it gets too narrow */
-@media only screen and (max-width: 575.98px) {
-    .shoping__cart__table {
-        overflow-x: auto;
-        display: block;
-        width: 100%;
-        -webkit-overflow-scrolling: touch;
-        margin-bottom: 20px;
-    }
-    
-    .shoping__cart__table table {
-        min-width: 480px; 
     }
 }
 

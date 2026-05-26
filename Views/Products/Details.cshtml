@@ -19,11 +19,7 @@
                     ?? Model.ProductImages?.FirstOrDefault()?.ImageUrl 
                     ?? "~/images/Others/product-1.jpg";
                     
-    var finalPrice = Model.UnitPrice;
-    if (Model.Discount > 0)
-    {
-        finalPrice = Model.UnitPrice * (1m - (decimal)Model.Discount / 100m);
-    }
+    var finalPrice = Model.GetFinalPrice();
 }
 @await Component.InvokeAsync("HeroSection");
 
@@ -79,7 +75,7 @@
                         <div class="product__details__price">
                             @finalPrice.ToString("N0")₫
                             <span class="text-muted text-decoration-line-through fs-5 ml-2" style="font-size: 18px; color: #b2b2b2; margin-left: 10px;">@Model.UnitPrice.ToString("N0")₫</span>
-                            <span class="badge bg-danger ms-2">-@(Model.Discount *100)%</span>
+                            <span class="badge bg-danger ms-2">-@(Model.Discount > 1 ? Model.Discount : Model.Discount * 100)%</span>
                         </div>
                     }
                     else

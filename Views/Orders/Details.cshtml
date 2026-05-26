@@ -92,6 +92,13 @@
                                     <span>@Model.PaymentMethod</span>
                                 }
                             </p>
+                            @if (Model.PaymentMethod == "VNPAY" && !string.IsNullOrEmpty(Model.TransactionId))
+                            {
+                                <p class="order-details-text-line">
+                                    <strong>@Loc.T("Mã giao dịch VNPAY:", "VNPAY Transaction ID:")</strong>
+                                    <span class="text-muted" style="font-family: monospace; font-size: 13px; background: #f8f9fa; padding: 2px 6px; border-radius: 4px; border: 1px solid #e3e6f0; margin-left: 5px;">@Model.TransactionId</span>
+                                </p>
+                            }
                             <p class="order-details-text-line-last"><strong>@Loc.T("Ngày đặt:", "Order Date:")</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
                             @if (!string.IsNullOrEmpty(Model.TrackingNumber))
                             {
@@ -128,7 +135,7 @@
                     @if (Model.PaymentMethod == "VNPAY" && !Model.IsPaid && (Model.StatusId == 0 || Model.StatusId == 1))
                     {
                         <a asp-controller="CheckOut" asp-action="RepayOrder" asp-route-id="@Model.OrderId" class="primary-btn w-100 mt-2 details-pay-btn text-center text-white font-weight-bold">
-                            <i class="fa fa-credit-card me-1"></i>@Loc.T("THANH TOÁN NGAY", "PAY NOW")
+                            @Loc.T("THANH TOÁN NGAY", "PAY NOW")
                         </a>
                     }
 

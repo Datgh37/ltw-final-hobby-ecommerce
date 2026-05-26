@@ -18,6 +18,7 @@ namespace TuNhanTamTInh_Ecommerce.Models.ViewModels
         public string StatusNameEn { get; set; } = null!;
         public bool IsPaid { get; set; }
         public string? TrackingNumber { get; set; }
+        public string? TransactionId { get; set; }
         public string? VoucherCode { get; set; }
         public decimal ShippingFee { get; set; }
 
